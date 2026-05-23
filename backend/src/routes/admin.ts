@@ -40,7 +40,7 @@ router.get("/dashboard", async (_req, res) => {
 });
 
 router.get("/quizzes/:quizId/analytics", async (req, res) => {
-  const quizId = req.params.quizId;
+  const quizId = String(req.params.quizId);
   const quiz = await prisma.quiz.findUnique({
     where: { id: quizId },
     include: { _count: { select: { questions: true } } },
@@ -89,8 +89,9 @@ router.get("/quizzes/:quizId/analytics", async (req, res) => {
 });
 
 router.get("/quizzes/:quizId/export", async (req, res) => {
+  const quizId = String(req.params.quizId);
   const attempts = await prisma.attempt.findMany({
-    where: { quizId: req.params.quizId, submittedAt: { not: null } },
+    where: { quizId, submittedAt: { not: null } },
     include: { user: { select: { name: true, email: true } } },
     orderBy: [{ rank: "asc" }, { score: "desc" }],
   });
@@ -115,7 +116,7 @@ router.get("/quizzes/:quizId/export", async (req, res) => {
 });
 
 router.delete("/quizzes/:quizId/leaderboard", async (req, res) => {
-  const { quizId } = req.params;
+  const quizId = String(req.params.quizId);
   const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
   if (!quiz) return res.status(404).json({ error: "Quiz not found" });
 
@@ -132,7 +133,8 @@ router.delete("/quizzes/:quizId/leaderboard", async (req, res) => {
 });
 
 router.delete("/quizzes/:quizId/attempts/:attemptId", async (req, res) => {
-  const { quizId, attemptId } = req.params;
+  const quizId = String(req.params.quizId);
+  const attemptId = String(req.params.attemptId);
 
   const attempt = await prisma.attempt.findFirst({
     where: { id: attemptId, quizId },

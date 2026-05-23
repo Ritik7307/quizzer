@@ -8,7 +8,7 @@ export interface JwtPayload {
 }
 
 const secret = process.env.JWT_SECRET ?? "dev-secret-change-me";
-const expiresIn = process.env.JWT_EXPIRES_IN ?? "7d";
+const expiresIn = (process.env.JWT_EXPIRES_IN ?? "7d") as any;
 
 export function signToken(payload: JwtPayload): string {
   return jwt.sign(payload, secret, { expiresIn });

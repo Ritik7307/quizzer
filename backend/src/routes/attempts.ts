@@ -16,8 +16,9 @@ import { cacheDeletePrefix } from "../lib/cache.js";
 const router = Router();
 
 router.post("/start/:quizId", authenticate, requireRole(Role.CANDIDATE), async (req: AuthRequest, res) => {
+  const quizId = String(req.params.quizId);
   const quiz = await prisma.quiz.findUnique({
-    where: { id: req.params.quizId },
+    where: { id: quizId },
     include: { questions: { orderBy: { order: "asc" } } },
   });
 
@@ -80,7 +81,7 @@ router.patch("/:attemptId/progress", authenticate, async (req: AuthRequest, res)
   const schema = z.object({ answers: z.record(z.string(), z.number().int().min(0).max(3)) });
   try {
     const { answers } = schema.parse(req.body);
-    const attemptId = req.params.attemptId;
+    const attemptId = String(req.params.attemptId);
 
     const attempt = await prisma.attempt.findUnique({
       where: { id: attemptId },
@@ -114,7 +115,7 @@ router.patch("/:attemptId/progress", authenticate, async (req: AuthRequest, res)
 });
 
 router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) => {
-  const attemptId = req.params.attemptId;
+  const attemptId = String(req.params.attemptId);
   const bodySchema = z.object({
     answers: z.record(z.string(), z.number().int().min(0).max(3)).optional(),
   });
@@ -194,8 +195,9 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
 });
 
 router.get("/quiz/:quizId", authenticate, requireRole(Role.ADMIN), async (req, res) => {
+  const quizId = String(req.params.quizId);
   const attempts = await prisma.attempt.findMany({
-    where: { quizId: req.params.quizId },
+    where: { quizId },
     include: { user: { select: { id: true, name: true, email: true } } },
     orderBy: { submittedAt: "desc" },
   });
@@ -203,8 +205,9 @@ router.get("/quiz/:quizId", authenticate, requireRole(Role.ADMIN), async (req, r
 });
 
 router.get("/my/:quizId", authenticate, async (req: AuthRequest, res) => {
+  const quizId = String(req.params.quizId);
   const attempt = await prisma.attempt.findUnique({
-    where: { userId_quizId: { userId: req.user!.userId, quizId: req.params.quizId } },
+    where: { userId_quizId: { userId: req.user!.userId, quizId } },
     include: { quiz: { select: { title: true } } },
   });
   if (!attempt) return res.status(404).json({ error: "No attempt found" });

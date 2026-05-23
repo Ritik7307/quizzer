@@ -95,8 +95,9 @@ router.get("/", authenticate, async (req: AuthRequest, res) => {
 });
 
 router.get("/:id", authenticate, async (req: AuthRequest, res) => {
+  const quizId = String(req.params.id);
   const quiz = await prisma.quiz.findUnique({
-    where: { id: req.params.id },
+    where: { id: quizId },
     include: {
       questions: { orderBy: { order: "asc" } },
       _count: { select: { attempts: true } },
@@ -118,7 +119,7 @@ router.get("/:id", authenticate, async (req: AuthRequest, res) => {
 
   if (!isAdmin) {
     const { questions, ...rest } = formatted;
-    const safeQuestions = questions.map(({ correctOptionIndex, ...q }) => q);
+    const safeQuestions = questions.map(({ correctOptionIndex, ...q }: any) => q);
     return res.json({ quiz: { ...rest, questions: safeQuestions } });
   }
 
@@ -148,10 +149,11 @@ router.post("/", authenticate, requireRole(Role.ADMIN), async (req: AuthRequest,
 });
 
 router.patch("/:id", authenticate, requireRole(Role.ADMIN), async (req: AuthRequest, res) => {
+  const quizId = String(req.params.id);
   try {
     const body = quizSchema.partial().parse(req.body);
     const quiz = await prisma.quiz.update({
-      where: { id: req.params.id },
+      where: { id: quizId },
       data: {
         ...body,
         startTime: body.startTime === null ? null : body.startTime ? new Date(body.startTime) : undefined,
@@ -165,17 +167,19 @@ router.patch("/:id", authenticate, requireRole(Role.ADMIN), async (req: AuthRequ
 });
 
 router.delete("/:id", authenticate, requireRole(Role.ADMIN), async (req, res) => {
-  await prisma.quiz.delete({ where: { id: req.params.id } });
+  const quizId = String(req.params.id);
+  await prisma.quiz.delete({ where: { id: quizId } });
   return res.json({ success: true });
 });
 
 router.post("/:id/questions", authenticate, requireRole(Role.ADMIN), async (req, res) => {
+  const quizId = String(req.params.id);
   try {
     const body = questionSchema.parse(req.body);
-    const count = await prisma.question.count({ where: { quizId: req.params.id } });
+    const count = await prisma.question.count({ where: { quizId } });
     const question = await prisma.question.create({
       data: {
-        quizId: req.params.id,
+        quizId,
         text: body.text,
         options: stringifyOptions(body.options),
         correctOptionIndex: body.correctOptionIndex,
@@ -190,10 +194,11 @@ router.post("/:id/questions", authenticate, requireRole(Role.ADMIN), async (req,
 });
 
 router.patch("/:quizId/questions/:questionId", authenticate, requireRole(Role.ADMIN), async (req, res) => {
+  const questionId = String(req.params.questionId);
   try {
     const body = questionSchema.partial().parse(req.body);
     const question = await prisma.question.update({
-      where: { id: req.params.questionId },
+      where: { id: questionId },
       data: {
         ...body,
         ...(body.options ? { options: stringifyOptions(body.options) } : {}),
@@ -206,7 +211,8 @@ router.patch("/:quizId/questions/:questionId", authenticate, requireRole(Role.AD
 });
 
 router.delete("/:quizId/questions/:questionId", authenticate, requireRole(Role.ADMIN), async (req, res) => {
-  await prisma.question.delete({ where: { id: req.params.questionId } });
+  const questionId = String(req.params.questionId);
+  await prisma.question.delete({ where: { id: questionId } });
   return res.json({ success: true });
 });
 
