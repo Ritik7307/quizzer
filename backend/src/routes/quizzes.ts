@@ -196,12 +196,12 @@ router.post("/:id/questions", authenticate, requireRole(Role.ADMIN), async (req,
 router.patch("/:quizId/questions/:questionId", authenticate, requireRole(Role.ADMIN), async (req, res) => {
   const questionId = String(req.params.questionId);
   try {
-    const body = questionSchema.partial().parse(req.body);
+    const { options, ...restBody } = questionSchema.partial().parse(req.body);
     const question = await prisma.question.update({
       where: { id: questionId },
       data: {
-        ...body,
-        ...(body.options ? { options: stringifyOptions(body.options) } : {}),
+        ...restBody,
+        ...(options ? { options: stringifyOptions(options) } : {}),
       },
     });
     return res.json({ question: formatQuestion(question) });
