@@ -56,12 +56,7 @@ npm run dev
 - **Frontend:** http://localhost:3000
 - **API:** http://localhost:4000
 
-## Demo Accounts
 
-| Role      | Email              | Password    |
-|-----------|--------------------|-------------|
-| Admin     | admin@quizzer.dev  | admin123    |
-| Candidate | alice@student.dev  | student123  |
 
 ### Registration & admin access
 
