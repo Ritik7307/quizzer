@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CANDIDATE
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         Role      @default(CANDIDATE)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  quizzes      Quiz[]    @relation("QuizCreator")
+  attempts     Attempt[]
+
+  @@index([role])
+}
+
+model Quiz {
+  id           String     @id @default(cuid())
+  title        String
+  description  String     @default("")
+  instructions String     @default("")
+  duration     Int
+  published    Boolean    @default(false)
+  startTime    DateTime?
+  endTime      DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  createdById  String
+  createdBy    User       @relation("QuizCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  questions    Question[]
+  attempts     Attempt[]
+
+  @@index([published])
+  @@index([startTime, endTime])
+}
+
+model Question {
+  id                 String @id @default(cuid())
+  quizId             String
+  quiz               Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text               String
+  options            String
+  correctOptionIndex Int
+  order              Int    @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([quizId])
+}
+
+model Attempt {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId        String
+  quiz          Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers       String    @default("{}")
+  score         Int       @default(0)
+  percentage    Float     @default(0)
+  correctCount  Int       @default(0)
+  wrongCount    Int       @default(0)
+  totalQuestions Int      @default(0)
+  rank          Int?
+  startedAt     DateTime  @default(now())
+  submittedAt   DateTime?
+  expiresAt     DateTime?
+
+  @@unique([userId, quizId])
+  @@index([quizId])
+  @@index([submittedAt])
+  @@index([quizId, submittedAt])
+  @@index([quizId, score])
+  @@index([quizId, rank])
+}
