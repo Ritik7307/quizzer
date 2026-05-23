@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";
 import { api, exportCsvUrl } from "@/lib/api";
-import type { Quiz } from "@/types";
+import type { Quiz, User } from "@/types";
 
 interface DashboardData {
   stats: { quizCount: number; attemptCount: number; userCount: number };
@@ -25,10 +25,17 @@ interface DashboardData {
   }>;
 }
 
+interface AdminUser extends User {
+  avatarUrl?: string | null;
+  createdAt: string;
+  _count: { attempts: number; quizzes: number };
+}
+
 export default function AdminDashboard() {
   const { token } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,10 +43,12 @@ export default function AdminDashboard() {
     Promise.all([
       api<DashboardData>("/api/admin/dashboard", { token }),
       api<{ quizzes: Quiz[] }>("/api/quizzes", { token }),
+      api<{ users: AdminUser[] }>("/api/admin/users", { token }),
     ])
-      .then(([dash, q]) => {
+      .then(([dash, q, u]) => {
         setData(dash);
         setQuizzes(q.quizzes);
+        setUsers(u.users);
       })
       .catch(() => toast.error("Failed to load dashboard"))
       .finally(() => setLoading(false));
@@ -159,6 +168,61 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="mt-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Registered Users</CardTitle>
+                  <CardDescription>All participants and administrators on the platform</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+                    <table className="w-full min-w-[640px] text-sm">
+                      <thead>
+                        <tr className="border-b text-left text-neutral-500">
+                          <th className="py-2">User</th>
+                          <th className="py-2">Role</th>
+                          <th className="py-2">Joined</th>
+                          <th className="py-2 text-right">Quizzes</th>
+                          <th className="py-2 text-right">Attempts</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users.map((u) => (
+                          <tr key={u.id} className="border-b border-neutral-800">
+                            <td className="py-3">
+                              <div className="flex items-center gap-3">
+                                {u.avatarUrl ? (
+                                  <img src={u.avatarUrl} alt={u.name} className="h-8 w-8 rounded-full object-cover" />
+                                ) : (
+                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-800">
+                                    <Users className="h-4 w-4 text-neutral-400" />
+                                  </div>
+                                )}
+                                <div>
+                                  <p className="font-medium">{u.name}</p>
+                                  <p className="text-xs text-neutral-500">{u.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3">
+                              <Badge variant={u.role === "ADMIN" ? "success" : "warning"}>
+                                {u.role.toLowerCase()}
+                              </Badge>
+                            </td>
+                            <td className="py-3 text-neutral-400">
+                              {new Date(u.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="py-3 text-right text-neutral-400">{u._count.quizzes}</td>
+                            <td className="py-3 text-right text-neutral-400">{u._count.attempts}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </CardContent>
               </Card>
             </div>

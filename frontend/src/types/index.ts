@@ -2,6 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  avatarUrl?: string | null;
   role: "ADMIN" | "CANDIDATE";
   createdAt?: string;
 }

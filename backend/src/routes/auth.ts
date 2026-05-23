@@ -40,7 +40,7 @@ router.post("/register", async (req, res) => {
         passwordHash,
         role,
       },
-      select: { id: true, email: true, name: true, role: true, createdAt: true },
+      select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
     });
 
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
@@ -75,7 +75,7 @@ router.post("/login", async (req, res) => {
       const updated = await prisma.user.update({
         where: { id: user.id },
         data: { role: Role.ADMIN },
-        select: { id: true, email: true, name: true, role: true, createdAt: true },
+        select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
       });
       const token = signToken({ userId: updated.id, email: updated.email, role: updated.role });
       return res.json({ user: updated, token });
@@ -85,6 +85,7 @@ router.post("/login", async (req, res) => {
       id: user.id,
       email: user.email,
       name: user.name,
+      avatarUrl: user.avatarUrl,
       role: user.role,
       createdAt: user.createdAt,
     };
@@ -103,10 +104,33 @@ router.post("/login", async (req, res) => {
 router.get("/me", authenticate, async (req: AuthRequest, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user!.userId },
-    select: { id: true, email: true, name: true, role: true, createdAt: true },
+    select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
   });
   if (!user) return res.status(404).json({ error: "User not found" });
   return res.json({ user });
+});
+
+const updateProfileSchema = z.object({
+  name: z.string().min(2).optional(),
+  avatarUrl: z.string().url().or(z.literal("")).optional(),
+});
+
+router.patch("/me", authenticate, async (req: AuthRequest, res) => {
+  try {
+    const body = updateProfileSchema.parse(req.body);
+    const user = await prisma.user.update({
+      where: { id: req.user!.userId },
+      data: {
+        ...(body.name ? { name: body.name } : {}),
+        ...(body.avatarUrl !== undefined ? { avatarUrl: body.avatarUrl || null } : {}),
+      },
+      select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
+    });
+    return res.json({ user });
+  } catch (e) {
+    if (e instanceof z.ZodError) return res.status(400).json({ error: e.errors[0]?.message });
+    return res.status(500).json({ error: "Failed to update profile" });
+  }
 });
 
 export default router;

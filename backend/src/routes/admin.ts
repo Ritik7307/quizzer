@@ -163,4 +163,22 @@ router.delete("/quizzes/:quizId/attempts/:attemptId", async (req, res) => {
   });
 });
 
+router.get("/users", async (_req, res) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      avatarUrl: true,
+      role: true,
+      createdAt: true,
+      _count: {
+        select: { attempts: true, quizzes: true }
+      }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+  return res.json({ users });
+});
+
 export default router;
