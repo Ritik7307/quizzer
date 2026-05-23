@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -39,6 +39,7 @@ interface Analytics {
 
 export default function AdminQuizManagePage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const { token } = useAuth();
   const [quiz, setQuiz] = useState<Quiz & { questions: Question[] } | null>(null);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
@@ -107,6 +108,17 @@ export default function AdminQuizManagePage() {
     load();
   }
 
+  async function deleteQuiz() {
+    if (!confirm("Are you sure you want to permanently delete this quiz? All attempts and questions will be lost.")) return;
+    try {
+      await api(`/api/quizzes/${id}`, { method: "DELETE", token });
+      toast.success("Quiz deleted");
+      router.push("/admin");
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Failed to delete quiz");
+    }
+  }
+
   async function deleteParticipant(attemptId: string, name: string) {
     if (!confirm(`Remove ${name} from the leaderboard? They can take the quiz again.`)) return;
     try {
@@ -168,6 +180,12 @@ export default function AdminQuizManagePage() {
             >
               {quiz.published ? "Unpublish" : "Publish"}
             </Button>
+            <Button
+              variant="destructive"
+              onClick={deleteQuiz}
+            >
+              Delete
+            </Button>
           </div>
         </div>
 
@@ -214,6 +232,22 @@ export default function AdminQuizManagePage() {
                 onBlur={(e) =>
                   updateQuiz({ endTime: e.target.value ? new Date(e.target.value).toISOString() : null })
                 }
+              />
+            </div>
+            <div className="space-y-2 col-span-1 sm:col-span-2">
+              <Label>Description</Label>
+              <Textarea
+                defaultValue={quiz.description || ""}
+                onBlur={(e) => updateQuiz({ description: e.target.value })}
+                placeholder="Brief description of the quiz"
+              />
+            </div>
+            <div className="space-y-2 col-span-1 sm:col-span-2">
+              <Label>Instructions</Label>
+              <Textarea
+                defaultValue={quiz.instructions || ""}
+                onBlur={(e) => updateQuiz({ instructions: e.target.value })}
+                placeholder="Instructions for participants"
               />
             </div>
           </CardContent>
