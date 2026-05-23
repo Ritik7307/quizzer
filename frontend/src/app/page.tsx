@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BarChart3, Clock, Shield, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function HomePage() {
   return (
@@ -46,23 +46,6 @@ export default function HomePage() {
             </Card>
           ))}
         </div>
-      </section>
-
-      <section className="border-t border-neutral-900 bg-black px-4 py-10 sm:px-6 sm:py-12">
-        <Card className="mx-auto max-w-3xl">
-          <CardHeader>
-            <CardTitle>Demo Accounts</CardTitle>
-            <CardDescription>Use these credentials after running the seed script</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-neutral-300">
-            <p>
-              <strong className="text-white">Admin:</strong> admin@quizzer.dev / admin123
-            </p>
-            <p>
-              <strong className="text-white">Student:</strong> alice@student.dev / student123
-            </p>
-          </CardContent>
-        </Card>
       </section>
     </div>
   );
