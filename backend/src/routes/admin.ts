@@ -181,4 +181,35 @@ router.get("/users", async (_req, res) => {
   return res.json({ users });
 });
 
+router.get("/users/export", async (_req, res) => {
+  const users = await prisma.user.findMany({
+    select: {
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+      _count: {
+        select: { attempts: true, quizzes: true }
+      }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const headers = ["Name", "Email", "Role", "Joined Date", "Quizzes Created", "Quizzes Attempted"];
+  const rows = users.map((u) => [
+    u.name,
+    u.email,
+    u.role,
+    u.createdAt.toISOString(),
+    u._count.quizzes,
+    u._count.attempts,
+  ]);
+
+  const csv = [headers, ...rows].map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", `attachment; filename="registered-users.csv"`);
+  return res.send(csv);
+});
+
 export default router;

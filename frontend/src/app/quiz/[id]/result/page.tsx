@@ -37,7 +37,7 @@ export default function QuizResultPage() {
 
   useEffect(() => {
     if (!token || !id) return;
-    api<{ attempt: typeof data extends null ? never : NonNullable<typeof data>["attempt"] }>(
+    api<NonNullable<typeof data>>(
       `/api/attempts/my/${id}`,
       { token }
     )

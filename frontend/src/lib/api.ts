@@ -52,3 +52,7 @@ export async function api<T>(
 export function exportCsvUrl(quizId: string) {
   return `/api/admin/quizzes/${quizId}/export`;
 }
+
+export function exportUsersCsvUrl() {
+  return `/api/admin/users/export`;
+}

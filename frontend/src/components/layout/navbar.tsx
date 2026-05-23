@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, X } from "lucide-react";
+import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,7 @@ export function Navbar() {
   const navLinks = [
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     ...(user ? [{ href: dashHref, label: "Dashboard", icon: LayoutDashboard }] : []),
+    ...(user?.role === "ADMIN" ? [{ href: "/admin/users", label: "Users", icon: Users }] : []),
   ];
 
   const linkClass = (href: string) =>

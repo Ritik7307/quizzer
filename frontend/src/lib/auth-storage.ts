@@ -5,6 +5,7 @@ export interface StoredUser {
   id: string;
   email: string;
   name: string;
+  avatarUrl?: string | null;
   role: "ADMIN" | "CANDIDATE";
 }
 

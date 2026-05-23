@@ -13,7 +13,7 @@ import { api, ApiError } from "@/lib/api";
 import type { User as UserType } from "@/types";
 
 export default function ProfilePage() {
-  const { user, login, token } = useAuth();
+  const { user, refresh, token } = useAuth();
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,8 +36,8 @@ export default function ProfilePage() {
         token,
         body: JSON.stringify({ name, avatarUrl }),
       });
-      // We call login with the same token to update the user object in context
-      login(token, res.user);
+      // We call refresh to update the user object in context
+      await refresh();
       toast.success("Profile updated successfully");
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Failed to update profile");
