@@ -208,13 +208,31 @@ router.get("/my/:quizId", authenticate, async (req: AuthRequest, res) => {
   const quizId = String(req.params.quizId);
   const attempt = await prisma.attempt.findUnique({
     where: { userId_quizId: { userId: req.user!.userId, quizId } },
-    include: { quiz: { select: { title: true } } },
+    include: { quiz: { include: { questions: { orderBy: { order: "asc" } } } } },
   });
   if (!attempt) return res.status(404).json({ error: "No attempt found" });
   if (!attempt.submittedAt) {
     return res.status(400).json({ error: "Quiz not yet submitted" });
   }
-  return res.json({ attempt });
+
+  const answers = parseAnswers(attempt.answers);
+  const breakdown = attempt.quiz.questions.map((q) => {
+    const parsedOptions = JSON.parse(q.options) as string[];
+    return {
+      questionId: q.id,
+      text: q.text,
+      options: parsedOptions,
+      selected: answers[q.id] ?? null,
+      correct: q.correctOptionIndex,
+      isCorrect: answers[q.id] === q.correctOptionIndex,
+    };
+  });
+
+  const { quiz, ...attemptData } = attempt;
+  return res.json({ 
+    attempt: { ...attemptData, quiz: { title: quiz.title } },
+    breakdown
+  });
 });
 
 export default router;

@@ -25,6 +25,14 @@ export default function QuizResultPage() {
       rank: number | null;
       quiz: { title: string };
     };
+    breakdown: Array<{
+      questionId: string;
+      text: string;
+      options: string[];
+      selected: number | null;
+      correct: number;
+      isCorrect: boolean;
+    }>;
   } | null>(null);
 
   useEffect(() => {
@@ -79,7 +87,7 @@ export default function QuizResultPage() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3 justify-center">
+              <div className="flex flex-wrap gap-3 justify-center pt-4 border-t border-neutral-800">
                 <Button asChild>
                   <Link href="/leaderboard">View Leaderboard</Link>
                 </Button>
@@ -98,6 +106,58 @@ export default function QuizResultPage() {
               </Button>
             </CardContent>
           </Card>
+        )}
+
+        {data?.breakdown && (
+          <div className="mt-8 space-y-4">
+            <h2 className="text-xl font-bold">Detailed Review</h2>
+            {data.breakdown.map((q, idx) => (
+              <Card key={q.questionId} className={q.isCorrect ? "border-emerald-900/50" : "border-red-900/50"}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-1">
+                      {q.isCorrect ? (
+                        <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-red-500" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-neutral-400">Question {idx + 1}</p>
+                      <CardTitle className="text-lg mt-1">{q.text}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pl-14">
+                  <div className="space-y-2">
+                    {q.options.map((opt, i) => {
+                      const isSelected = q.selected === i;
+                      const isCorrect = q.correct === i;
+                      let optionClass = "border-neutral-800 bg-neutral-900 text-neutral-300";
+                      
+                      if (isCorrect) {
+                        optionClass = "border-emerald-500 bg-emerald-500/10 text-emerald-500 font-medium";
+                      } else if (isSelected && !isCorrect) {
+                        optionClass = "border-red-500 bg-red-500/10 text-red-500 font-medium";
+                      }
+
+                      return (
+                        <div
+                          key={i}
+                          className={`rounded-md border p-3 text-sm ${optionClass}`}
+                        >
+                          {opt}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {q.selected === null && (
+                    <p className="mt-3 text-sm text-amber-500">You did not answer this question.</p>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
       </div>
     </ProtectedRoute>
