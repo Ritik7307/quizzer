@@ -9,6 +9,7 @@ import quizRoutes from "./routes/quizzes.js";
 import attemptRoutes from "./routes/attempts.js";
 import adminRoutes from "./routes/admin.js";
 import leaderboardRoutes from "./routes/leaderboard.js";
+import notificationRoutes from "./routes/notifications.js";
 import { prisma } from "./lib/prisma.js";
 
 const defaultOrigins = [
@@ -88,6 +89,7 @@ export function createApp() {
   app.use("/api/attempts", attemptRoutes);
   app.use("/api/admin", adminRoutes);
   app.use("/api/leaderboard", leaderboardRoutes);
+  app.use("/api/notifications", notificationRoutes);
 
   return app;
 }

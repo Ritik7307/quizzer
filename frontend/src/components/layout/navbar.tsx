@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X } from "lucide-react";
+import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "./notification-bell";
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -18,7 +19,10 @@ export function Navbar() {
   const navLinks = [
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     ...(user ? [{ href: dashHref, label: "Dashboard", icon: LayoutDashboard }] : []),
-    ...(user?.role === "ADMIN" ? [{ href: "/admin/users", label: "Users", icon: Users }] : []),
+    ...(user?.role === "ADMIN" ? [
+      { href: "/admin/users", label: "Users", icon: Users },
+      { href: "/admin/notifications", label: "Push", icon: Bell }
+    ] : []),
   ];
 
   const linkClass = (href: string) =>
@@ -47,6 +51,7 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {user && <NotificationBell />}
           {user ? (
             <>
               <Link href="/profile" className="flex items-center gap-2 hover:opacity-80">

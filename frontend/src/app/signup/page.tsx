@@ -24,7 +24,9 @@ export default function SignupPage() {
       const user = await register(
         String(fd.get("name")),
         String(fd.get("email")),
-        String(fd.get("password"))
+        String(fd.get("password")),
+        String(fd.get("recoveryQuestion")),
+        String(fd.get("recoveryAnswer"))
       );
       toast.success("Account created!");
       router.push(user.role === "ADMIN" ? "/admin" : "/dashboard");
@@ -58,6 +60,26 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input id="password" name="password" type="password" required minLength={6} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="recoveryQuestion">Recovery Question</Label>
+              <select
+                id="recoveryQuestion"
+                name="recoveryQuestion"
+                required
+                defaultValue=""
+                className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 sm:h-10 sm:text-sm"
+              >
+                <option value="" disabled>Select a security question</option>
+                <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                <option value="In which city were you born?">In which city were you born?</option>
+                <option value="What was the make of your first car?">What was the make of your first car?</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="recoveryAnswer">Recovery Answer</Label>
+              <Input id="recoveryAnswer" name="recoveryAnswer" required placeholder="Your answer (case-insensitive)" />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating..." : "Create account"}
