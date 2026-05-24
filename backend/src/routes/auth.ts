@@ -1,5 +1,5 @@
 import { Router } from "express";
-import bcrypt from "bcryptjs";
+import * as bcrypt from "@node-rs/bcrypt";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { signToken } from "../utils/jwt.js";
@@ -31,7 +31,7 @@ router.post("/register", async (req, res) => {
     }
 
     const role: Role = isAdminEmail(email) ? Role.ADMIN : Role.CANDIDATE;
-    const passwordHash = await bcrypt.hash(body.password, 12);
+    const passwordHash = await bcrypt.hash(body.password, 10);
 
     const user = await prisma.user.create({
       data: {

@@ -1,11 +1,11 @@
 import { PrismaClient, Role } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import * as bcrypt from "@node-rs/bcrypt";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminPassword = await bcrypt.hash("admin123", 12);
-  const candidatePassword = await bcrypt.hash("student123", 12);
+  const adminPassword = await bcrypt.hash("admin123", 10);
+  const candidatePassword = await bcrypt.hash("student123", 10);
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@quizzer.dev" },
