@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Bell, Check, Trash } from "lucide-react";
 import { api, getApiErrorMessage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
 
 interface NotificationItem {
   id: string;
@@ -15,28 +16,32 @@ interface NotificationItem {
 }
 
 export function NotificationBell() {
+  const { token } = useAuth();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
+    if (!token) return;
     try {
-      const data = await api<{ notifications: NotificationItem[] }>("/api/notifications");
+      const data = await api<{ notifications: NotificationItem[] }>("/api/notifications", { token });
       setNotifications(data.notifications);
     } catch (err) {
       console.error("Failed to fetch notifications:", getApiErrorMessage(err));
     }
-  };
+  }, [token]);
 
   useEffect(() => {
-    fetchNotifications();
+    if (token) {
+      fetchNotifications();
 
-    // Poll every 30 seconds for new notifications
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+      // Poll every 30 seconds for new notifications
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [token, fetchNotifications]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -51,7 +56,7 @@ export function NotificationBell() {
 
   const handleMarkAllRead = async () => {
     try {
-      await api("/api/notifications/read-all", { method: "PATCH" });
+      await api("/api/notifications/read-all", { method: "PATCH", token });
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       toast.success("All marked as read");
     } catch (err) {
@@ -62,7 +67,7 @@ export function NotificationBell() {
   const handleMarkRead = async (id: string, currentlyRead: boolean) => {
     if (currentlyRead) return;
     try {
-      await api(`/api/notifications/${id}/read`, { method: "PATCH" });
+      await api(`/api/notifications/${id}/read`, { method: "PATCH", token });
       setNotifications((prev) =>
         prev.map((n) => (n.id === id ? { ...n, read: true } : n))
       );

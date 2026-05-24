@@ -20,7 +20,7 @@ interface RegisteredUser {
 }
 
 export default function AdminNotificationsPage() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const router = useRouter();
 
   const [users, setUsers] = useState<RegisteredUser[]>([]);
@@ -41,8 +41,9 @@ export default function AdminNotificationsPage() {
   // Fetch users for the dropdown list
   useEffect(() => {
     async function fetchUsers() {
+      if (!token) return;
       try {
-        const data = await api<{ users: RegisteredUser[] }>("/api/admin/users");
+        const data = await api<{ users: RegisteredUser[] }>("/api/admin/users", { token });
         // Sort users by name
         const sorted = data.users.sort((a, b) => a.name.localeCompare(b.name));
         setUsers(sorted);
@@ -53,7 +54,7 @@ export default function AdminNotificationsPage() {
       }
     }
     fetchUsers();
-  }, []);
+  }, [token]);
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
@@ -71,6 +72,7 @@ export default function AdminNotificationsPage() {
           title: title.trim(),
           message: message.trim(),
         }),
+        token,
       });
 
       toast.success(response.message || "Notification sent successfully!");
