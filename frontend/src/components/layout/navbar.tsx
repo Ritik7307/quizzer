@@ -18,7 +18,10 @@ export function Navbar() {
 
   const navLinks = [
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
-    ...(user ? [{ href: dashHref, label: "Dashboard", icon: LayoutDashboard }] : []),
+    ...(user ? [
+      { href: dashHref, label: "Dashboard", icon: LayoutDashboard },
+      { href: "/compiler", label: "Compiler", icon: Code }
+    ] : []),
     ...(user?.role === "ADMIN" ? [
       { href: "/admin/users", label: "Users", icon: Users },
       { href: "/admin/notifications", label: "Notifications", icon: Bell },

@@ -113,6 +113,22 @@ router.post("/questions/:id/run", authenticate, async (req, res) => {
   }
 });
 
+// 3b. Generic Run code (for standalone compiler, does not save submission history)
+router.post("/run", authenticate, async (req, res) => {
+  try {
+    const { code, language, stdin } = runCodeSchema.parse(req.body);
+
+    const result = await compileAndRun(code, language, stdin);
+    return res.json(result);
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      return res.status(400).json({ error: e.errors[0]?.message ?? "Invalid input" });
+    }
+    console.error(e);
+    return res.status(500).json({ error: "Compilation and execution failed" });
+  }
+});
+
 // 4. Submit code (Runs against all test cases, saves submission history)
 router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res) => {
   try {

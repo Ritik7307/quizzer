@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Play, Send, Loader2, Code, ArrowLeft, Terminal, CheckCircle2, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import Editor from "@monaco-editor/react";
 
 interface QuestionDetails {
   id: string;
@@ -276,17 +277,35 @@ export default function CodingWorkspacePage() {
             <span className="text-xs font-semibold uppercase text-neutral-400 tracking-wider">Source Editor</span>
           </div>
 
-          {/* Editor Textarea */}
-          <div className="flex-1 min-h-[220px] relative font-mono">
-            <textarea
+          {/* Editor Container */}
+          <div className="flex-1 min-h-[220px] relative">
+            <Editor
+              height="100%"
+              language={language === "cpp" ? "cpp" : language === "c" ? "c" : "java"}
+              theme="vs-dark"
               value={code}
-              onChange={(e) => setCode(e.target.value)}
-              spellCheck={false}
-              className="w-full h-full min-h-full resize-none border-0 bg-black p-4 font-mono text-sm leading-relaxed text-neutral-200 placeholder:text-neutral-700 focus:outline-none focus:ring-0"
-              style={{
-                fontFamily: "var(--font-mono), monospace",
-                tabSize: 4,
+              onChange={(value) => setCode(value || "")}
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                automaticLayout: true,
+                padding: { top: 12, bottom: 12 },
+                scrollbar: {
+                  vertical: "visible",
+                  horizontal: "visible",
+                },
+                lineNumbers: "on",
+                roundedSelection: false,
+                scrollBeyondLastLine: false,
+                readOnly: false,
+                cursorStyle: "line",
               }}
+              loading={
+                <div className="flex h-full items-center justify-center bg-black text-sm text-neutral-400">
+                  <Loader2 className="h-6 w-6 animate-spin text-violet-500 mr-2" />
+                  Loading Code Editor...
+                </div>
+              }
             />
           </div>
 
