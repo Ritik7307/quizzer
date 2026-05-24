@@ -26,6 +26,7 @@ model User {
   quizzes            Quiz[]    @relation("QuizCreator")
   attempts           Attempt[]
   notifications      Notification[]
+  codingSubmissions  CodingSubmission[]
 
   @@index([role])
 }
@@ -99,4 +100,37 @@ model Notification {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model CodingQuestion {
+  id           String             @id @default(cuid())
+  title        String
+  description  String
+  inputFormat  String             @default("")
+  outputFormat String             @default("")
+  sampleInput  String             @default("")
+  sampleOutput String             @default("")
+  testCases    String             @default("[]") // JSON array of { input: string, output: string }
+  difficulty   String             @default("Easy") // Easy, Medium, Hard
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  submissions  CodingSubmission[]
+}
+
+model CodingSubmission {
+  id               String         @id @default(cuid())
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codingQuestionId String
+  codingQuestion   CodingQuestion @relation(fields: [codingQuestionId], references: [id], onDelete: Cascade)
+  code             String
+  language         String         // cpp, c, java
+  status           String         // Accepted, Wrong Answer, Compile Error, Runtime Error, Time Limit Exceeded
+  passedCount      Int
+  totalCount       Int
+  errorDetails     String?
+  createdAt        DateTime       @default(now())
+
+  @@index([userId])
+  @@index([codingQuestionId])
 }

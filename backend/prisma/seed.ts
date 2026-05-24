@@ -141,6 +141,45 @@ async function main() {
     ],
   });
 
+  // Seed coding questions
+  await prisma.codingQuestion.deleteMany({});
+  const sumQuestion = await prisma.codingQuestion.create({
+    data: {
+      title: "Sum of Two Numbers",
+      description: "Write a program that takes two integers as input and prints their sum. Both integers will be provided on a single line, separated by a space.",
+      inputFormat: "Two space-separated integers, a and b.",
+      outputFormat: "Print a single integer representing the sum of a and b.",
+      sampleInput: "5 7\n",
+      sampleOutput: "12\n",
+      difficulty: "Easy",
+      testCases: JSON.stringify([
+        { input: "5 7\n", output: "12\n" },
+        { input: "10 -3\n", output: "7\n" },
+        { input: "-100 -200\n", output: "-300\n" },
+        { input: "0 0\n", output: "0\n" },
+        { input: "999999999 1\n", output: "1000000000\n" }
+      ])
+    }
+  });
+
+  const evenOddQuestion = await prisma.codingQuestion.create({
+    data: {
+      title: "Even or Odd",
+      description: "Write a program that reads an integer and prints 'Even' if it is even, and 'Odd' if it is odd.",
+      inputFormat: "A single integer, n.",
+      outputFormat: "Print 'Even' or 'Odd'.",
+      sampleInput: "4\n",
+      sampleOutput: "Even\n",
+      difficulty: "Easy",
+      testCases: JSON.stringify([
+        { input: "4\n", output: "Even\n" },
+        { input: "7\n", output: "Odd\n" },
+        { input: "0\n", output: "Even\n" },
+        { input: "-5\n", output: "Odd\n" }
+      ])
+    }
+  });
+
   console.log("Seed completed:");
   console.log("  Admin: admin@quizzer.dev / admin123");
   console.log("  Students: alice@student.dev, bob@student.dev, carol@student.dev / student123");

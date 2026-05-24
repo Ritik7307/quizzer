@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell } from "lucide-react";
+import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -21,7 +21,8 @@ export function Navbar() {
     ...(user ? [{ href: dashHref, label: "Dashboard", icon: LayoutDashboard }] : []),
     ...(user?.role === "ADMIN" ? [
       { href: "/admin/users", label: "Users", icon: Users },
-      { href: "/admin/notifications", label: "Notifications", icon: Bell }
+      { href: "/admin/notifications", label: "Notifications", icon: Bell },
+      { href: "/admin/coding/new", label: "Add Code Q", icon: Code }
     ] : []),
   ];
 
