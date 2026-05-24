@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BarChart3, FileDown, Plus, Users } from "lucide-react";
+import { BarChart3, FileDown, Plus, Users, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Badge } from "@/components/ui/badge";
@@ -53,11 +53,18 @@ export default function AdminDashboard() {
             <h1 className="text-2xl font-bold text-white sm:text-3xl">Admin Dashboard</h1>
             <p className="text-sm text-neutral-400 sm:text-base">Manage quizzes, participants, and analytics</p>
           </div>
-          <Button asChild className="w-full sm:w-auto">
-            <Link href="/admin/quizzes/new">
-              <Plus className="h-4 w-4" /> New Quiz
-            </Link>
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row w-full sm:w-auto">
+            <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Link href="/admin/notifications">
+                <Bell className="mr-2 h-4 w-4" /> Send Notification
+              </Link>
+            </Button>
+            <Button asChild className="w-full sm:w-auto">
+              <Link href="/admin/quizzes/new">
+                <Plus className="mr-2 h-4 w-4" /> New Quiz
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {loading ? (

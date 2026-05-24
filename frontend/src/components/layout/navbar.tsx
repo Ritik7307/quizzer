@@ -21,7 +21,7 @@ export function Navbar() {
     ...(user ? [{ href: dashHref, label: "Dashboard", icon: LayoutDashboard }] : []),
     ...(user?.role === "ADMIN" ? [
       { href: "/admin/users", label: "Users", icon: Users },
-      { href: "/admin/notifications", label: "Push", icon: Bell }
+      { href: "/admin/notifications", label: "Notifications", icon: Bell }
     ] : []),
   ];
 
