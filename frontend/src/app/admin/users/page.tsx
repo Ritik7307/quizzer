@@ -78,6 +78,8 @@ export default function UsersPage() {
                     <tr className="border-b text-left text-neutral-500">
                       <th className="py-2">User</th>
                       <th className="py-2">Role</th>
+                      <th className="py-2">LeetCode</th>
+                      <th className="py-2">Codeforces</th>
                       <th className="py-2">Joined</th>
                       <th className="py-2 text-right">Quizzes</th>
                       <th className="py-2 text-right">Attempts</th>
@@ -105,6 +107,34 @@ export default function UsersPage() {
                           <Badge variant={u.role === "ADMIN" ? "success" : "warning"}>
                             {u.role.toLowerCase()}
                           </Badge>
+                        </td>
+                        <td className="py-3">
+                          {u.leetcodeHandle ? (
+                            <a
+                              href={`https://leetcode.com/${u.leetcodeHandle}/`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-amber-500 hover:text-amber-400 font-bold hover:underline"
+                            >
+                              @{u.leetcodeHandle}
+                            </a>
+                          ) : (
+                            <span className="text-neutral-500 italic text-xs">Not submitted</span>
+                          )}
+                        </td>
+                        <td className="py-3">
+                          {u.codeforcesHandle ? (
+                            <a
+                              href={`https://codeforces.com/profile/${u.codeforcesHandle}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-red-400 hover:text-red-300 font-bold hover:underline"
+                            >
+                              @{u.codeforcesHandle}
+                            </a>
+                          ) : (
+                            <span className="text-neutral-500 italic text-xs">Not submitted</span>
+                          )}
                         </td>
                         <td className="py-3 text-neutral-400">
                           {new Date(u.createdAt).toLocaleDateString()}

@@ -187,6 +187,8 @@ router.get("/users", async (_req, res) => {
       name: true,
       avatarUrl: true,
       role: true,
+      leetcodeHandle: true,
+      codeforcesHandle: true,
       createdAt: true,
       _count: {
         select: { attempts: true, quizzes: true }
@@ -203,6 +205,8 @@ router.get("/users/export", async (_req, res) => {
       name: true,
       email: true,
       role: true,
+      leetcodeHandle: true,
+      codeforcesHandle: true,
       createdAt: true,
       _count: {
         select: { attempts: true, quizzes: true }
@@ -211,11 +215,13 @@ router.get("/users/export", async (_req, res) => {
     orderBy: { createdAt: "desc" }
   });
 
-  const headers = ["Name", "Email", "Role", "Joined Date", "Quizzes Created", "Quizzes Attempted"];
+  const headers = ["Name", "Email", "Role", "LeetCode Handle", "Codeforces Handle", "Joined Date", "Quizzes Created", "Quizzes Attempted"];
   const rows = users.map((u) => [
     u.name,
     u.email,
     u.role,
+    u.leetcodeHandle || "",
+    u.codeforcesHandle || "",
     u.createdAt.toISOString(),
     u._count.quizzes,
     u._count.attempts,

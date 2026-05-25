@@ -16,6 +16,8 @@ const registerSchema = z.object({
   name: z.string().min(2),
   recoveryQuestion: z.string().min(4),
   recoveryAnswer: z.string().min(2),
+  leetcodeHandle: z.string().min(1, "LeetCode handle is required"),
+  codeforcesHandle: z.string().min(1, "Codeforces handle is required"),
 });
 
 const loginSchema = z.object({
@@ -45,6 +47,8 @@ router.post("/register", async (req, res) => {
         role,
         recoveryQuestion: body.recoveryQuestion,
         recoveryAnswerHash,
+        leetcodeHandle: body.leetcodeHandle.trim(),
+        codeforcesHandle: body.codeforcesHandle.trim(),
       },
       select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, points: true, streak: true, lastSolvedDate: true, createdAt: true },
     });

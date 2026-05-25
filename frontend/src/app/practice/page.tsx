@@ -7,6 +7,8 @@ import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { api, getApiErrorMessage } from "@/lib/api";
 import {
@@ -40,6 +42,36 @@ export default function PracticeSheetPage() {
   const [loading, setLoading] = useState(true);
   const [expandedTopics, setExpandedTopics] = useState<Record<string, boolean>>({});
   const [markingIds, setMarkingIds] = useState<Record<string, boolean>>({});
+
+  const [leetcodeInput, setLeetcodeInput] = useState("");
+  const [codeforcesInput, setCodeforcesInput] = useState("");
+  const [submittingHandles, setSubmittingHandles] = useState(false);
+
+  const handleSaveHandles = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token) return;
+    if (!leetcodeInput.trim() || !codeforcesInput.trim()) {
+      toast.error("Please enter both LeetCode and Codeforces handles");
+      return;
+    }
+    setSubmittingHandles(true);
+    try {
+      await api<{ user: any }>("/api/auth/me", {
+        method: "PATCH",
+        token,
+        body: JSON.stringify({
+          leetcodeHandle: leetcodeInput.trim(),
+          codeforcesHandle: codeforcesInput.trim(),
+        }),
+      });
+      toast.success("Handles saved successfully!");
+      await refreshUser();
+    } catch (err) {
+      toast.error("Failed to save handles: " + getApiErrorMessage(err));
+    } finally {
+      setSubmittingHandles(false);
+    }
+  };
 
   const handleMarkSolved = async (questionId: string) => {
     if (!token) return;
@@ -144,6 +176,63 @@ export default function PracticeSheetPage() {
           <p className="text-sm text-neutral-400">Loading Coding Sheet...</p>
         </div>
       </div>
+    );
+  }
+
+  const hasHandles = user?.leetcodeHandle && user?.codeforcesHandle;
+
+  if (!hasHandles) {
+    return (
+      <ProtectedRoute>
+        <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-8">
+          <Card className="w-full max-w-md border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl p-6 relative overflow-hidden">
+            <div className="absolute right-0 top-0 -mr-16 -mt-16 h-32 w-32 rounded-full bg-violet-650/10 blur-2xl" />
+            <CardHeader className="space-y-2 pb-4 px-0 pt-0">
+              <CardTitle className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                <Code2 className="h-6 w-6 text-violet-450" />
+                Submit Coding Profiles
+              </CardTitle>
+              <CardDescription className="text-xs text-neutral-400 leading-relaxed">
+                Before accessing the SDE Practice Sheet, please submit your LeetCode and Codeforces profile usernames. 
+                This is a one-time process to sync your activity grid, streaks, and points.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <form onSubmit={handleSaveHandles} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="leetcode" className="text-xs font-bold text-neutral-300">LeetCode Username</Label>
+                  <Input
+                    id="leetcode"
+                    required
+                    placeholder="e.g. leetcode_user"
+                    value={leetcodeInput}
+                    onChange={(e) => setLeetcodeInput(e.target.value)}
+                    className="border-neutral-800 bg-black/60 focus:border-violet-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="codeforces" className="text-xs font-bold text-neutral-300">Codeforces Username</Label>
+                  <Input
+                    id="codeforces"
+                    required
+                    placeholder="e.g. cf_user"
+                    value={codeforcesInput}
+                    onChange={(e) => setCodeforcesInput(e.target.value)}
+                    className="border-neutral-800 bg-black/60 focus:border-violet-500"
+                  />
+                </div>
+                <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-750 text-white font-extrabold text-xs uppercase tracking-wider h-10 mt-2" disabled={submittingHandles}>
+                  {submittingHandles ? (
+                    <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                  ) : (
+                    "Save & Access Sheets"
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </ProtectedRoute>
     );
   }
 

@@ -26,7 +26,9 @@ export default function SignupPage() {
         String(fd.get("email")),
         String(fd.get("password")),
         String(fd.get("recoveryQuestion")),
-        String(fd.get("recoveryAnswer"))
+        String(fd.get("recoveryAnswer")),
+        String(fd.get("leetcodeHandle")),
+        String(fd.get("codeforcesHandle"))
       );
       toast.success("Account created!");
       router.push(user.role === "ADMIN" ? "/admin" : "/dashboard");
@@ -60,6 +62,16 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input id="password" name="password" type="password" required minLength={6} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="leetcodeHandle">LeetCode Username</Label>
+                <Input id="leetcodeHandle" name="leetcodeHandle" required placeholder="leetcode_user" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="codeforcesHandle">Codeforces Username</Label>
+                <Input id="codeforcesHandle" name="codeforcesHandle" required placeholder="cf_user" />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="recoveryQuestion">Recovery Question</Label>
