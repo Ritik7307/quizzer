@@ -28,6 +28,7 @@ model User {
   notifications      Notification[]
   codingSubmissions  CodingSubmission[]
   feedbacks          Feedback[]
+  compilerNotes      CompilerNote[]
 
   @@index([role])
 }
@@ -110,6 +111,7 @@ model CodingQuestion {
   description  String
   inputFormat  String             @default("")
   outputFormat String             @default("")
+  constraints  String             @default("")
   sampleInput  String             @default("")
   sampleOutput String             @default("")
   testCases    String             @default("[]") // JSON array of { input: string, output: string }
@@ -150,4 +152,18 @@ model Feedback {
   category    String   @default("General")
   comments    String?
   createdAt   DateTime @default(now())
+}
+
+model CompilerNote {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  code      String?  @db.Text
+  language  String?
+  note      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

@@ -44,6 +44,7 @@ export default function AdminNewCodingQuestionPage() {
   const [description, setDescription] = useState("");
   const [inputFormat, setInputFormat] = useState("");
   const [outputFormat, setOutputFormat] = useState("");
+  const [constraints, setConstraints] = useState("");
   const [sampleInput, setSampleInput] = useState("");
   const [sampleOutput, setSampleOutput] = useState("");
   const [testCasesJson, setTestCasesJson] = useState(defaultTestCases);
@@ -91,6 +92,7 @@ export default function AdminNewCodingQuestionPage() {
           description: description.trim(),
           inputFormat: inputFormat.trim(),
           outputFormat: outputFormat.trim(),
+          constraints: constraints.trim(),
           sampleInput: sampleInput.trim(),
           sampleOutput: sampleOutput.trim(),
           testCases: testCasesJson.trim(),
@@ -210,6 +212,19 @@ export default function AdminNewCodingQuestionPage() {
                   className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
                 />
               </div>
+            </div>
+
+            {/* Constraints */}
+            <div className="space-y-2">
+              <Label htmlFor="constraints">Constraints</Label>
+              <Textarea
+                id="constraints"
+                placeholder="e.g. 1 <= N <= 10^5, Time Limit: 1.0s, Memory Limit: 256MB"
+                rows={3}
+                value={constraints}
+                onChange={(e) => setConstraints(e.target.value)}
+                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+              />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">

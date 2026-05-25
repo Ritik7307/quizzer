@@ -13,6 +13,7 @@ const createQuestionSchema = z.object({
   description: z.string().min(1, "Description is required"),
   inputFormat: z.string().default(""),
   outputFormat: z.string().default(""),
+  constraints: z.string().default(""),
   sampleInput: z.string().default(""),
   sampleOutput: z.string().default(""),
   testCases: z.string().refine((val) => {
@@ -108,6 +109,7 @@ router.get("/questions/:id", authenticate, async (req: AuthRequest, res) => {
         description: question.description,
         inputFormat: question.inputFormat,
         outputFormat: question.outputFormat,
+        constraints: question.constraints,
         sampleInput: question.sampleInput,
         sampleOutput: question.sampleOutput,
         difficulty: question.difficulty,
@@ -277,6 +279,7 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
         description: body.description,
         inputFormat: body.inputFormat,
         outputFormat: body.outputFormat,
+        constraints: body.constraints,
         sampleInput: body.sampleInput,
         sampleOutput: body.sampleOutput,
         testCases: body.testCases,

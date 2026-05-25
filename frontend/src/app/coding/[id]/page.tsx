@@ -19,6 +19,7 @@ interface QuestionDetails {
   description: string;
   inputFormat: string;
   outputFormat: string;
+  constraints: string;
   sampleInput: string;
   sampleOutput: string;
   difficulty: string;
@@ -286,7 +287,7 @@ export default function CodingWorkspacePage() {
                   </div>
                 </div>
 
-                {(question.inputFormat || question.outputFormat) && (
+                {(question.inputFormat || question.outputFormat || question.constraints) && (
                   <div className="space-y-4 pt-4 border-t border-neutral-900">
                     {question.inputFormat && (
                       <div>
@@ -298,6 +299,12 @@ export default function CodingWorkspacePage() {
                       <div>
                         <h3 className="text-sm font-semibold text-neutral-200">Output Format</h3>
                         <p className="mt-1 text-xs text-neutral-400 leading-relaxed">{question.outputFormat}</p>
+                      </div>
+                    )}
+                    {question.constraints && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-neutral-200">Constraints</h3>
+                        <p className="mt-1 text-xs text-neutral-450 leading-relaxed font-mono whitespace-pre-wrap">{question.constraints}</p>
                       </div>
                     )}
                   </div>
