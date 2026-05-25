@@ -30,21 +30,22 @@ interface FeedbackItem {
   id: string;
   rating: number;
   difficulty: string;
+  category: string;
   comments: string | null;
   createdAt: string;
+  user: { name: string; email: string };
   attempt: {
     score: number;
     percentage: number;
     correctCount: number;
     wrongCount: number;
     totalQuestions: number;
-    user: { name: string; email: string };
     quiz: { title: string };
-  };
+  } | null;
 }
 
 export default function AdminDashboard() {
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
@@ -274,14 +275,14 @@ export default function AdminDashboard() {
                       <p className="text-4xl font-extrabold text-amber-500">{avgRating}</p>
                       <div className="flex items-center text-amber-500">
                         <Star className="h-5 w-5 fill-amber-500" />
-                        <span className="text-xs text-neutral-450 ml-1">/ 5.0</span>
+                        <span className="text-xs text-neutral-455 ml-1">/ 5.0</span>
                       </div>
                     </CardContent>
                   </Card>
                   
                   <Card className="border-neutral-800 bg-neutral-950/40">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-xs font-semibold text-neutral-550 uppercase tracking-wider">Total Reviews</CardTitle>
+                      <CardTitle className="text-xs font-semibold text-neutral-555 uppercase tracking-wider">Total Reviews</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-4xl font-extrabold text-white">{totalReviews}</p>
@@ -290,7 +291,7 @@ export default function AdminDashboard() {
 
                   <Card className="border-neutral-800 bg-neutral-950/40 sm:col-span-2">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-xs font-semibold text-neutral-550 uppercase tracking-wider">Difficulty Distribution</CardTitle>
+                      <CardTitle className="text-xs font-semibold text-neutral-555 uppercase tracking-wider">Quiz Difficulty Distribution</CardTitle>
                     </CardHeader>
                     <CardContent className="flex items-center gap-4 h-10">
                       <div className="flex-1 flex gap-1 h-3 rounded-full overflow-hidden bg-neutral-900 border border-neutral-850">
@@ -342,81 +343,111 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                   ) : feedbacks.length === 0 ? (
-                    <Card className="border-neutral-800 bg-neutral-950/40 text-center py-12">
+                    <Card className="border-neutral-800 bg-neutral-955/40 text-center py-12">
                       <CardContent className="space-y-2">
                         <MessageSquare className="h-8 w-8 text-neutral-600 mx-auto" />
                         <p className="text-neutral-400 font-semibold">No feedback reviews submitted yet</p>
-                        <p className="text-xs text-neutral-500">Feedback will appear here once candidates complete quizzes.</p>
+                        <p className="text-xs text-neutral-500">Feedback will appear here once candidates complete quizzes or submit navbar reviews.</p>
                       </CardContent>
                     </Card>
                   ) : (
                     <div className="grid gap-4 md:grid-cols-2">
-                      {feedbacks.map((f) => (
-                        <Card key={f.id} className="border-neutral-800 bg-neutral-950/30 shadow-md">
-                          <CardHeader className="pb-3 border-b border-neutral-900/50">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="font-bold text-white text-sm">{f.attempt.user.name}</p>
-                                <p className="text-[10px] text-neutral-500">{f.attempt.user.email}</p>
-                              </div>
-                              <Badge
-                                variant={
-                                  f.difficulty === "Easy"
-                                    ? "success"
-                                    : f.difficulty === "Medium"
-                                    ? "warning"
-                                    : "outline"
-                                }
-                                className={cn(
-                                  "text-[10px] py-0.5 px-2 font-semibold",
-                                  f.difficulty === "Hard" && "border-red-500/30 text-red-300 bg-red-950/20"
+                      {feedbacks.map((f) => {
+                        const isQuizFeedback = f.attempt !== null;
+
+                        return (
+                          <Card key={f.id} className="border-neutral-800 bg-neutral-950/30 shadow-md">
+                            <CardHeader className="pb-3 border-b border-neutral-900/50">
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <p className="font-bold text-white text-sm">{f.user.name}</p>
+                                  <p className="text-[10px] text-neutral-500">{f.user.email}</p>
+                                </div>
+                                {isQuizFeedback ? (
+                                  <Badge
+                                    variant={
+                                      f.difficulty === "Easy"
+                                        ? "success"
+                                        : f.difficulty === "Medium"
+                                        ? "warning"
+                                        : "outline"
+                                    }
+                                    className={cn(
+                                      "text-[10px] py-0.5 px-2 font-semibold",
+                                      f.difficulty === "Hard" && "border-red-500/30 text-red-300 bg-red-950/20"
+                                    )}
+                                  >
+                                    Difficulty: {f.difficulty}
+                                  </Badge>
+                                ) : (
+                                  <Badge
+                                    variant={
+                                      f.category === "Bug"
+                                        ? "outline"
+                                        : f.category === "Suggestion"
+                                        ? "warning"
+                                        : "default"
+                                    }
+                                    className={cn(
+                                      "text-[10px] py-0.5 px-2 font-semibold uppercase tracking-wider",
+                                      f.category === "Bug" && "border-red-500/30 text-red-300 bg-red-950/20"
+                                    )}
+                                  >
+                                    {f.category === "Bug" ? "🐛 Bug" : f.category === "Suggestion" ? "💡 Suggestion" : "💬 General"}
+                                  </Badge>
                                 )}
-                              >
-                                {f.difficulty}
-                              </Badge>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="pt-4 space-y-3">
-                            <div className="flex items-center justify-between text-xs text-neutral-400">
-                              <span className="font-semibold text-neutral-300">{f.attempt.quiz.title}</span>
-                              <span className="flex items-center gap-1 text-[11px] font-bold text-violet-400">
-                                <Award className="h-3 w-3" /> {f.attempt.percentage}% ({f.attempt.score} pts)
-                              </span>
-                            </div>
-
-                            {/* Stars rating */}
-                            <div className="flex items-center gap-0.5">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <Star
-                                  key={star}
-                                  className={cn(
-                                    "h-4 w-4",
-                                    star <= f.rating
-                                      ? "fill-amber-500 text-amber-500"
-                                      : "text-neutral-800 fill-transparent"
-                                  )}
-                                />
-                              ))}
-                            </div>
-
-                            {f.comments ? (
-                              <div className="rounded-lg bg-neutral-900/40 border border-neutral-850 p-3 font-sans text-xs text-neutral-300 leading-relaxed italic whitespace-pre-wrap">
-                                "{f.comments}"
                               </div>
-                            ) : (
-                              <p className="text-[10px] text-neutral-550 italic">No comments left.</p>
-                            )}
+                            </CardHeader>
+                            <CardContent className="pt-4 space-y-3">
+                              {isQuizFeedback ? (
+                                <div className="flex items-center justify-between text-xs text-neutral-450 border-b border-neutral-900/30 pb-2">
+                                  <span className="font-semibold text-neutral-300 truncate max-w-[180px]">
+                                    Quiz: {f.attempt!.quiz.title}
+                                  </span>
+                                  <span className="flex items-center gap-1 text-[11px] font-bold text-violet-400">
+                                    <Award className="h-3.5 w-3.5" /> {f.attempt!.percentage}% ({f.attempt!.score} pts)
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-between text-xs text-neutral-450 border-b border-neutral-900/30 pb-2">
+                                  <span className="font-semibold text-violet-450">Platform Review</span>
+                                </div>
+                              )}
 
-                            <div className="text-[9px] text-neutral-500 text-right">
-                              Submitted: {new Date(f.createdAt).toLocaleDateString()} at{" "}
-                              {new Date(f.createdAt).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                              {/* Stars rating */}
+                              <div className="flex items-center gap-0.5">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star
+                                    key={star}
+                                    className={cn(
+                                      "h-4 w-4",
+                                      star <= f.rating
+                                        ? "fill-amber-500 text-amber-500"
+                                        : "text-neutral-800 fill-transparent"
+                                    )}
+                                  />
+                                ))}
+                              </div>
+
+                              {f.comments ? (
+                                <div className="rounded-lg bg-neutral-900/40 border border-neutral-850 p-3 font-sans text-xs text-neutral-300 leading-relaxed italic whitespace-pre-wrap">
+                                  "{f.comments}"
+                                </div>
+                              ) : (
+                                <p className="text-[10px] text-neutral-550 italic">No comments left.</p>
+                              )}
+
+                              <div className="text-[9px] text-neutral-500 text-right">
+                                Submitted: {new Date(f.createdAt).toLocaleDateString()} at{" "}
+                                {new Date(f.createdAt).toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

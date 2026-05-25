@@ -27,6 +27,7 @@ model User {
   attempts           Attempt[]
   notifications      Notification[]
   codingSubmissions  CodingSubmission[]
+  feedbacks          Feedback[]
 
   @@index([role])
 }
@@ -140,10 +141,13 @@ model CodingSubmission {
 
 model Feedback {
   id          String   @id @default(cuid())
-  attemptId   String   @unique
-  attempt     Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  attemptId   String?  @unique
+  attempt     Attempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   rating      Int
-  difficulty  String
+  difficulty  String   @default("Medium")
+  category    String   @default("General")
   comments    String?
   createdAt   DateTime @default(now())
 }

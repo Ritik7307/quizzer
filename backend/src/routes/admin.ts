@@ -232,6 +232,7 @@ router.get("/feedback", async (_req, res) => {
   try {
     const feedbacks = await prisma.feedback.findMany({
       include: {
+        user: { select: { name: true, email: true } },
         attempt: {
           include: {
             user: { select: { name: true, email: true } },
@@ -241,7 +242,13 @@ router.get("/feedback", async (_req, res) => {
       },
       orderBy: { createdAt: "desc" }
     });
-    return res.json({ feedbacks });
+
+    const normalizedFeedbacks = feedbacks.map(f => ({
+      ...f,
+      user: f.user || f.attempt?.user || { name: "Unknown User", email: "unknown@example.com" }
+    }));
+
+    return res.json({ feedbacks: normalizedFeedbacks });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Failed to fetch candidate feedbacks" });

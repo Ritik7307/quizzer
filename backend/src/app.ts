@@ -11,6 +11,7 @@ import adminRoutes from "./routes/admin.js";
 import leaderboardRoutes from "./routes/leaderboard.js";
 import notificationRoutes from "./routes/notifications.js";
 import codingRoutes from "./routes/coding.js";
+import feedbackRoutes from "./routes/feedback.js";
 import { prisma } from "./lib/prisma.js";
 
 const defaultOrigins = [
@@ -92,6 +93,7 @@ export function createApp() {
   app.use("/api/leaderboard", leaderboardRoutes);
   app.use("/api/notifications", notificationRoutes);
   app.use("/api/coding", codingRoutes);
+  app.use("/api/feedback", feedbackRoutes);
 
   return app;
 }
