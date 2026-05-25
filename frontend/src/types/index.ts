@@ -8,6 +8,7 @@ export interface User {
   codeforcesHandle?: string | null;
   points?: number;
   streak?: number;
+  lastActiveAt?: string | null;
   createdAt?: string;
 }
 

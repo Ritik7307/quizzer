@@ -193,6 +193,7 @@ router.get("/users", async (_req, res) => {
       points: true,
       streak: true,
       lastSolvedDate: true,
+      lastActiveAt: true,
       codingSubmissions: {
         where: {
           status: "Accepted"
@@ -257,6 +258,7 @@ router.get("/users/export", async (_req, res) => {
       createdAt: true,
       points: true,
       streak: true,
+      lastActiveAt: true,
       codingSubmissions: {
         where: {
           status: "Accepted"
@@ -284,6 +286,7 @@ router.get("/users/export", async (_req, res) => {
     "LeetCode Handle",
     "Codeforces Handle",
     "Joined Date",
+    "Last Active",
     "Points",
     "Daily Streak",
     "Solved Count",
@@ -310,6 +313,7 @@ router.get("/users/export", async (_req, res) => {
       u.leetcodeHandle || "",
       u.codeforcesHandle || "",
       u.createdAt.toISOString(),
+      u.lastActiveAt ? u.lastActiveAt.toISOString() : "",
       u.points,
       u.streak,
       solvedCount,

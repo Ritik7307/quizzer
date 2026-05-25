@@ -27,9 +27,16 @@ interface AdminUser extends User {
   points: number;
   streak: number;
   lastSolvedDate?: string | null;
+  lastActiveAt?: string | null;
   solvedCount: number;
   solvedQuestions: SolvedQuestion[];
   _count: { attempts: number; quizzes: number };
+}
+
+function isUserOnline(lastActiveAt?: string | null) {
+  if (!lastActiveAt) return false;
+  const diff = Date.now() - new Date(lastActiveAt).getTime();
+  return diff < 5 * 60 * 1000; // 5 minutes
 }
 
 export default function UsersPage() {
@@ -94,6 +101,7 @@ export default function UsersPage() {
                     <tr className="border-b text-left text-neutral-500">
                       <th className="py-2">User</th>
                       <th className="py-2">Role</th>
+                      <th className="py-2 text-center">Status</th>
                       <th className="py-2">LeetCode</th>
                       <th className="py-2">Codeforces</th>
                       <th className="py-2 text-center">Streak</th>
@@ -125,6 +133,17 @@ export default function UsersPage() {
                           <Badge variant={u.role === "ADMIN" ? "success" : "warning"}>
                             {u.role.toLowerCase()}
                           </Badge>
+                        </td>
+                        <td className="py-3 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <span className="relative flex h-2.5 w-2.5">
+                              {isUserOnline(u.lastActiveAt) && (
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              )}
+                              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isUserOnline(u.lastActiveAt) ? "bg-emerald-500" : "bg-neutral-600"}`}></span>
+                            </span>
+                            <span className="text-xs text-neutral-400">{isUserOnline(u.lastActiveAt) ? "Online" : "Offline"}</span>
+                          </div>
                         </td>
                         <td className="py-3">
                           {u.leetcodeHandle ? (

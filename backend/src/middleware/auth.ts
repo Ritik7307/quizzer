@@ -6,6 +6,8 @@ export interface AuthRequest extends Request {
   user?: JwtPayload;
 }
 
+const lastActiveUpdates = new Map<string, number>();
+
 export function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
   const token = header?.startsWith("Bearer ") ? header.slice(7) : req.cookies?.token;
@@ -16,6 +18,22 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
 
   try {
     req.user = verifyToken(token);
+    
+    // Update lastActiveAt at most once every 1 minute per user
+    const now = Date.now();
+    const lastUpdate = lastActiveUpdates.get(req.user.userId) || 0;
+    if (now - lastUpdate > 60000) {
+      lastActiveUpdates.set(req.user.userId, now);
+      import("../lib/prisma.js").then(({ prisma }) => {
+        prisma.user.update({
+          where: { id: req.user!.userId },
+          data: { lastActiveAt: new Date() }
+        }).catch(() => {
+          // ignore errors silently
+        });
+      }).catch(() => {});
+    }
+
     next();
   } catch {
     return res.status(401).json({ error: "Invalid or expired token" });

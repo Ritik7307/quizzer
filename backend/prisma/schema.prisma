@@ -34,6 +34,7 @@ model User {
   points             Int       @default(0)
   streak             Int       @default(0)
   lastSolvedDate     DateTime?
+  lastActiveAt       DateTime  @default(now())
 
   @@index([role])
 }
