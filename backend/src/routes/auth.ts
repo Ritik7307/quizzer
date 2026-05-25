@@ -126,6 +126,10 @@ router.get("/me", authenticate, async (req: AuthRequest, res) => {
   return res.json({ user });
 });
 
+router.get("/ping", authenticate, async (_req, res) => {
+  return res.json({ ok: true });
+});
+
 const updateProfileSchema = z.object({
   name: z.string().min(2).optional(),
   avatarUrl: z.string().url().or(z.literal("")).optional(),
