@@ -4,6 +4,8 @@ export interface User {
   name: string;
   avatarUrl?: string | null;
   role: "ADMIN" | "CANDIDATE";
+  leetcodeHandle?: string | null;
+  codeforcesHandle?: string | null;
   createdAt?: string;
 }
 

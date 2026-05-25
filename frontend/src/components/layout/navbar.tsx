@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, MessageSquare, Star, CheckCircle2 } from "lucide-react";
+import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, MessageSquare, Star, CheckCircle2, BookOpen } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -38,6 +38,7 @@ export function Navbar() {
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     ...(user ? [
       { href: dashHref, label: "Dashboard", icon: LayoutDashboard },
+      { href: "/practice", label: "Practice Sheet", icon: BookOpen },
       { href: "/compiler", label: "Compiler", icon: Code }
     ] : []),
     ...(user?.role === "ADMIN" ? [

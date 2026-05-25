@@ -45,6 +45,7 @@ export default function AdminNewCodingQuestionPage() {
   const [inputFormat, setInputFormat] = useState("");
   const [outputFormat, setOutputFormat] = useState("");
   const [constraints, setConstraints] = useState("");
+  const [topic, setTopic] = useState("General");
   const [sampleInput, setSampleInput] = useState("");
   const [sampleOutput, setSampleOutput] = useState("");
   const [testCasesJson, setTestCasesJson] = useState(defaultTestCases);
@@ -97,6 +98,7 @@ export default function AdminNewCodingQuestionPage() {
           sampleOutput: sampleOutput.trim(),
           testCases: testCasesJson.trim(),
           difficulty,
+          topic,
           referenceUrl: referenceUrl.trim() || null,
           editorial: editorial.trim() || null,
         }),
@@ -130,19 +132,18 @@ export default function AdminNewCodingQuestionPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-3">
-              {/* Title */}
-              <div className="sm:col-span-2 space-y-2">
-                <Label htmlFor="title">Problem Title</Label>
-                <Input
-                  id="title"
-                  placeholder="e.g. Sum of Two Numbers"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="title">Problem Title</Label>
+              <Input
+                id="title"
+                placeholder="e.g. Sum of Two Numbers"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
               {/* Difficulty */}
               <div className="space-y-2">
                 <Label htmlFor="difficulty">Difficulty</Label>
@@ -155,6 +156,30 @@ export default function AdminNewCodingQuestionPage() {
                   <option value="Easy">🟢 Easy</option>
                   <option value="Medium">🟡 Medium</option>
                   <option value="Hard">🔴 Hard</option>
+                </select>
+              </div>
+
+              {/* Topic */}
+              <div className="space-y-2">
+                <Label htmlFor="topic">Topic / Category (Practice Sheet)</Label>
+                <select
+                  id="topic"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 sm:h-10 sm:text-sm"
+                >
+                  <option value="Arrays">Arrays</option>
+                  <option value="Strings">Strings</option>
+                  <option value="Linked Lists">Linked Lists</option>
+                  <option value="Stacks & Queues">Stacks & Queues</option>
+                  <option value="Trees">Trees</option>
+                  <option value="Graphs">Graphs</option>
+                  <option value="Dynamic Programming">Dynamic Programming</option>
+                  <option value="Greedy Algorithms">Greedy Algorithms</option>
+                  <option value="Recursion & Backtracking">Recursion & Backtracking</option>
+                  <option value="Sorting & Searching">Sorting & Searching</option>
+                  <option value="Bit Manipulation">Bit Manipulation</option>
+                  <option value="General">General</option>
                 </select>
               </div>
             </div>

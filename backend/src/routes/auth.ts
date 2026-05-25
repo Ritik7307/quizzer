@@ -45,7 +45,7 @@ router.post("/register", async (req, res) => {
         recoveryQuestion: body.recoveryQuestion,
         recoveryAnswerHash,
       },
-      select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
+      select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
     });
 
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
@@ -80,7 +80,7 @@ router.post("/login", async (req, res) => {
       const updated = await prisma.user.update({
         where: { id: user.id },
         data: { role: Role.ADMIN },
-        select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
+        select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
       });
       const token = signToken({ userId: updated.id, email: updated.email, role: updated.role });
       return res.json({ user: updated, token });
@@ -92,6 +92,8 @@ router.post("/login", async (req, res) => {
       name: user.name,
       avatarUrl: user.avatarUrl,
       role: user.role,
+      leetcodeHandle: user.leetcodeHandle,
+      codeforcesHandle: user.codeforcesHandle,
       createdAt: user.createdAt,
     };
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
@@ -109,7 +111,7 @@ router.post("/login", async (req, res) => {
 router.get("/me", authenticate, async (req: AuthRequest, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user!.userId },
-    select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
+    select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
   });
   if (!user) return res.status(404).json({ error: "User not found" });
   return res.json({ user });
@@ -118,6 +120,8 @@ router.get("/me", authenticate, async (req: AuthRequest, res) => {
 const updateProfileSchema = z.object({
   name: z.string().min(2).optional(),
   avatarUrl: z.string().url().or(z.literal("")).optional(),
+  leetcodeHandle: z.string().max(60).or(z.literal("")).optional().nullable(),
+  codeforcesHandle: z.string().max(60).or(z.literal("")).optional().nullable(),
 });
 
 router.patch("/me", authenticate, async (req: AuthRequest, res) => {
@@ -128,8 +132,10 @@ router.patch("/me", authenticate, async (req: AuthRequest, res) => {
       data: {
         ...(body.name ? { name: body.name } : {}),
         ...(body.avatarUrl !== undefined ? { avatarUrl: body.avatarUrl || null } : {}),
+        ...(body.leetcodeHandle !== undefined ? { leetcodeHandle: body.leetcodeHandle || null } : {}),
+        ...(body.codeforcesHandle !== undefined ? { codeforcesHandle: body.codeforcesHandle || null } : {}),
       },
-      select: { id: true, email: true, name: true, avatarUrl: true, role: true, createdAt: true },
+      select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
     });
     return res.json({ user });
   } catch (e) {

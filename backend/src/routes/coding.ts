@@ -14,6 +14,7 @@ const createQuestionSchema = z.object({
   inputFormat: z.string().default(""),
   outputFormat: z.string().default(""),
   constraints: z.string().default(""),
+  topic: z.string().default("General"),
   sampleInput: z.string().default(""),
   sampleOutput: z.string().default(""),
   testCases: z.string().refine((val) => {
@@ -52,20 +53,38 @@ function normalizeOutput(str: string): string {
 }
 
 // 1. Get all coding questions (Basic info for candidates)
-router.get("/questions", authenticate, async (_req, res) => {
+router.get("/questions", authenticate, async (req: AuthRequest, res) => {
   try {
     const questions = await prisma.codingQuestion.findMany({
       select: {
         id: true,
         title: true,
         difficulty: true,
+        topic: true,
+        referenceUrl: true,
         sampleInput: true,
         sampleOutput: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
     });
-    return res.json({ questions });
+
+    const acceptedSubmissions = await prisma.codingSubmission.findMany({
+      where: {
+        userId: req.user!.userId,
+        status: "Accepted",
+      },
+      select: { codingQuestionId: true },
+    });
+
+    const solvedIds = new Set(acceptedSubmissions.map((s) => s.codingQuestionId));
+
+    const questionsWithStatus = questions.map((q) => ({
+      ...q,
+      solved: solvedIds.has(q.id),
+    }));
+
+    return res.json({ questions: questionsWithStatus });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Failed to fetch coding questions" });
@@ -110,6 +129,7 @@ router.get("/questions/:id", authenticate, async (req: AuthRequest, res) => {
         inputFormat: question.inputFormat,
         outputFormat: question.outputFormat,
         constraints: question.constraints,
+        topic: question.topic,
         sampleInput: question.sampleInput,
         sampleOutput: question.sampleOutput,
         difficulty: question.difficulty,
@@ -280,6 +300,7 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
         inputFormat: body.inputFormat,
         outputFormat: body.outputFormat,
         constraints: body.constraints,
+        topic: body.topic,
         sampleInput: body.sampleInput,
         sampleOutput: body.sampleOutput,
         testCases: body.testCases,

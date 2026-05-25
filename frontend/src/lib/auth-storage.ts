@@ -7,6 +7,8 @@ export interface StoredUser {
   name: string;
   avatarUrl?: string | null;
   role: "ADMIN" | "CANDIDATE";
+  leetcodeHandle?: string | null;
+  codeforcesHandle?: string | null;
 }
 
 export function getToken(): string | null {

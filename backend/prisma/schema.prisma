@@ -29,6 +29,8 @@ model User {
   codingSubmissions  CodingSubmission[]
   feedbacks          Feedback[]
   compilerNotes      CompilerNote[]
+  leetcodeHandle     String?
+  codeforcesHandle   String?
 
   @@index([role])
 }
@@ -116,6 +118,7 @@ model CodingQuestion {
   sampleOutput String             @default("")
   testCases    String             @default("[]") // JSON array of { input: string, output: string }
   difficulty   String             @default("Easy") // Easy, Medium, Hard
+  topic        String             @default("General") // Arrays, Strings, DP, etc.
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
   submissions  CodingSubmission[]
