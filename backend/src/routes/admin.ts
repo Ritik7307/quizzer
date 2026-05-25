@@ -190,13 +190,60 @@ router.get("/users", async (_req, res) => {
       leetcodeHandle: true,
       codeforcesHandle: true,
       createdAt: true,
+      points: true,
+      streak: true,
+      lastSolvedDate: true,
+      codingSubmissions: {
+        where: {
+          status: "Accepted"
+        },
+        select: {
+          codingQuestion: {
+            select: {
+              id: true,
+              title: true,
+              difficulty: true,
+              isExternalOnly: true,
+              referenceUrl: true
+            }
+          }
+        }
+      },
       _count: {
         select: { attempts: true, quizzes: true }
       }
     },
     orderBy: { createdAt: "desc" }
   });
-  return res.json({ users });
+
+  const processedUsers = users.map(user => {
+    const solvedQuestionsMap = new Map();
+    user.codingSubmissions.forEach(sub => {
+      if (sub.codingQuestion) {
+        solvedQuestionsMap.set(sub.codingQuestion.id, {
+          id: sub.codingQuestion.id,
+          title: sub.codingQuestion.title,
+          difficulty: sub.codingQuestion.difficulty,
+          isExternalOnly: sub.codingQuestion.isExternalOnly,
+          referenceUrl: sub.codingQuestion.referenceUrl
+        });
+      }
+    });
+
+    const solvedQuestions = Array.from(solvedQuestionsMap.values());
+    const solvedCount = solvedQuestions.length;
+
+    // Remove codingSubmissions to avoid sending heavy raw tables
+    const { codingSubmissions, ...rest } = user;
+
+    return {
+      ...rest,
+      solvedCount,
+      solvedQuestions
+    };
+  });
+
+  return res.json({ users: processedUsers });
 });
 
 router.get("/users/export", async (_req, res) => {
@@ -208,6 +255,21 @@ router.get("/users/export", async (_req, res) => {
       leetcodeHandle: true,
       codeforcesHandle: true,
       createdAt: true,
+      points: true,
+      streak: true,
+      codingSubmissions: {
+        where: {
+          status: "Accepted"
+        },
+        select: {
+          codingQuestion: {
+            select: {
+              id: true,
+              title: true
+            }
+          }
+        }
+      },
       _count: {
         select: { attempts: true, quizzes: true }
       }
@@ -215,17 +277,47 @@ router.get("/users/export", async (_req, res) => {
     orderBy: { createdAt: "desc" }
   });
 
-  const headers = ["Name", "Email", "Role", "LeetCode Handle", "Codeforces Handle", "Joined Date", "Quizzes Created", "Quizzes Attempted"];
-  const rows = users.map((u) => [
-    u.name,
-    u.email,
-    u.role,
-    u.leetcodeHandle || "",
-    u.codeforcesHandle || "",
-    u.createdAt.toISOString(),
-    u._count.quizzes,
-    u._count.attempts,
-  ]);
+  const headers = [
+    "Name",
+    "Email",
+    "Role",
+    "LeetCode Handle",
+    "Codeforces Handle",
+    "Joined Date",
+    "Points",
+    "Daily Streak",
+    "Solved Count",
+    "Solved Problems",
+    "Quizzes Created",
+    "Quizzes Attempted"
+  ];
+  
+  const rows = users.map((u) => {
+    const solvedQuestionsSet = new Set<string>();
+    u.codingSubmissions.forEach(sub => {
+      if (sub.codingQuestion) {
+        solvedQuestionsSet.add(sub.codingQuestion.title);
+      }
+    });
+    const solvedQuestions = Array.from(solvedQuestionsSet);
+    const solvedCount = solvedQuestions.length;
+    const solvedListString = solvedQuestions.join("; ");
+
+    return [
+      u.name,
+      u.email,
+      u.role,
+      u.leetcodeHandle || "",
+      u.codeforcesHandle || "",
+      u.createdAt.toISOString(),
+      u.points,
+      u.streak,
+      solvedCount,
+      solvedListString,
+      u._count.quizzes,
+      u._count.attempts,
+    ];
+  });
 
   const csv = [headers, ...rows].map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
 
