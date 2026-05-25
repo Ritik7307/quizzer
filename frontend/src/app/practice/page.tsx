@@ -16,10 +16,10 @@ import {
   Circle,
   ExternalLink,
   ChevronDown,
-  ChevronUp,
   BookOpen,
   Award,
-  ExternalLink as LinkIcon
+  Zap,
+  Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -94,44 +94,62 @@ export default function PracticeSheetPage() {
     );
   }
 
+  // Get user level rank styling
+  const getRankDetails = () => {
+    if (percentageSolved === 100) return { title: "Grandmaster", desc: "You have conquered all problems!", color: "text-red-400 bg-red-950/20 border-red-500/30" };
+    if (percentageSolved >= 75) return { title: "Expert Solver", desc: "Almost finished! Keep pushing.", color: "text-amber-400 bg-amber-950/20 border-amber-500/30" };
+    if (percentageSolved >= 40) return { title: "Specialist", desc: "Good logical grasp. Keep practicing.", color: "text-violet-400 bg-violet-950/20 border-violet-500/30" };
+    if (percentageSolved >= 10) return { title: "Apprentice", desc: "Making solid progress on fundamental tracks.", color: "text-blue-400 bg-blue-950/20 border-blue-500/30" };
+    return { title: "Newbie", desc: "Welcome to the sheets! Begin your journey.", color: "text-emerald-455 bg-emerald-950/10 border-emerald-500/20" };
+  };
+
+  const rank = getRankDetails();
+
   return (
     <ProtectedRoute>
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12 animate-fade-in space-y-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12 space-y-8">
         
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-900 pb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight sm:text-3xl flex items-center gap-2">
-              <BookOpen className="h-7 w-7 text-violet-400" /> Coding Practice Sheet
-            </h1>
-            <p className="text-neutral-400 text-sm mt-1">
-              Curated programming lists to master data structures, algorithms, and technical interviews.
-            </p>
+        {/* Header Section */}
+        <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-gradient-to-r from-violet-900/10 via-purple-900/5 to-transparent p-6 sm:p-8">
+          <div className="absolute right-0 top-0 -mr-16 -mt-16 h-40 w-40 rounded-full bg-violet-650/10 blur-3xl" />
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold text-white tracking-tight sm:text-3xl flex items-center gap-2.5">
+                <Sparkles className="h-7 w-7 text-violet-450 animate-pulse" /> Coding Practice Sheet
+              </h1>
+              <p className="text-neutral-400 text-sm max-w-2xl leading-relaxed">
+                Curated programming lists to master data structures, algorithms, and technical interview patterns. Grouped by data structure tracks to optimize learning.
+              </p>
+            </div>
+            <Badge className="w-fit border-violet-500/30 text-violet-400 bg-violet-950/30 px-3 py-1 font-bold text-xs uppercase tracking-widest shrink-0">
+              SDE Sheet Active
+            </Badge>
           </div>
         </div>
 
         {/* Stats Dashboard Row */}
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-3">
           {/* Progress Card */}
-          <Card className="border-neutral-850 bg-neutral-950/40 backdrop-blur-sm sm:col-span-2">
+          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl sm:col-span-2 hover:border-neutral-750 transition-colors duration-300">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-450">
-                Your Completion Progress
+              <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
+                <Zap className="h-3.5 w-3.5 text-violet-450" />
+                Sheet Completion
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-end justify-between">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-extrabold text-white">{solvedCount}</span>
-                  <span className="text-xs text-neutral-500">/ {totalCount} Problems Solved</span>
+                  <span className="text-3xl font-extrabold text-white tracking-tight">{solvedCount}</span>
+                  <span className="text-xs text-neutral-500 font-medium">/ {totalCount} Problems Solved</span>
                 </div>
-                <span className="text-sm font-bold text-violet-400 bg-violet-950/40 px-2 py-0.5 rounded border border-violet-900/30">
+                <span className="text-xs font-bold text-violet-400 bg-violet-950/50 px-2.5 py-1 rounded-lg border border-violet-900/30 shadow-[0_0_12px_rgba(139,92,246,0.15)]">
                   {percentageSolved}% Complete
                 </span>
               </div>
-              <div className="w-full h-3 bg-neutral-900 rounded-full border border-neutral-850 overflow-hidden">
+              <div className="w-full h-3.5 bg-neutral-900 rounded-full border border-neutral-850 overflow-hidden p-0.5">
                 <div
-                  className="h-full bg-violet-600 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-violet-600 via-purple-550 to-fuchsia-500 rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(139,92,246,0.4)]"
                   style={{ width: `${percentageSolved}%` }}
                 />
               </div>
@@ -139,30 +157,22 @@ export default function PracticeSheetPage() {
           </Card>
 
           {/* Achievement Card */}
-          <Card className="border-neutral-850 bg-neutral-950/40 backdrop-blur-sm flex flex-col justify-between">
+          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl flex flex-col justify-between hover:border-neutral-750 transition-colors duration-300">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-450">
-                Current Level
+              <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400">
+                User Ranking Title
               </CardTitle>
             </CardHeader>
             <CardContent className="flex items-center gap-4 py-2">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.15)]">
                 <Trophy className="h-6 w-6" />
               </div>
-              <div>
-                <p className="font-bold text-sm text-neutral-250">
-                  {percentageSolved === 100
-                    ? "Grandmaster"
-                    : percentageSolved >= 75
-                    ? "Expert Solver"
-                    : percentageSolved >= 40
-                    ? "Specialist"
-                    : percentageSolved >= 10
-                    ? "Apprentice"
-                    : "Newbie"}
+              <div className="space-y-0.5">
+                <p className="font-bold text-sm text-neutral-200 tracking-tight">
+                  {rank.title}
                 </p>
-                <p className="text-[10px] text-neutral-500">
-                  Keep solving to unlock advanced titles.
+                <p className="text-[10px] text-neutral-500 leading-normal">
+                  {rank.desc}
                 </p>
               </div>
             </CardContent>
@@ -171,14 +181,18 @@ export default function PracticeSheetPage() {
 
         {/* Topics Accordion Feed */}
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-white tracking-tight">Structured Topics</h2>
+          <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-neutral-400" /> Dynamic Topics Tracker
+          </h2>
           
           {topics.length === 0 ? (
-            <Card className="border-neutral-900 bg-neutral-950/20 text-center py-12">
-              <CardContent className="space-y-2">
-                <Award className="h-8 w-8 text-neutral-600 mx-auto" />
+            <Card className="border-neutral-800 bg-neutral-950/40 text-center py-16">
+              <CardContent className="space-y-3">
+                <Award className="h-10 w-10 text-neutral-750 mx-auto" />
                 <p className="text-neutral-400 font-semibold">No sheet questions configured</p>
-                <p className="text-xs text-neutral-500">Admins need to upload coding questions to build the sheet categories.</p>
+                <p className="text-xs text-neutral-500 max-w-xs mx-auto leading-relaxed">
+                  Coding sheet sections will render dynamically once admins upload questions tagged with topics in the admin console.
+                </p>
               </CardContent>
             </Card>
           ) : (
@@ -188,54 +202,67 @@ export default function PracticeSheetPage() {
                 const solvedInTopic = topicQuestions.filter((q) => q.solved).length;
                 const totalInTopic = topicQuestions.length;
                 const isExpanded = !!expandedTopics[topicName];
+                const isAllSolved = solvedInTopic === totalInTopic;
 
                 return (
                   <Card
                     key={topicName}
                     className={cn(
-                      "border-neutral-850 bg-neutral-950/25 transition-all overflow-hidden",
-                      isExpanded && "border-neutral-800"
+                      "border-neutral-800/80 bg-neutral-950/40 backdrop-blur-sm transition-all duration-300 overflow-hidden shadow-md",
+                      isExpanded && "border-neutral-700 bg-neutral-950/50 shadow-lg"
                     )}
                   >
                     {/* Topic Accordion Header */}
                     <div
                       onClick={() => toggleTopic(topicName)}
-                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-neutral-900/40 select-none transition-colors border-b border-neutral-900/10"
+                      className={cn(
+                        "p-4 flex items-center justify-between cursor-pointer hover:bg-neutral-900/30 select-none transition-colors border-b border-transparent",
+                        isExpanded && "border-neutral-900 bg-neutral-900/10"
+                      )}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-extrabold text-neutral-100">{topicName}</span>
+                        <span className="text-sm font-extrabold text-neutral-200 tracking-tight">{topicName}</span>
                         <Badge
-                          variant={solvedInTopic === totalInTopic ? "success" : "outline"}
-                          className="text-[9px] py-0.5 px-2"
+                          variant={isAllSolved ? "success" : "outline"}
+                          className={cn(
+                            "text-[9px] py-0.5 px-2 font-bold uppercase",
+                            isAllSolved
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
+                              : "border-neutral-850 text-neutral-450"
+                          )}
                         >
                           {solvedInTopic} / {totalInTopic} Solved
                         </Badge>
                       </div>
-                      <div className="text-neutral-500">
-                        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      <div className="text-neutral-500 hover:text-neutral-300 transition-colors">
+                        <ChevronDown className={cn("h-4 w-4 transition-transform duration-250", isExpanded && "rotate-180")} />
                       </div>
                     </div>
 
                     {/* Topic Questions List */}
                     {isExpanded && (
-                      <div className="border-t border-neutral-900 bg-neutral-950/15 divide-y divide-neutral-900">
+                      <div className="border-t border-neutral-900/50 bg-neutral-950/10 divide-y divide-neutral-900/50">
                         {topicQuestions.map((q) => (
                           <div
                             key={q.id}
-                            className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neutral-900/10 transition-colors"
+                            className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neutral-900/20 transition-colors duration-200"
                           >
-                            <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex items-center gap-3.5 min-w-0">
                               {/* Solved Status Checkbox Icon */}
                               {q.solved ? (
-                                <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500 shrink-0" />
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.25)] animate-fade-in">
+                                  <CheckCircle2 className="h-3.5 w-3.5" />
+                                </div>
                               ) : (
-                                <Circle className="h-4.5 w-4.5 text-neutral-800 shrink-0" />
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-neutral-700 hover:text-neutral-500 border border-neutral-850 hover:border-neutral-700 transition-colors duration-150">
+                                  <Circle className="h-3 w-3" />
+                                </div>
                               )}
 
                               {/* Question Title */}
                               <Link
                                 href={`/coding/${q.id}`}
-                                className="text-xs font-semibold text-neutral-200 hover:text-violet-400 truncate"
+                                className="text-xs font-semibold text-neutral-300 hover:text-violet-400 transition-colors truncate leading-none"
                               >
                                 {q.title}
                               </Link>
@@ -246,15 +273,15 @@ export default function PracticeSheetPage() {
                                   href={q.referenceUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  title="View on external source"
-                                  className="text-neutral-550 hover:text-white transition-colors p-0.5 shrink-0"
+                                  title="View on original LeetCode / Codeforces page"
+                                  className="text-neutral-550 hover:text-neutral-350 transition-colors p-0.5 shrink-0"
                                 >
                                   <ExternalLink className="h-3 w-3" />
                                 </a>
                               )}
                             </div>
 
-                            <div className="flex items-center gap-3 justify-between sm:justify-end">
+                            <div className="flex items-center gap-4 justify-between sm:justify-end">
                               {/* Difficulty Badge */}
                               <Badge
                                 variant={
@@ -265,27 +292,27 @@ export default function PracticeSheetPage() {
                                     : "outline"
                                 }
                                 className={cn(
-                                  "text-[10px] font-semibold px-2.5 py-0.5 shrink-0",
+                                  "text-[10px] font-bold px-2.5 py-0.5 shrink-0 tracking-wider",
                                   q.difficulty === "Hard" && "border-red-500/30 text-red-300 bg-red-950/20"
                                 )}
                               >
                                 {q.difficulty}
                               </Badge>
 
-                              {/* Action Link Button */}
+                              {/* Action Button */}
                               <Button
                                 size="sm"
                                 variant={q.solved ? "ghost" : "outline"}
                                 asChild
                                 className={cn(
-                                  "h-8 text-[10px] shrink-0 font-bold",
+                                  "h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider",
                                   q.solved
-                                    ? "text-neutral-450 hover:text-violet-400 hover:bg-violet-955/10"
-                                    : "border-neutral-800 text-neutral-250 bg-black/35 hover:bg-neutral-850 hover:text-white"
+                                    ? "text-neutral-500 hover:text-violet-400 hover:bg-violet-955/15"
+                                    : "border-neutral-800 text-neutral-350 bg-black/40 hover:bg-neutral-800 hover:text-white"
                                 )}
                               >
                                 <Link href={`/coding/${q.id}`}>
-                                  {q.solved ? "Solve again" : "Solve Problem"}
+                                  {q.solved ? "Solve Again" : "Solve Problem"}
                                 </Link>
                               </Button>
                             </div>
