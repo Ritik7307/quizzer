@@ -50,7 +50,7 @@ export function Navbar() {
 
   const linkClass = (href: string) =>
     cn(
-      "flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+      "flex items-center gap-1.5 rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium transition-colors whitespace-nowrap",
       pathname === href || pathname.startsWith(href + "/")
         ? "bg-violet-600/20 text-violet-400"
         : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
@@ -100,7 +100,7 @@ export function Navbar() {
           <span className="text-base text-white sm:text-lg">Quizzer</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-0.5 lg:gap-1.5 md:flex">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className={linkClass(link.href)}>
               <link.icon className="h-4 w-4" />

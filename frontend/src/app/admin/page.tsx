@@ -116,38 +116,28 @@ export default function AdminDashboard() {
     <ProtectedRoute role="ADMIN">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 space-y-8 animate-fade-in">
         
-        {/* Title and Controls Header Section */}
-        <div className="relative overflow-hidden rounded-2xl border border-neutral-850 bg-gradient-to-r from-violet-950/15 via-neutral-950/40 to-transparent p-6 sm:p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-          <div className="absolute right-0 top-0 -mr-16 -mt-16 h-48 w-48 rounded-full bg-violet-600/10 blur-3xl" />
-          <div className="absolute left-1/3 bottom-0 -mb-20 h-32 w-32 rounded-full bg-indigo-650/5 blur-3xl" />
-          
-          <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="space-y-2">
-              <h1 className="text-2xl font-extrabold text-white tracking-tight sm:text-3xl flex items-center gap-3">
-                <Brain className="h-8 w-8 text-violet-400 animate-pulse" /> Admin Control Center
-              </h1>
-              <p className="text-neutral-400 text-sm max-w-2xl leading-relaxed">
-                Oversee quiz structures, design coding questions, schedule real-time candidate notifications, and inspect candidate feedback reports.
-              </p>
-            </div>
-            
-            <div className="flex flex-wrap gap-2.5 shrink-0">
-              <Button asChild variant="outline" className="border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200 uppercase tracking-wider text-[10px] font-extrabold px-4 h-10">
-                <Link href="/admin/notifications">
-                  <Bell className="mr-2 h-4 w-4 text-violet-400" /> Send Alert
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200 uppercase tracking-wider text-[10px] font-extrabold px-4 h-10">
-                <Link href="/admin/coding/new">
-                  <Plus className="mr-2 h-4 w-4 text-violet-400" /> New Code Q
-                </Link>
-              </Button>
-              <Button asChild className="bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-700 hover:to-indigo-750 text-white font-extrabold shadow-[0_0_15px_rgba(139,92,246,0.25)] hover:shadow-[0_0_20px_rgba(139,92,246,0.45)] transition-all duration-300 uppercase tracking-wider text-[10px] px-5 h-10">
-                <Link href="/admin/quizzes/new">
-                  <Plus className="mr-2 h-4 w-4" /> New Quiz
-                </Link>
-              </Button>
-            </div>
+        {/* Title and Controls Header */}
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-900 pb-5">
+          <div>
+            <h1 className="text-2xl font-bold text-white sm:text-3xl">Admin Control Center</h1>
+            <p className="text-sm text-neutral-400 sm:text-base">Manage quizzes, coding problems, notifications, and candidate reviews.</p>
+          </div>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200">
+              <Link href="/admin/notifications">
+                <Bell className="mr-2 h-4 w-4" /> Send Notification
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200">
+              <Link href="/admin/coding/new">
+                <Plus className="mr-2 h-4 w-4" /> New Coding Problem
+              </Link>
+            </Button>
+            <Button asChild className="w-full sm:w-auto bg-violet-600 hover:bg-violet-750 text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all">
+              <Link href="/admin/quizzes/new">
+                <Plus className="mr-2 h-4 w-4" /> New Quiz
+              </Link>
+            </Button>
           </div>
         </div>
 
