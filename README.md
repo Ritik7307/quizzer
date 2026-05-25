@@ -1,16 +1,18 @@
 # Quizzer
 
-A full-stack MCQ quiz platform for development upskilling — built with **Next.js**, **Express**, **Prisma**, and **SQLite** (local dev) / **PostgreSQL** (production).
+A modern development upskilling platform featuring timed MCQ quizzes, curated SDE coding sheets, LeetCode/Codeforces profile sync, and interactive streaks with a 365-day contribution calendar grid. Built with **Next.js**, **Express**, **Prisma**, and **SQLite** / **PostgreSQL**.
 
 ## Features
 
 - **Roles:** Admin (email whitelist) & Candidate
 - **JWT authentication** with protected routes
-- **Admin:** Create quizzes, MCQ questions, publish/schedule, analytics, CSV export
-- **Candidate:** Timed quizzes, question palette, auto-submit, results & rank
-- **Public leaderboard** with real-time Socket.IO updates
+- **Admin:** Create quizzes, MCQ questions, coding questions (internal compiler or external-only SDE sheet links), analytics, CSV export
+- **Candidate:** Timed quizzes (with timer and auto-submit), curated SDE sheets (Apna College/Striver-style), and automated profile synchronization
+- **Contribution Heatmap Grid**: 365-day horizontal activity grid mapping daily solved questions, consecutive "Active Days" streaks, and total points (Easy: 10, Medium: 20, Hard: 30)
+- **External Coding support**: Supports external-only problems where users solve questions on external platforms (LeetCode/Codeforces) and manually mark them as solved to maintain streaks
+- **Public Leaderboard** with real-time Socket.IO updates
 - **Dark theme**, toasts, loading skeletons, search & filters
-- **Production-ready** for ~150 concurrent quiz takers (with PostgreSQL + cluster mode)
+- **Production-ready** for ~150 concurrent users (with PostgreSQL + cluster mode)
 
 ## Quick Start
 
@@ -161,10 +163,15 @@ quizer/
 |--------|----------|-------------|
 | POST | `/api/auth/register` | Candidate signup |
 | POST | `/api/auth/login` | Login |
+| GET | `/api/auth/me` | Retrieve profile and automatically sync active days & points |
 | GET | `/api/quizzes` | List quizzes (role-based) |
 | POST | `/api/attempts/start/:quizId` | Start quiz attempt |
 | POST | `/api/attempts/:id/submit` | Submit & score |
 | GET | `/api/leaderboard/:quizId` | Public rankings |
+| GET | `/api/coding/questions` | List coding practice sheet questions |
+| POST | `/api/coding/questions/:id/submit` | Run and submit code against test cases (Easy: 10, Medium: 20, Hard: 30) |
+| POST | `/api/coding/questions/:id/mark-solved` | Register external solves and reward points/streak manually |
+| GET | `/api/coding/submissions` | Retrieve coding submissions for contribution calendar |
 | GET | `/api/admin/quizzes/:id/analytics` | Admin analytics |
 | GET | `/api/admin/quizzes/:id/export` | CSV export |
 
