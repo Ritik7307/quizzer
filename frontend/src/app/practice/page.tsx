@@ -19,7 +19,7 @@ import {
   BookOpen,
   Award,
   Zap,
-  Sparkles
+  Code2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -177,7 +177,7 @@ export default function PracticeSheetPage() {
           <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-white tracking-tight sm:text-3xl flex items-center gap-2.5">
-                <Sparkles className="h-7 w-7 text-violet-450 animate-pulse" /> Coding Practice Sheet
+                <Code2 className="h-7 w-7 text-violet-450" /> Coding Practice Sheet
               </h1>
               <p className="text-neutral-400 text-sm max-w-2xl leading-relaxed">
                 Curated programming lists to master data structures, algorithms, and technical interview patterns. Grouped by data structure tracks to optimize learning.
@@ -362,7 +362,7 @@ export default function PracticeSheetPage() {
 
                   {/* Points widget */}
                   <div className="flex items-center gap-2 rounded-lg border border-violet-500/15 bg-violet-950/10 px-3 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.06)]">
-                    <Sparkles className="h-4.5 w-4.5 text-violet-400 shrink-0 animate-pulse" />
+                    <Award className="h-4.5 w-4.5 text-violet-400 shrink-0" />
                     <div>
                       <p className="text-[9px] font-extrabold text-violet-500 uppercase tracking-widest leading-none">Total Points</p>
                       <p className="text-xs font-black text-violet-400 mt-0.5 leading-none">{user?.points ?? 0} PTS</p>
