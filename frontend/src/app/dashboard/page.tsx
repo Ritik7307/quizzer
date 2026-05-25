@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Clock, Play, Search, Code, History, BookOpen, Loader2, ChevronDown, ChevronUp, AlertCircle, CheckCircle, Award } from "lucide-react";
+import { Clock, Play, Search, Code, History, BookOpen, Loader2, ChevronDown, ChevronUp, AlertCircle, CheckCircle, Award, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";
 import { api } from "@/lib/api";
-import type { Quiz } from "@/types";
+import type { Quiz, Resource } from "@/types";
 
 interface CodingQuestion {
   id: string;
@@ -43,13 +43,15 @@ export default function CandidateDashboard() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [codingQuestions, setCodingQuestions] = useState<CodingQuestion[]>([]);
   const [submissions, setSubmissions] = useState<CodingSubmission[]>([]);
+  const [resources, setResources] = useState<Resource[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [loadingCoding, setLoadingCoding] = useState(false);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
+  const [loadingResources, setLoadingResources] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<"quizzes" | "coding" | "history">("quizzes");
+  const [activeTab, setActiveTab] = useState<"quizzes" | "coding" | "history" | "resources">("quizzes");
   const [expandedSubId, setExpandedSubId] = useState<string | null>(null);
 
   // Load data based on selected tab
@@ -74,6 +76,12 @@ export default function CandidateDashboard() {
         .then((d) => setSubmissions(d.submissions))
         .catch(() => toast.error("Failed to load submission history"))
         .finally(() => setLoadingSubmissions(false));
+    } else if (activeTab === "resources") {
+      setLoadingResources(true);
+      api<{ resources: Resource[] }>("/api/resources", { token })
+        .then((d) => setResources(d.resources))
+        .catch(() => toast.error("Failed to load study resources"))
+        .finally(() => setLoadingResources(false));
     }
   }, [token, activeTab]);
 
@@ -87,6 +95,12 @@ export default function CandidateDashboard() {
   const filteredCoding = codingQuestions.filter(
     (q) =>
       q.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filteredResources = resources.filter(
+    (r) =>
+      r.title.toLowerCase().includes(search.toLowerCase()) ||
+      r.description.toLowerCase().includes(search.toLowerCase())
   );
 
   const formatDate = (dateStr: string) => {
@@ -118,6 +132,7 @@ export default function CandidateDashboard() {
               {activeTab === "quizzes" && "Available quizzes for the upskilling series"}
               {activeTab === "coding" && "Practice your programming logic in C++, Java, and C"}
               {activeTab === "history" && "Analyze your past code compile and run submissions"}
+              {activeTab === "resources" && "Download references, guides, and learning resources"}
             </p>
           </div>
 
@@ -165,6 +180,7 @@ export default function CandidateDashboard() {
             { id: "quizzes", label: "Quizzes", icon: BookOpen },
             { id: "coding", label: "Coding Practice", icon: Code },
             { id: "history", label: "Submissions History", icon: History },
+            { id: "resources", label: "Study Resources", icon: FileText },
           ].map((t) => (
             <button
               key={t.id}
@@ -191,7 +207,13 @@ export default function CandidateDashboard() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <Input
               className="pl-10"
-              placeholder={activeTab === "quizzes" ? "Search quizzes..." : "Search coding problems..."}
+              placeholder={
+                activeTab === "quizzes"
+                  ? "Search quizzes..."
+                  : activeTab === "coding"
+                  ? "Search coding problems..."
+                  : "Search resources..."
+              }
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -375,6 +397,53 @@ export default function CandidateDashboard() {
                       </div>
                     </CardContent>
                   )}
+                </Card>
+              ))}
+            </div>
+          )
+        )}
+
+        {activeTab === "resources" && (
+          /* 4. STUDY RESOURCES TAB */
+          loadingResources ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 animate-pulse">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-40" />
+              ))}
+            </div>
+          ) : filteredResources.length === 0 ? (
+            <Card className="border-neutral-850 bg-neutral-950/20">
+              <CardContent className="py-12 text-center text-neutral-500">No resources found.</CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredResources.map((resource) => (
+                <Card key={resource.id} className="flex flex-col justify-between transition-all duration-300 border-neutral-850 bg-neutral-950/20 hover:border-neutral-700 hover:shadow-lg rounded-xl overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <CardTitle className="text-base font-bold text-white truncate max-w-[200px]" title={resource.title}>
+                        {resource.title}
+                      </CardTitle>
+                      <Badge className="bg-violet-500/10 text-violet-400 border border-violet-500/20 text-[10px] font-bold uppercase tracking-wider">
+                        {resource.fileType.toUpperCase()}
+                      </Badge>
+                    </div>
+                    {resource.description && (
+                      <CardDescription className="text-xs text-neutral-450 line-clamp-3 leading-relaxed mt-1">
+                        {resource.description}
+                      </CardDescription>
+                    )}
+                  </CardHeader>
+                  <CardContent className="pt-2 flex items-center justify-between border-t border-neutral-900/60 bg-neutral-950/40 px-6 py-3.5 mt-auto">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                      {(resource.fileSize / 1024 / 1024).toFixed(2)} MB
+                    </span>
+                    <Button size="sm" variant="outline" className="h-8 text-xs font-bold border-neutral-800 text-neutral-350 bg-black/30 hover:bg-neutral-800 hover:text-white" asChild>
+                      <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" download={resource.fileName}>
+                        <Download className="mr-1.5 h-3.5 w-3.5" /> Download
+                      </a>
+                    </Button>
+                  </CardContent>
                 </Card>
               ))}
             </div>

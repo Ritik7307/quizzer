@@ -174,3 +174,15 @@ model CompilerNote {
 
   @@index([userId])
 }
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  fileName    String
+  fileUrl     String
+  fileType    String   // e.g. pdf, image, doc, zip
+  fileSize    Int      // in bytes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

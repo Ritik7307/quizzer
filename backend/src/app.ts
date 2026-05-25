@@ -13,7 +13,9 @@ import notificationRoutes from "./routes/notifications.js";
 import codingRoutes from "./routes/coding.js";
 import feedbackRoutes from "./routes/feedback.js";
 import compilerNotesRoutes from "./routes/compilerNotes.js";
+import resourcesRoutes from "./routes/resources.js";
 import { prisma } from "./lib/prisma.js";
+import path from "path";
 
 const defaultOrigins = [
   "http://localhost:3000",
@@ -53,7 +55,8 @@ export function createApp() {
     })
   );
 
-  app.use(express.json({ limit: "256kb" }));
+  app.use(express.json({ limit: "15mb" }));
+  app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
   const globalLimiter = rateLimit({
     windowMs: 60_000,
@@ -96,6 +99,7 @@ export function createApp() {
   app.use("/api/coding", codingRoutes);
   app.use("/api/feedback", feedbackRoutes);
   app.use("/api/compiler-notes", compilerNotesRoutes);
+  app.use("/api/resources", resourcesRoutes);
 
   return app;
 }

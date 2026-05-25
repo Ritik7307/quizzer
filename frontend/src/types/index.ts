@@ -59,3 +59,15 @@ export interface QuizResult {
   rank: number | null;
   submittedAt: string;
 }
+
+export interface Resource {
+  id: string;
+  title: string;
+  description: string;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -129,6 +129,11 @@ export default function AdminDashboard() {
               </Link>
             </Button>
             <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200">
+              <Link href="/admin/resources">
+                <Brain className="mr-2 h-4 w-4" /> Manage Resources
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200">
               <Link href="/admin/coding/new">
                 <Plus className="mr-2 h-4 w-4" /> New Coding Problem
               </Link>
