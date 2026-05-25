@@ -47,6 +47,8 @@ export default function AdminNewCodingQuestionPage() {
   const [sampleInput, setSampleInput] = useState("");
   const [sampleOutput, setSampleOutput] = useState("");
   const [testCasesJson, setTestCasesJson] = useState(defaultTestCases);
+  const [referenceUrl, setReferenceUrl] = useState("");
+  const [editorial, setEditorial] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -70,6 +72,16 @@ export default function AdminNewCodingQuestionPage() {
       return;
     }
 
+    // Validate URL if present
+    if (referenceUrl.trim()) {
+      try {
+        new URL(referenceUrl.trim());
+      } catch {
+        toast.error("Please enter a valid Reference URL");
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
       await api("/api/coding/admin/questions", {
@@ -83,6 +95,8 @@ export default function AdminNewCodingQuestionPage() {
           sampleOutput: sampleOutput.trim(),
           testCases: testCasesJson.trim(),
           difficulty,
+          referenceUrl: referenceUrl.trim() || null,
+          editorial: editorial.trim() || null,
         }),
         token,
       });
@@ -97,8 +111,8 @@ export default function AdminNewCodingQuestionPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
-      <Card className="border-neutral-800 bg-neutral-950/40 backdrop-blur-sm animate-fade-in">
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12 animate-fade-in">
+      <Card className="border-neutral-800 bg-neutral-950/40 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-600/20 text-violet-400">
@@ -143,6 +157,19 @@ export default function AdminNewCodingQuestionPage() {
               </div>
             </div>
 
+            {/* Reference URL */}
+            <div className="space-y-2">
+              <Label htmlFor="referenceUrl">Reference Question URL (LeetCode / Codeforces) — Optional</Label>
+              <Input
+                id="referenceUrl"
+                type="url"
+                placeholder="e.g. https://leetcode.com/problems/two-sum/ or https://codeforces.com/problemset/problem/..."
+                value={referenceUrl}
+                onChange={(e) => setReferenceUrl(e.target.value)}
+                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+              />
+            </div>
+
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">Problem Statement</Label>
@@ -167,7 +194,7 @@ export default function AdminNewCodingQuestionPage() {
                   rows={3}
                   value={inputFormat}
                   onChange={(e) => setInputFormat(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2"
+                  className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
                 />
               </div>
 
@@ -180,7 +207,7 @@ export default function AdminNewCodingQuestionPage() {
                   rows={3}
                   value={outputFormat}
                   onChange={(e) => setOutputFormat(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2"
+                  className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
                 />
               </div>
             </div>
@@ -195,7 +222,7 @@ export default function AdminNewCodingQuestionPage() {
                   rows={3}
                   value={sampleInput}
                   onChange={(e) => setSampleInput(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2"
+                  className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
                 />
               </div>
 
@@ -208,7 +235,7 @@ export default function AdminNewCodingQuestionPage() {
                   rows={3}
                   value={sampleOutput}
                   onChange={(e) => setSampleOutput(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2"
+                  className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
                 />
               </div>
             </div>
@@ -221,11 +248,24 @@ export default function AdminNewCodingQuestionPage() {
               </div>
               <Textarea
                 id="testCases"
-                rows={8}
+                rows={6}
                 value={testCasesJson}
                 onChange={(e) => setTestCasesJson(e.target.value)}
                 required
-                className="bg-black border-neutral-800 text-neutral-100 font-mono text-xs leading-relaxed focus-visible:ring-2"
+                className="bg-black border-neutral-800 text-neutral-100 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-violet-500"
+              />
+            </div>
+
+            {/* Editorial Solution */}
+            <div className="space-y-2">
+              <Label htmlFor="editorial">Editorial / Solution Explanation (Markdown/Text) — Optional</Label>
+              <Textarea
+                id="editorial"
+                placeholder="Provide a detailed explanation of the solution, algorithm approach, and the solution code..."
+                rows={6}
+                value={editorial}
+                onChange={(e) => setEditorial(e.target.value)}
+                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
               />
             </div>
 
@@ -234,13 +274,13 @@ export default function AdminNewCodingQuestionPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-1/3"
+                className="w-1/3 border-neutral-800 text-neutral-300 hover:bg-neutral-800"
                 onClick={() => router.back()}
                 disabled={submitting}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2">
+              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-750 text-white font-semibold">
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />

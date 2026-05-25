@@ -3,7 +3,7 @@ import { z } from "zod";
 import { Role } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { authenticate, requireRole, type AuthRequest } from "../middleware/auth.js";
-import { evaluateAnswers, computeRanks } from "../utils/scoring.js";
+import { evaluateAnswers } from "../utils/scoring.js";
 import { isQuizActive } from "../utils/quiz.js";
 import {
   formatQuestion,
@@ -164,10 +164,16 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
     },
   });
 
-  await computeRanks(attempt.quizId, prisma);
   cacheDeletePrefix(`leaderboard:${attempt.quizId}`);
 
-  const ranked = await prisma.attempt.findUnique({ where: { id: submitted.id } });
+  const rankCount = await prisma.attempt.count({
+    where: {
+      quizId: attempt.quizId,
+      submittedAt: { not: null },
+      score: { gt: submitted.score }
+    }
+  });
+  const currentRank = rankCount + 1;
 
   const io = req.app.get("io");
   if (io) {
@@ -176,13 +182,13 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
 
   return res.json({
     result: {
-      score: ranked!.score,
-      percentage: ranked!.percentage,
-      correctCount: ranked!.correctCount,
-      wrongCount: ranked!.wrongCount,
-      totalQuestions: ranked!.totalQuestions,
-      rank: ranked!.rank,
-      submittedAt: ranked!.submittedAt,
+      score: submitted.score,
+      percentage: submitted.percentage,
+      correctCount: submitted.correctCount,
+      wrongCount: submitted.wrongCount,
+      totalQuestions: submitted.totalQuestions,
+      rank: currentRank,
+      submittedAt: submitted.submittedAt,
     },
     breakdown: attempt.quiz.questions.map((q) => ({
       questionId: q.id,
@@ -208,12 +214,24 @@ router.get("/my/:quizId", authenticate, async (req: AuthRequest, res) => {
   const quizId = String(req.params.quizId);
   const attempt = await prisma.attempt.findUnique({
     where: { userId_quizId: { userId: req.user!.userId, quizId } },
-    include: { quiz: { include: { questions: { orderBy: { order: "asc" } } } } },
+    include: {
+      quiz: { include: { questions: { orderBy: { order: "asc" } } } },
+      feedback: true,
+    },
   });
   if (!attempt) return res.status(404).json({ error: "No attempt found" });
   if (!attempt.submittedAt) {
     return res.status(400).json({ error: "Quiz not yet submitted" });
   }
+
+  const rankCount = await prisma.attempt.count({
+    where: {
+      quizId,
+      submittedAt: { not: null },
+      score: { gt: attempt.score }
+    }
+  });
+  const rank = rankCount + 1;
 
   const answers = parseAnswers(attempt.answers);
   const breakdown = attempt.quiz.questions.map((q) => {
@@ -230,9 +248,57 @@ router.get("/my/:quizId", authenticate, async (req: AuthRequest, res) => {
 
   const { quiz, ...attemptData } = attempt;
   return res.json({ 
-    attempt: { ...attemptData, quiz: { title: quiz.title } },
+    attempt: { ...attemptData, rank, quiz: { title: quiz.title } },
     breakdown
   });
+});
+
+router.post("/:attemptId/feedback", authenticate, async (req: AuthRequest, res) => {
+  const attemptId = String(req.params.attemptId);
+  const schema = z.object({
+    rating: z.number().int().min(1).max(5),
+    difficulty: z.enum(["Easy", "Medium", "Hard"]),
+    comments: z.string().optional().nullable(),
+  });
+
+  try {
+    const { rating, difficulty, comments } = schema.parse(req.body);
+    const attempt = await prisma.attempt.findUnique({
+      where: { id: attemptId }
+    });
+
+    if (!attempt || attempt.userId !== req.user!.userId) {
+      return res.status(404).json({ error: "Attempt not found" });
+    }
+
+    if (!attempt.submittedAt) {
+      return res.status(400).json({ error: "Quiz must be submitted before providing feedback" });
+    }
+
+    const existingFeedback = await prisma.feedback.findUnique({
+      where: { attemptId }
+    });
+    if (existingFeedback) {
+      return res.status(409).json({ error: "Feedback already submitted for this attempt" });
+    }
+
+    const feedback = await prisma.feedback.create({
+      data: {
+        attemptId,
+        rating,
+        difficulty,
+        comments: comments || null,
+      }
+    });
+
+    return res.status(201).json({ success: true, feedback });
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      return res.status(400).json({ error: e.errors[0]?.message ?? "Invalid feedback data" });
+    }
+    console.error(e);
+    return res.status(500).json({ error: "Failed to submit feedback" });
+  }
 });
 
 export default router;

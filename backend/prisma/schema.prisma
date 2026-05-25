@@ -81,6 +81,7 @@ model Attempt {
   startedAt     DateTime  @default(now())
   submittedAt   DateTime?
   expiresAt     DateTime?
+  feedback      Feedback?
 
   @@unique([userId, quizId])
   @@index([quizId])
@@ -115,6 +116,8 @@ model CodingQuestion {
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
   submissions  CodingSubmission[]
+  referenceUrl String?
+  editorial    String?
 }
 
 model CodingSubmission {
@@ -133,4 +136,14 @@ model CodingSubmission {
 
   @@index([userId])
   @@index([codingQuestionId])
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  attemptId   String   @unique
+  attempt     Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  rating      Int
+  difficulty  String
+  comments    String?
+  createdAt   DateTime @default(now())
 }

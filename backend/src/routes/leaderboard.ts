@@ -23,13 +23,22 @@ router.get("/:quizId", async (req, res) => {
       ...(minScore !== undefined && !Number.isNaN(minScore) ? { score: { gte: minScore } } : {}),
     },
     include: { user: { select: { name: true, email: true } } },
-    orderBy: [{ rank: "asc" }, { score: "desc" }, { submittedAt: "asc" }],
+    orderBy: [{ score: "desc" }, { submittedAt: "asc" }],
     take: 500,
   });
 
-  let filtered = entries;
+  // Calculate ranks dynamically in-memory on the ordered list
+  let currentRank = 1;
+  const entriesWithRank = entries.map((e, i) => {
+    if (i > 0 && e.score < entries[i - 1].score) {
+      currentRank = i + 1;
+    }
+    return { ...e, computedRank: currentRank };
+  });
+
+  let filtered = entriesWithRank;
   if (search) {
-    filtered = entries.filter(
+    filtered = entriesWithRank.filter(
       (e) =>
         e.user.name.toLowerCase().includes(search) ||
         e.user.email.toLowerCase().includes(search)
@@ -40,7 +49,7 @@ router.get("/:quizId", async (req, res) => {
     id: e.id,
     name: e.user.name,
     score: e.score,
-    rank: e.rank,
+    rank: e.computedRank,
     percentage: e.percentage,
     submittedAt: e.submittedAt,
   }));

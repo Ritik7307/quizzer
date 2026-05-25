@@ -24,6 +24,8 @@ const createQuestionSchema = z.object({
     }
   }, "Test cases must be a valid JSON array of { input: string, output: string }"),
   difficulty: z.enum(["Easy", "Medium", "Hard"]).default("Easy"),
+  referenceUrl: z.string().url("Must be a valid URL").or(z.literal("")).nullable().optional(),
+  editorial: z.string().nullable().optional(),
 });
 
 const runCodeSchema = z.object({
@@ -70,27 +72,50 @@ router.get("/questions", authenticate, async (_req, res) => {
 });
 
 // 2. Get specific coding question
-router.get("/questions/:id", authenticate, async (req, res) => {
+router.get("/questions/:id", authenticate, async (req: AuthRequest, res) => {
   try {
+    const questionId = String(req.params.id);
     const question = await prisma.codingQuestion.findUnique({
-      where: { id: String(req.params.id) },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        inputFormat: true,
-        outputFormat: true,
-        sampleInput: true,
-        sampleOutput: true,
-        difficulty: true,
-      },
+      where: { id: questionId },
     });
 
     if (!question) {
       return res.status(404).json({ error: "Coding question not found" });
     }
 
-    return res.json({ question });
+    const isAdmin = req.user!.role === Role.ADMIN;
+    let isEditorialLocked = true;
+
+    if (isAdmin) {
+      isEditorialLocked = false;
+    } else {
+      const solved = await prisma.codingSubmission.findFirst({
+        where: {
+          userId: req.user!.userId,
+          codingQuestionId: questionId,
+          status: "Accepted",
+        },
+      });
+      if (solved) {
+        isEditorialLocked = false;
+      }
+    }
+
+    return res.json({
+      question: {
+        id: question.id,
+        title: question.title,
+        description: question.description,
+        inputFormat: question.inputFormat,
+        outputFormat: question.outputFormat,
+        sampleInput: question.sampleInput,
+        sampleOutput: question.sampleOutput,
+        difficulty: question.difficulty,
+        referenceUrl: question.referenceUrl,
+        editorial: isEditorialLocked ? null : question.editorial,
+        isEditorialLocked,
+      },
+    });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Failed to fetch coding question details" });
@@ -256,6 +281,8 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
         sampleOutput: body.sampleOutput,
         testCases: body.testCases,
         difficulty: body.difficulty,
+        referenceUrl: body.referenceUrl || null,
+        editorial: body.editorial || null,
       },
     });
 

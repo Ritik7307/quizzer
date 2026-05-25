@@ -3,7 +3,7 @@ import type { Request } from "express";
 import { Role } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { authenticate, requireRole } from "../middleware/auth.js";
-import { computeRanks } from "../utils/scoring.js";
+// Removed computeRanks import
 import { cacheDeletePrefix } from "../lib/cache.js";
 
 const router = Router();
@@ -53,6 +53,23 @@ router.get("/quizzes/:quizId/analytics", async (req, res) => {
     include: { user: { select: { id: true, name: true, email: true } } },
   });
 
+  // Calculate ranks dynamically in-memory for completed attempts
+  const completedAttempts = attempts
+    .filter((a) => a.submittedAt !== null)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return new Date(a.submittedAt!).getTime() - new Date(b.submittedAt!).getTime();
+    });
+
+  const rankMap = new Map<string, number>();
+  let currentRank = 1;
+  completedAttempts.forEach((a, i) => {
+    if (i > 0 && a.score < completedAttempts[i - 1].score) {
+      currentRank = i + 1;
+    }
+    rankMap.set(a.id, currentRank);
+  });
+
   const submitted = attempts.filter((a) => a.submittedAt);
   const totalParticipants = attempts.length;
   const completedCount = submitted.length;
@@ -82,7 +99,7 @@ router.get("/quizzes/:quizId/analytics", async (req, res) => {
       submittedAt: a.submittedAt,
       score: a.score,
       percentage: a.percentage,
-      rank: a.rank,
+      rank: a.submittedAt ? (rankMap.get(a.id) ?? null) : null,
       status: a.submittedAt ? "completed" : "in_progress",
     })),
   });
@@ -93,20 +110,26 @@ router.get("/quizzes/:quizId/export", async (req, res) => {
   const attempts = await prisma.attempt.findMany({
     where: { quizId, submittedAt: { not: null } },
     include: { user: { select: { name: true, email: true } } },
-    orderBy: [{ rank: "asc" }, { score: "desc" }],
+    orderBy: [{ score: "desc" }, { submittedAt: "asc" }],
   });
 
+  let currentRank = 1;
   const headers = ["Rank", "Name", "Email", "Score", "Percentage", "Correct", "Wrong", "Submitted At"];
-  const rows = attempts.map((a) => [
-    a.rank ?? "",
-    a.user.name,
-    a.user.email,
-    a.score,
-    a.percentage,
-    a.correctCount,
-    a.wrongCount,
-    a.submittedAt?.toISOString() ?? "",
-  ]);
+  const rows = attempts.map((a, i) => {
+    if (i > 0 && a.score < attempts[i - 1].score) {
+      currentRank = i + 1;
+    }
+    return [
+      currentRank,
+      a.user.name,
+      a.user.email,
+      a.score,
+      a.percentage,
+      a.correctCount,
+      a.wrongCount,
+      a.submittedAt?.toISOString() ?? "",
+    ];
+  });
 
   const csv = [headers, ...rows].map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
 
@@ -146,13 +169,6 @@ router.delete("/quizzes/:quizId/attempts/:attemptId", async (req, res) => {
   }
 
   await prisma.attempt.delete({ where: { id: attemptId } });
-
-  const remainingSubmitted = await prisma.attempt.count({
-    where: { quizId, submittedAt: { not: null } },
-  });
-  if (remainingSubmitted > 0) {
-    await computeRanks(quizId, prisma);
-  }
 
   cacheDeletePrefix(`leaderboard:${quizId}`);
   emitLeaderboardUpdate(req, quizId);
@@ -210,6 +226,26 @@ router.get("/users/export", async (_req, res) => {
   res.setHeader("Content-Type", "text/csv");
   res.setHeader("Content-Disposition", `attachment; filename="registered-users.csv"`);
   return res.send(csv);
+});
+
+router.get("/feedback", async (_req, res) => {
+  try {
+    const feedbacks = await prisma.feedback.findMany({
+      include: {
+        attempt: {
+          include: {
+            user: { select: { name: true, email: true } },
+            quiz: { select: { title: true } }
+          }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+    return res.json({ feedbacks });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to fetch candidate feedbacks" });
+  }
 });
 
 export default router;

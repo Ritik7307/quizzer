@@ -36,25 +36,4 @@ export function evaluateAnswers(
   return { score, percentage, correctCount, wrongCount, totalQuestions };
 }
 
-export async function computeRanks(quizId: string, prisma: PrismaClient) {
-  const submitted = await prisma.attempt.findMany({
-    where: { quizId, submittedAt: { not: null } },
-    orderBy: [{ score: "desc" }, { submittedAt: "asc" }],
-    select: { id: true, score: true },
-  });
 
-  if (submitted.length === 0) return;
-
-  let rank = 1;
-  const updates = submitted.map((row, i) => {
-    if (i > 0 && row.score < submitted[i - 1].score) {
-      rank = i + 1;
-    }
-    return prisma.attempt.update({
-      where: { id: row.id },
-      data: { rank },
-    });
-  });
-
-  await prisma.$transaction(updates);
-}
