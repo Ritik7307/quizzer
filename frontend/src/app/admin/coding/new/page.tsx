@@ -51,27 +51,46 @@ export default function AdminNewCodingQuestionPage() {
   const [testCasesJson, setTestCasesJson] = useState(defaultTestCases);
   const [referenceUrl, setReferenceUrl] = useState("");
   const [editorial, setEditorial] = useState("");
+  const [isExternalOnly, setIsExternalOnly] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!title.trim() || !description.trim()) {
-      toast.error("Title and description are required");
+    if (!title.trim()) {
+      toast.error("Title is required");
       return;
     }
 
-    // Validate test cases JSON structure
-    try {
-      const parsed = JSON.parse(testCasesJson);
-      if (!Array.isArray(parsed)) {
-        throw new Error("Test cases must be a JSON array");
+    let finalDescription = description.trim();
+    let finalTestCases = testCasesJson.trim();
+
+    if (isExternalOnly) {
+      if (!referenceUrl.trim()) {
+        toast.error("Reference URL is required for external-only questions");
+        return;
       }
-      if (!parsed.every((tc) => typeof tc.input === "string" && typeof tc.output === "string")) {
-        throw new Error("Each test case must have an 'input' string and an 'output' string");
+      if (!finalDescription) {
+        finalDescription = "Solve this question on the external platform using the link provided.";
       }
-    } catch (err: any) {
-      toast.error("Invalid Test Cases format: " + err.message);
-      return;
+      finalTestCases = "[]";
+    } else {
+      if (!finalDescription) {
+        toast.error("Description is required");
+        return;
+      }
+      // Validate test cases JSON structure
+      try {
+        const parsed = JSON.parse(testCasesJson);
+        if (!Array.isArray(parsed)) {
+          throw new Error("Test cases must be a JSON array");
+        }
+        if (!parsed.every((tc) => typeof tc.input === "string" && typeof tc.output === "string")) {
+          throw new Error("Each test case must have an 'input' string and an 'output' string");
+        }
+      } catch (err: any) {
+        toast.error("Invalid Test Cases format: " + err.message);
+        return;
+      }
     }
 
     // Validate URL if present
@@ -90,17 +109,18 @@ export default function AdminNewCodingQuestionPage() {
         method: "POST",
         body: JSON.stringify({
           title: title.trim(),
-          description: description.trim(),
-          inputFormat: inputFormat.trim(),
-          outputFormat: outputFormat.trim(),
-          constraints: constraints.trim(),
-          sampleInput: sampleInput.trim(),
-          sampleOutput: sampleOutput.trim(),
-          testCases: testCasesJson.trim(),
+          description: finalDescription,
+          inputFormat: isExternalOnly ? "" : inputFormat.trim(),
+          outputFormat: isExternalOnly ? "" : outputFormat.trim(),
+          constraints: isExternalOnly ? "" : constraints.trim(),
+          sampleInput: isExternalOnly ? "" : sampleInput.trim(),
+          sampleOutput: isExternalOnly ? "" : sampleOutput.trim(),
+          testCases: finalTestCases,
           difficulty,
           topic,
           referenceUrl: referenceUrl.trim() || null,
           editorial: editorial.trim() || null,
+          isExternalOnly,
         }),
         token,
       });
@@ -184,15 +204,45 @@ export default function AdminNewCodingQuestionPage() {
               </div>
             </div>
 
+            {/* External-Only Toggle */}
+            <div className="flex items-center space-x-3 rounded-lg border border-neutral-800 bg-neutral-950/60 p-4">
+              <input
+                id="isExternalOnly"
+                type="checkbox"
+                checked={isExternalOnly}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setIsExternalOnly(checked);
+                  if (checked) {
+                    if (!description.trim()) {
+                      setDescription("Solve this question on the external platform using the link provided.");
+                    }
+                  }
+                }}
+                className="h-4 w-4 rounded border-neutral-800 bg-neutral-900 text-violet-600 focus:ring-violet-500 focus:ring-offset-black"
+              />
+              <div className="space-y-0.5">
+                <Label htmlFor="isExternalOnly" className="text-sm font-semibold text-neutral-200 cursor-pointer">
+                  External-Only Problem (Solved on LeetCode / Codeforces)
+                </Label>
+                <p className="text-[11px] text-neutral-500">
+                  Checking this disables the inline compiler workspace. Candidates will solve the question on the external site, and click "Mark as Solved" on their sheet to claim points and advance their daily active days count.
+                </p>
+              </div>
+            </div>
+
             {/* Reference URL */}
             <div className="space-y-2">
-              <Label htmlFor="referenceUrl">Reference Question URL (LeetCode / Codeforces) — Optional</Label>
+              <Label htmlFor="referenceUrl">
+                Reference Question URL (LeetCode / Codeforces) {isExternalOnly ? "— Required" : "— Optional"}
+              </Label>
               <Input
                 id="referenceUrl"
                 type="url"
-                placeholder="e.g. https://leetcode.com/problems/two-sum/ or https://codeforces.com/problemset/problem/..."
+                placeholder="e.g. https://leetcode.com/problems/two-sum/"
                 value={referenceUrl}
                 onChange={(e) => setReferenceUrl(e.target.value)}
+                required={isExternalOnly}
                 className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
               />
             </div>
@@ -202,8 +252,8 @@ export default function AdminNewCodingQuestionPage() {
               <Label htmlFor="description">Problem Statement</Label>
               <Textarea
                 id="description"
-                placeholder="Describe the problem, requirements, logic, and output constraints..."
-                rows={6}
+                placeholder={isExternalOnly ? "e.g. Solve the Two Sum problem on LeetCode..." : "Describe the problem, requirements, logic, and output constraints..."}
+                rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
@@ -211,90 +261,94 @@ export default function AdminNewCodingQuestionPage() {
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              {/* Input Format */}
-              <div className="space-y-2">
-                <Label htmlFor="inputFormat">Input Format</Label>
-                <Textarea
-                  id="inputFormat"
-                  placeholder="e.g. Two space-separated integers, a and b."
-                  rows={3}
-                  value={inputFormat}
-                  onChange={(e) => setInputFormat(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-                />
-              </div>
+            {!isExternalOnly && (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {/* Input Format */}
+                  <div className="space-y-2">
+                    <Label htmlFor="inputFormat">Input Format</Label>
+                    <Textarea
+                      id="inputFormat"
+                      placeholder="e.g. Two space-separated integers, a and b."
+                      rows={3}
+                      value={inputFormat}
+                      onChange={(e) => setInputFormat(e.target.value)}
+                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                    />
+                  </div>
 
-              {/* Output Format */}
-              <div className="space-y-2">
-                <Label htmlFor="outputFormat">Output Format</Label>
-                <Textarea
-                  id="outputFormat"
-                  placeholder="e.g. Print a single integer representing the sum."
-                  rows={3}
-                  value={outputFormat}
-                  onChange={(e) => setOutputFormat(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-                />
-              </div>
-            </div>
+                  {/* Output Format */}
+                  <div className="space-y-2">
+                    <Label htmlFor="outputFormat">Output Format</Label>
+                    <Textarea
+                      id="outputFormat"
+                      placeholder="e.g. Print a single integer representing the sum."
+                      rows={3}
+                      value={outputFormat}
+                      onChange={(e) => setOutputFormat(e.target.value)}
+                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                    />
+                  </div>
+                </div>
 
-            {/* Constraints */}
-            <div className="space-y-2">
-              <Label htmlFor="constraints">Constraints</Label>
-              <Textarea
-                id="constraints"
-                placeholder="e.g. 1 <= N <= 10^5, Time Limit: 1.0s, Memory Limit: 256MB"
-                rows={3}
-                value={constraints}
-                onChange={(e) => setConstraints(e.target.value)}
-                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-              />
-            </div>
+                {/* Constraints */}
+                <div className="space-y-2">
+                  <Label htmlFor="constraints">Constraints</Label>
+                  <Textarea
+                    id="constraints"
+                    placeholder="e.g. 1 <= N <= 10^5, Time Limit: 1.0s, Memory Limit: 256MB"
+                    rows={3}
+                    value={constraints}
+                    onChange={(e) => setConstraints(e.target.value)}
+                    className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                  />
+                </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              {/* Sample Input */}
-              <div className="space-y-2">
-                <Label htmlFor="sampleInput">Sample Input</Label>
-                <Textarea
-                  id="sampleInput"
-                  placeholder="5 7"
-                  rows={3}
-                  value={sampleInput}
-                  onChange={(e) => setSampleInput(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
-                />
-              </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {/* Sample Input */}
+                  <div className="space-y-2">
+                    <Label htmlFor="sampleInput">Sample Input</Label>
+                    <Textarea
+                      id="sampleInput"
+                      placeholder="5 7"
+                      rows={3}
+                      value={sampleInput}
+                      onChange={(e) => setSampleInput(e.target.value)}
+                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
+                    />
+                  </div>
 
-              {/* Sample Output */}
-              <div className="space-y-2">
-                <Label htmlFor="sampleOutput">Sample Output</Label>
-                <Textarea
-                  id="sampleOutput"
-                  placeholder="12"
-                  rows={3}
-                  value={sampleOutput}
-                  onChange={(e) => setSampleOutput(e.target.value)}
-                  className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
-                />
-              </div>
-            </div>
+                  {/* Sample Output */}
+                  <div className="space-y-2">
+                    <Label htmlFor="sampleOutput">Sample Output</Label>
+                    <Textarea
+                      id="sampleOutput"
+                      placeholder="12"
+                      rows={3}
+                      value={sampleOutput}
+                      onChange={(e) => setSampleOutput(e.target.value)}
+                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
+                    />
+                  </div>
+                </div>
 
-            {/* Test Cases */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="testCases">Test Cases (JSON Format)</Label>
-                <span className="text-[10px] text-neutral-500 font-mono">[{`{input: string, output: string}`}...]</span>
-              </div>
-              <Textarea
-                id="testCases"
-                rows={6}
-                value={testCasesJson}
-                onChange={(e) => setTestCasesJson(e.target.value)}
-                required
-                className="bg-black border-neutral-800 text-neutral-100 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-violet-500"
-              />
-            </div>
+                {/* Test Cases */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="testCases">Test Cases (JSON Format)</Label>
+                    <span className="text-[10px] text-neutral-500 font-mono">[{`{input: string, output: string}`}...]</span>
+                  </div>
+                  <Textarea
+                    id="testCases"
+                    rows={6}
+                    value={testCasesJson}
+                    onChange={(e) => setTestCasesJson(e.target.value)}
+                    required
+                    className="bg-black border-neutral-800 text-neutral-100 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-violet-500"
+                  />
+                </div>
+              </>
+            )}
 
             {/* Editorial Solution */}
             <div className="space-y-2">

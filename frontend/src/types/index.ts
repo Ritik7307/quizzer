@@ -6,6 +6,8 @@ export interface User {
   role: "ADMIN" | "CANDIDATE";
   leetcodeHandle?: string | null;
   codeforcesHandle?: string | null;
+  points?: number;
+  streak?: number;
   createdAt?: string;
 }
 

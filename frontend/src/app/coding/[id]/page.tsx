@@ -37,7 +37,7 @@ const templates: Record<string, string> = {
 export default function CodingWorkspacePage() {
   const { id } = useParams();
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, refresh: refreshUser } = useAuth();
 
   const [question, setQuestion] = useState<QuestionDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -140,9 +140,17 @@ export default function CodingWorkspacePage() {
       setRunStatus(res.status);
       if (res.status === "Accepted") {
         setTerminalOutput(`🎉 All Test Cases Passed (${res.passedCount}/${res.totalCount})!`);
-        toast.success("Accepted! Perfect score!");
+        const ptsAwarded = (res as any).pointsAwarded ?? 0;
+        const currentStr = (res as any).currentStreak ?? 0;
+        if (ptsAwarded > 0) {
+          toast.success(`Accepted! Perfect score! +${ptsAwarded} points earned. Active Days: ${currentStr}`);
+        } else {
+          toast.success(`Accepted! Perfect score! Active Days: ${currentStr}`);
+        }
         // Refresh question data to unlock the Editorial Solution
         loadQuestion(false);
+        // Refresh user context to update header stats
+        refreshUser().catch((e) => console.error("Failed to refresh user stats:", e));
       } else {
         setTerminalOutput(`❌ Failed: ${res.status} (${res.passedCount}/${res.totalCount} test cases passed)`);
         setErrorDetails(res.errorDetails || "Review your logic and edge cases.");

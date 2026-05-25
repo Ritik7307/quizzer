@@ -9,6 +9,8 @@ export interface StoredUser {
   role: "ADMIN" | "CANDIDATE";
   leetcodeHandle?: string | null;
   codeforcesHandle?: string | null;
+  points?: number;
+  streak?: number;
 }
 
 export function getToken(): string | null {

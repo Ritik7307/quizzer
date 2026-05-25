@@ -31,6 +31,9 @@ model User {
   compilerNotes      CompilerNote[]
   leetcodeHandle     String?
   codeforcesHandle   String?
+  points             Int       @default(0)
+  streak             Int       @default(0)
+  lastSolvedDate     DateTime?
 
   @@index([role])
 }
@@ -124,6 +127,7 @@ model CodingQuestion {
   submissions  CodingSubmission[]
   referenceUrl String?
   editorial    String?
+  isExternalOnly Boolean @default(false)
 }
 
 model CodingSubmission {

@@ -17,7 +17,7 @@ const createQuestionSchema = z.object({
   topic: z.string().default("General"),
   sampleInput: z.string().default(""),
   sampleOutput: z.string().default(""),
-  testCases: z.string().refine((val) => {
+  testCases: z.string().default("[]").refine((val) => {
     try {
       const parsed = JSON.parse(val);
       return Array.isArray(parsed) && parsed.every((tc) => typeof tc.input === "string" && typeof tc.output === "string");
@@ -28,6 +28,7 @@ const createQuestionSchema = z.object({
   difficulty: z.enum(["Easy", "Medium", "Hard"]).default("Easy"),
   referenceUrl: z.string().url("Must be a valid URL").or(z.literal("")).nullable().optional(),
   editorial: z.string().nullable().optional(),
+  isExternalOnly: z.boolean().default(false),
 });
 
 const runCodeSchema = z.object({
@@ -64,6 +65,7 @@ router.get("/questions", authenticate, async (req: AuthRequest, res) => {
         referenceUrl: true,
         sampleInput: true,
         sampleOutput: true,
+        isExternalOnly: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
@@ -136,6 +138,7 @@ router.get("/questions/:id", authenticate, async (req: AuthRequest, res) => {
         referenceUrl: question.referenceUrl,
         editorial: isEditorialLocked ? null : question.editorial,
         isEditorialLocked,
+        isExternalOnly: question.isExternalOnly,
       },
     });
   } catch (e) {
@@ -239,6 +242,61 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
       }
     }
 
+    let pointsToAward = 0;
+    let newStreak = 0;
+
+    if (finalStatus === "Accepted") {
+      const alreadySolved = await prisma.codingSubmission.findFirst({
+        where: {
+          userId: req.user!.userId,
+          codingQuestionId: question.id,
+          status: "Accepted",
+        },
+      });
+
+      if (!alreadySolved) {
+        if (question.difficulty === "Easy") pointsToAward = 10;
+        else if (question.difficulty === "Medium") pointsToAward = 20;
+        else if (question.difficulty === "Hard") pointsToAward = 30;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: req.user!.userId },
+      });
+
+      if (user) {
+        newStreak = user.streak;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+
+        if (!user.lastSolvedDate) {
+          newStreak = 1;
+        } else {
+          const lastSolved = new Date(user.lastSolvedDate);
+          lastSolved.setHours(0, 0, 0, 0);
+
+          if (lastSolved.getTime() === yesterday.getTime()) {
+            newStreak = user.streak + 1;
+          } else if (lastSolved.getTime() < yesterday.getTime()) {
+            newStreak = 1;
+          }
+        }
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            points: { increment: pointsToAward },
+            streak: newStreak,
+            lastSolvedDate: new Date(),
+          },
+        });
+      }
+    }
+
     // Save submission record
     const submission = await prisma.codingSubmission.create({
       data: {
@@ -259,6 +317,8 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
       passedCount,
       totalCount: testCases.length,
       errorDetails: firstErrorDetails,
+      pointsAwarded: pointsToAward,
+      currentStreak: newStreak || undefined,
     });
   } catch (e) {
     if (e instanceof z.ZodError) {
@@ -266,6 +326,104 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
     }
     console.error(e);
     return res.status(500).json({ error: "Submission process failed" });
+  }
+});
+
+// 4b. Mark an external coding question as solved manually (for external-only questions)
+router.post("/questions/:id/mark-solved", authenticate, async (req: AuthRequest, res) => {
+  try {
+    const id = String(req.params.id);
+
+    const question = await prisma.codingQuestion.findUnique({
+      where: { id },
+    });
+
+    if (!question) {
+      return res.status(404).json({ error: "Coding question not found" });
+    }
+
+    if (!question.isExternalOnly && !question.referenceUrl) {
+      return res.status(400).json({ error: "Only questions with external references can be marked as solved" });
+    }
+
+    // Check if user already solved it
+    const alreadySolved = await prisma.codingSubmission.findFirst({
+      where: {
+        userId: req.user!.userId,
+        codingQuestionId: question.id,
+        status: "Accepted",
+      },
+    });
+
+    let pointsToAward = 0;
+    let newStreak = 0;
+
+    if (!alreadySolved) {
+      if (question.difficulty === "Easy") pointsToAward = 10;
+      else if (question.difficulty === "Medium") pointsToAward = 20;
+      else if (question.difficulty === "Hard") pointsToAward = 30;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.userId },
+    });
+
+    if (user) {
+      newStreak = user.streak;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(0, 0, 0, 0);
+
+      if (!user.lastSolvedDate) {
+        newStreak = 1;
+      } else {
+        const lastSolved = new Date(user.lastSolvedDate);
+        lastSolved.setHours(0, 0, 0, 0);
+
+        if (lastSolved.getTime() === yesterday.getTime()) {
+          newStreak = user.streak + 1;
+        } else if (lastSolved.getTime() < yesterday.getTime()) {
+          newStreak = 1;
+        }
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          points: { increment: pointsToAward },
+          streak: newStreak,
+          lastSolvedDate: new Date(),
+        },
+      });
+    }
+
+    // Create a dummy submission record
+    const submission = await prisma.codingSubmission.create({
+      data: {
+        userId: req.user!.userId,
+        codingQuestionId: question.id,
+        code: "// Solved externally on LeetCode/Codeforces",
+        language: "external",
+        status: "Accepted",
+        passedCount: 1,
+        totalCount: 1,
+        errorDetails: null,
+      },
+    });
+
+    return res.json({
+      success: true,
+      submissionId: submission.id,
+      status: "Accepted",
+      pointsAwarded: pointsToAward,
+      currentStreak: newStreak,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to mark question as solved" });
   }
 });
 
@@ -307,6 +465,7 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
         difficulty: body.difficulty,
         referenceUrl: body.referenceUrl || null,
         editorial: body.editorial || null,
+        isExternalOnly: body.isExternalOnly,
       },
     });
 

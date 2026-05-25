@@ -45,7 +45,7 @@ router.post("/register", async (req, res) => {
         recoveryQuestion: body.recoveryQuestion,
         recoveryAnswerHash,
       },
-      select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
+      select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, points: true, streak: true, lastSolvedDate: true, createdAt: true },
     });
 
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
@@ -80,7 +80,7 @@ router.post("/login", async (req, res) => {
       const updated = await prisma.user.update({
         where: { id: user.id },
         data: { role: Role.ADMIN },
-        select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
+        select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, points: true, streak: true, lastSolvedDate: true, createdAt: true },
       });
       const token = signToken({ userId: updated.id, email: updated.email, role: updated.role });
       return res.json({ user: updated, token });
@@ -94,6 +94,9 @@ router.post("/login", async (req, res) => {
       role: user.role,
       leetcodeHandle: user.leetcodeHandle,
       codeforcesHandle: user.codeforcesHandle,
+      points: user.points,
+      streak: user.streak,
+      lastSolvedDate: user.lastSolvedDate,
       createdAt: user.createdAt,
     };
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
@@ -111,7 +114,7 @@ router.post("/login", async (req, res) => {
 router.get("/me", authenticate, async (req: AuthRequest, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user!.userId },
-    select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
+    select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, points: true, streak: true, lastSolvedDate: true, createdAt: true },
   });
   if (!user) return res.status(404).json({ error: "User not found" });
   return res.json({ user });
@@ -135,7 +138,7 @@ router.patch("/me", authenticate, async (req: AuthRequest, res) => {
         ...(body.leetcodeHandle !== undefined ? { leetcodeHandle: body.leetcodeHandle || null } : {}),
         ...(body.codeforcesHandle !== undefined ? { codeforcesHandle: body.codeforcesHandle || null } : {}),
       },
-      select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, createdAt: true },
+      select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, points: true, streak: true, lastSolvedDate: true, createdAt: true },
     });
     return res.json({ user });
   } catch (e) {

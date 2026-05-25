@@ -2,7 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BarChart3, FileDown, Plus, Users, Bell, Star, MessageSquare, Award } from "lucide-react";
+import {
+  BarChart3,
+  FileDown,
+  Plus,
+  Users,
+  Bell,
+  Star,
+  MessageSquare,
+  Award,
+  Brain,
+  ClipboardList,
+  ChevronRight,
+  TrendingUp,
+} from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Badge } from "@/components/ui/badge";
@@ -101,116 +114,167 @@ export default function AdminDashboard() {
 
   return (
     <ProtectedRoute role="ADMIN">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 space-y-8 animate-fade-in">
         
-        {/* Title and Controls Header */}
-        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-900 pb-5">
-          <div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">Admin Control Center</h1>
-            <p className="text-sm text-neutral-400 sm:text-base">Manage quizzes, coding problems, notifications, and candidate reviews.</p>
-          </div>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-300 hover:bg-neutral-800">
-              <Link href="/admin/notifications">
-                <Bell className="mr-2 h-4 w-4" /> Send Notification
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-300 hover:bg-neutral-800">
-              <Link href="/admin/coding/new">
-                <Plus className="mr-2 h-4 w-4" /> New Coding Problem
-              </Link>
-            </Button>
-            <Button asChild className="w-full sm:w-auto bg-violet-600 hover:bg-violet-750 text-white font-semibold">
-              <Link href="/admin/quizzes/new">
-                <Plus className="mr-2 h-4 w-4" /> New Quiz
-              </Link>
-            </Button>
+        {/* Title and Controls Header Section */}
+        <div className="relative overflow-hidden rounded-2xl border border-neutral-850 bg-gradient-to-r from-violet-950/15 via-neutral-950/40 to-transparent p-6 sm:p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+          <div className="absolute right-0 top-0 -mr-16 -mt-16 h-48 w-48 rounded-full bg-violet-600/10 blur-3xl" />
+          <div className="absolute left-1/3 bottom-0 -mb-20 h-32 w-32 rounded-full bg-indigo-650/5 blur-3xl" />
+          
+          <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-extrabold text-white tracking-tight sm:text-3xl flex items-center gap-3">
+                <Brain className="h-8 w-8 text-violet-400 animate-pulse" /> Admin Control Center
+              </h1>
+              <p className="text-neutral-400 text-sm max-w-2xl leading-relaxed">
+                Oversee quiz structures, design coding questions, schedule real-time candidate notifications, and inspect candidate feedback reports.
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap gap-2.5 shrink-0">
+              <Button asChild variant="outline" className="border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200 uppercase tracking-wider text-[10px] font-extrabold px-4 h-10">
+                <Link href="/admin/notifications">
+                  <Bell className="mr-2 h-4 w-4 text-violet-400" /> Send Alert
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200 uppercase tracking-wider text-[10px] font-extrabold px-4 h-10">
+                <Link href="/admin/coding/new">
+                  <Plus className="mr-2 h-4 w-4 text-violet-400" /> New Code Q
+                </Link>
+              </Button>
+              <Button asChild className="bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-700 hover:to-indigo-750 text-white font-extrabold shadow-[0_0_15px_rgba(139,92,246,0.25)] hover:shadow-[0_0_20px_rgba(139,92,246,0.45)] transition-all duration-300 uppercase tracking-wider text-[10px] px-5 h-10">
+                <Link href="/admin/quizzes/new">
+                  <Plus className="mr-2 h-4 w-4" /> New Quiz
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Tab Navigation buttons */}
-        <div className="flex border-b border-neutral-900 mb-6 gap-6">
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={cn(
-              "text-sm font-bold uppercase tracking-wider pb-2 outline-none border-b-2 transition-all select-none",
-              activeTab === "overview"
-                ? "text-violet-400 border-violet-500"
-                : "text-neutral-500 border-transparent hover:text-neutral-300"
-            )}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setActiveTab("feedback")}
-            className={cn(
-              "text-sm font-bold uppercase tracking-wider pb-2 outline-none border-b-2 transition-all select-none flex items-center gap-1.5",
-              activeTab === "feedback"
-                ? "text-violet-400 border-violet-500"
-                : "text-neutral-500 border-transparent hover:text-neutral-300"
-            )}
-          >
-            Candidate Reviews
-          </button>
+        {/* Tab Selection */}
+        <div className="flex gap-2 border-b border-neutral-900 pb-px">
+          {[
+            { id: "overview", label: "System Overview", icon: BarChart3 },
+            { id: "feedback", label: "Candidate Reviews", icon: MessageSquare },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id as any)}
+              className={cn(
+                "flex items-center gap-2.5 border-b-2 px-5 py-3.5 text-xs sm:text-sm font-extrabold uppercase tracking-wider transition-all select-none focus:outline-none",
+                activeTab === t.id
+                  ? "border-violet-500 text-violet-400 bg-violet-950/5"
+                  : "border-transparent text-neutral-500 hover:text-neutral-300 hover:bg-neutral-950/10"
+              )}
+            >
+              <t.icon className={cn("h-4 w-4 transition-colors", activeTab === t.id ? "text-violet-400" : "text-neutral-500")} />
+              {t.label}
+            </button>
+          ))}
         </div>
 
         {loading ? (
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-28" />
+              <Skeleton key={i} className="h-28 rounded-xl border border-neutral-900" />
             ))}
           </div>
         ) : (
           <>
             {activeTab === "overview" ? (
-              <>
-                {/* Stats row */}
-                <div className="mb-8 grid gap-4 sm:grid-cols-3">
+              <div className="space-y-8">
+                
+                {/* Stats Dashboard Grid */}
+                <div className="grid gap-6 sm:grid-cols-3">
                   {[
-                    { label: "Total Quizzes", value: data?.stats.quizCount, icon: BarChart3 },
-                    { label: "Submissions", value: data?.stats.attemptCount, icon: Users },
-                    { label: "Candidates", value: data?.stats.userCount, icon: Users },
+                    {
+                      label: "Total Quizzes",
+                      value: data?.stats.quizCount,
+                      icon: ClipboardList,
+                      desc: "Constructed evaluation models",
+                      color: "text-violet-400 border-violet-500/10 bg-violet-950/10 shadow-[0_0_20px_rgba(139,92,246,0.03)]",
+                    },
+                    {
+                      label: "Total Submissions",
+                      value: data?.stats.attemptCount,
+                      icon: Award,
+                      desc: "Completed test runs & quizzes",
+                      color: "text-amber-400 border-amber-500/10 bg-amber-950/10 shadow-[0_0_20px_rgba(245,158,11,0.03)]",
+                    },
+                    {
+                      label: "Active Candidates",
+                      value: data?.stats.userCount,
+                      icon: Users,
+                      desc: "Registered profile candidates",
+                      color: "text-emerald-400 border-emerald-500/10 bg-emerald-950/10 shadow-[0_0_20px_rgba(16,185,129,0.03)]",
+                    },
                   ].map((s) => (
-                    <Card key={s.label} className="border-neutral-800 bg-neutral-950/40">
+                    <Card
+                      key={s.label}
+                      className={cn(
+                        "border bg-neutral-950/50 backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-[1.01] hover:border-neutral-800",
+                        s.color.split(" ").slice(1).join(" ")
+                      )}
+                    >
                       <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-neutral-550">{s.label}</CardTitle>
-                        <s.icon className="h-4 w-4 text-violet-500" />
+                        <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">
+                          {s.label}
+                        </CardTitle>
+                        <s.icon className={cn("h-4.5 w-4.5", s.color.split(" ")[0])} />
                       </CardHeader>
-                      <CardContent>
-                        <p className="text-3xl font-bold">{s.value}</p>
+                      <CardContent className="space-y-1">
+                        <p className="text-3xl font-extrabold text-white tracking-tight">{s.value}</p>
+                        <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{s.desc}</p>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
 
-                {/* Quizzes & Recent Submissions Cards */}
+                {/* Quizzes & Recent Submissions Section */}
                 <div className="grid gap-8 lg:grid-cols-2">
-                  <Card className="border-neutral-800 bg-neutral-950/40">
-                    <CardHeader>
-                      <CardTitle>Your Quizzes</CardTitle>
+                  
+                  {/* Quizzes list */}
+                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl">
+                    <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
+                      <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        <ClipboardList className="h-5 w-5 text-violet-400" /> Managed Quizzes
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                      {quizzes.map((q) => (
-                        <div
-                          key={q.id}
-                          className="flex flex-col gap-3 rounded-xl border border-neutral-850 p-4 sm:flex-row sm:items-center sm:justify-between bg-neutral-900/10"
-                        >
-                          <div>
-                            <p className="font-medium text-white">{q.title}</p>
-                            <p className="text-xs text-neutral-500">
-                              {q._count?.questions ?? 0} questions · {q.duration} min
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={q.published ? "success" : "warning"}>
-                              {q.published ? "Published" : "Draft"}
-                            </Badge>
-                            <Button variant="outline" size="sm" asChild className="border-neutral-750 text-neutral-350 hover:bg-neutral-800">
-                              <Link href={`/admin/quizzes/${q.id}`}>Manage</Link>
-                            </Button>
-                            <Button variant="ghost" size="sm" asChild className="text-neutral-400 hover:text-neutral-200">
-                              <a
-                                href={exportCsvUrl(q.id)}
+                    <CardContent className="space-y-4">
+                      {quizzes.length === 0 ? (
+                        <p className="text-xs text-neutral-500 italic py-6 text-center">No quizzes configured yet.</p>
+                      ) : (
+                        quizzes.map((q) => (
+                          <div
+                            key={q.id}
+                            className="flex flex-col gap-4 rounded-xl border border-neutral-900 p-4 sm:flex-row sm:items-center sm:justify-between bg-neutral-950/20 hover:bg-neutral-900/30 hover:border-neutral-800 transition-all duration-200 shadow-sm"
+                          >
+                            <div className="space-y-1">
+                              <p className="font-extrabold text-sm text-neutral-200 tracking-tight">{q.title}</p>
+                              <p className="text-xs text-neutral-500">
+                                {q._count?.questions ?? 0} questions · {q.duration} min
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2.5 justify-between sm:justify-end">
+                              <Badge
+                                variant={q.published ? "success" : "warning"}
+                                className="text-[9px] uppercase font-extrabold tracking-wider py-0.5 px-2"
+                              >
+                                {q.published ? "Published" : "Draft"}
+                              </Badge>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                asChild
+                                className="h-8 border-neutral-800 text-[10px] font-extrabold uppercase text-neutral-350 bg-black/40 hover:bg-neutral-800 hover:text-white"
+                              >
+                                <Link href={`/admin/quizzes/${q.id}`}>Manage</Link>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-neutral-500 hover:text-white transition-colors"
+                                title="Export results to CSV"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   fetch(exportCsvUrl(q.id), {
@@ -228,75 +292,96 @@ export default function AdminDashboard() {
                                 }}
                               >
                                 <FileDown className="h-4 w-4" />
-                              </a>
-                            </Button>
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </CardContent>
                   </Card>
 
-                  <Card className="border-neutral-800 bg-neutral-950/40">
-                    <CardHeader>
-                      <CardTitle>Recent Submissions</CardTitle>
-                      <CardDescription>Latest candidate attempts</CardDescription>
+                  {/* Recent attempts feed */}
+                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl">
+                    <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
+                      <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-violet-400" /> Recent Quiz Activity
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                      {data?.recentAttempts.length === 0 && (
-                        <p className="text-sm text-neutral-500">No submissions yet.</p>
-                      )}
-                      {data?.recentAttempts.map((a) => (
-                        <div key={a.id} className="flex justify-between text-sm border-b border-neutral-900/60 pb-3 last:border-0 last:pb-0">
-                          <div>
-                            <p className="font-medium text-neutral-200">{a.user.name}</p>
-                            <p className="text-xs text-neutral-500">{a.quiz.title}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold text-violet-500">{a.percentage}%</p>
-                            <p className="text-xs text-neutral-500">{a.score} pts</p>
-                          </div>
+                    <CardContent className="space-y-4">
+                      {data?.recentAttempts.length === 0 ? (
+                        <p className="text-xs text-neutral-500 italic py-6 text-center">No quiz submissions recorded yet.</p>
+                      ) : (
+                        <div className="divide-y divide-neutral-900/60">
+                          {data?.recentAttempts.map((a) => (
+                            <div
+                              key={a.id}
+                              className="flex items-center justify-between text-sm py-3 px-2 rounded-lg hover:bg-neutral-900/10 transition-colors"
+                            >
+                              <div className="space-y-0.5">
+                                <p className="font-extrabold text-neutral-200 text-sm leading-tight flex items-center gap-1.5">
+                                  {a.user.name} <ChevronRight className="h-3 w-3 text-neutral-600" />
+                                </p>
+                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">
+                                  Quiz: {a.quiz.title}
+                                </p>
+                              </div>
+                              
+                              <div className="flex items-center gap-4">
+                                <div className="text-right">
+                                  <p className="font-extrabold text-violet-400 text-sm">{a.percentage}%</p>
+                                  <p className="text-[9px] font-bold text-neutral-550 uppercase tracking-widest">{a.score} pts</p>
+                                </div>
+                                <div className="text-[10px] text-neutral-500 font-semibold bg-neutral-900 border border-neutral-850 px-2 py-0.5 rounded shrink-0">
+                                  {new Date(a.submittedAt).toLocaleDateString([], { month: "short", day: "numeric" })}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </CardContent>
                   </Card>
                 </div>
-              </>
+              </div>
             ) : (
               // Feedback Review tab
-              <div className="space-y-6">
+              <div className="space-y-8">
                 
                 {/* Feedback statistics summary row */}
-                <div className="grid gap-4 sm:grid-cols-4">
-                  <Card className="border-neutral-800 bg-neutral-950/40">
+                <div className="grid gap-6 sm:grid-cols-4">
+                  {/* Rating Card */}
+                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-xs font-semibold text-neutral-550 uppercase tracking-wider">Average Rating</CardTitle>
+                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">Average Rating</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-baseline gap-2">
-                      <p className="text-4xl font-extrabold text-amber-500">{avgRating}</p>
+                    <CardContent className="flex items-baseline gap-2 py-1">
+                      <p className="text-4xl font-extrabold text-amber-500 tracking-tight">{avgRating}</p>
                       <div className="flex items-center text-amber-500">
-                        <Star className="h-5 w-5 fill-amber-500" />
-                        <span className="text-xs text-neutral-455 ml-1">/ 5.0</span>
+                        <Star className="h-4.5 w-4.5 fill-amber-500" />
+                        <span className="text-[10px] text-neutral-500 ml-1 font-bold">/ 5.0</span>
                       </div>
                     </CardContent>
                   </Card>
                   
-                  <Card className="border-neutral-800 bg-neutral-950/40">
+                  {/* Reviews Card */}
+                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-xs font-semibold text-neutral-555 uppercase tracking-wider">Total Reviews</CardTitle>
+                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">Total Reviews</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <p className="text-4xl font-extrabold text-white">{totalReviews}</p>
+                    <CardContent className="py-1">
+                      <p className="text-4xl font-extrabold text-white tracking-tight">{totalReviews}</p>
                     </CardContent>
                   </Card>
 
-                  <Card className="border-neutral-800 bg-neutral-950/40 sm:col-span-2">
+                  {/* Difficulty Distribution Card */}
+                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl sm:col-span-2 hover:border-neutral-800 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-xs font-semibold text-neutral-555 uppercase tracking-wider">Quiz Difficulty Distribution</CardTitle>
+                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">Difficulty Rating Distribution</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-center gap-4 h-10">
-                      <div className="flex-1 flex gap-1 h-3 rounded-full overflow-hidden bg-neutral-900 border border-neutral-850">
+                    <CardContent className="flex items-center gap-4 py-2 mt-auto">
+                      <div className="flex-1 flex gap-1 h-3 rounded-full overflow-hidden bg-neutral-900 border border-neutral-850 p-0.5">
                         <div
-                          className="bg-green-500 h-full transition-all"
+                          className="bg-emerald-500 h-full rounded-l transition-all shadow-[0_0_8px_rgba(16,185,129,0.3)]"
                           style={{
                             width: `${
                               totalReviews > 0 ? (diffCounts.Easy / totalReviews) * 100 : 0
@@ -305,7 +390,7 @@ export default function AdminDashboard() {
                           title={`Easy: ${diffCounts.Easy}`}
                         />
                         <div
-                          className="bg-yellow-500 h-full transition-all"
+                          className="bg-amber-500 h-full transition-all shadow-[0_0_8px_rgba(245,158,11,0.3)]"
                           style={{
                             width: `${
                               totalReviews > 0 ? (diffCounts.Medium / totalReviews) * 100 : 0
@@ -314,7 +399,7 @@ export default function AdminDashboard() {
                           title={`Medium: ${diffCounts.Medium}`}
                         />
                         <div
-                          className="bg-red-500 h-full transition-all"
+                          className="bg-red-500 h-full rounded-r transition-all shadow-[0_0_8px_rgba(239,68,68,0.3)]"
                           style={{
                             width: `${
                               totalReviews > 0 ? (diffCounts.Hard / totalReviews) * 100 : 0
@@ -323,7 +408,7 @@ export default function AdminDashboard() {
                           title={`Hard: ${diffCounts.Hard}`}
                         />
                       </div>
-                      <div className="flex gap-3 text-xs font-semibold text-neutral-400 shrink-0">
+                      <div className="flex gap-3 text-[10px] font-extrabold tracking-wider text-neutral-450 shrink-0">
                         <span className="flex items-center gap-1">🟢 {diffCounts.Easy}</span>
                         <span className="flex items-center gap-1">🟡 {diffCounts.Medium}</span>
                         <span className="flex items-center gap-1">🔴 {diffCounts.Hard}</span>
@@ -332,36 +417,40 @@ export default function AdminDashboard() {
                   </Card>
                 </div>
 
-                {/* Feedbacks list */}
+                {/* Feedbacks Comments Feed */}
                 <div className="space-y-4">
-                  <h2 className="text-xl font-bold text-white tracking-tight">Candidate Comments & Reviews</h2>
+                  <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-neutral-400" /> Candidate Comments & Reviews
+                  </h2>
                   
                   {loadingFeedback ? (
-                    <div className="space-y-3">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       {[1, 2].map((i) => (
-                        <Skeleton key={i} className="h-28 w-full" />
+                        <Skeleton key={i} className="h-32 w-full rounded-xl border border-neutral-900" />
                       ))}
                     </div>
                   ) : feedbacks.length === 0 ? (
-                    <Card className="border-neutral-800 bg-neutral-955/40 text-center py-12">
-                      <CardContent className="space-y-2">
-                        <MessageSquare className="h-8 w-8 text-neutral-600 mx-auto" />
+                    <Card className="border-neutral-850 bg-neutral-950/40 text-center py-16">
+                      <CardContent className="space-y-3">
+                        <MessageSquare className="h-10 w-10 text-neutral-750 mx-auto" />
                         <p className="text-neutral-400 font-semibold">No feedback reviews submitted yet</p>
-                        <p className="text-xs text-neutral-500">Feedback will appear here once candidates complete quizzes or submit navbar reviews.</p>
+                        <p className="text-xs text-neutral-500 max-w-xs mx-auto leading-relaxed">
+                          Reviews will populate here once candidates submit quiz ratings or log suggestions via the navigation feedback forms.
+                        </p>
                       </CardContent>
                     </Card>
                   ) : (
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-6 md:grid-cols-2">
                       {feedbacks.map((f) => {
                         const isQuizFeedback = f.attempt !== null;
 
                         return (
-                          <Card key={f.id} className="border-neutral-800 bg-neutral-950/30 shadow-md">
-                            <CardHeader className="pb-3 border-b border-neutral-900/50">
-                              <div className="flex items-start justify-between">
-                                <div>
-                                  <p className="font-bold text-white text-sm">{f.user.name}</p>
-                                  <p className="text-[10px] text-neutral-500">{f.user.email}</p>
+                          <Card key={f.id} className="border-neutral-850 bg-neutral-950/40 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300 flex flex-col justify-between overflow-hidden">
+                            <CardHeader className="pb-3.5 border-b border-neutral-900 bg-neutral-900/10">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="space-y-0.5">
+                                  <p className="font-extrabold text-neutral-200 text-sm tracking-tight">{f.user.name}</p>
+                                  <p className="text-[10px] text-neutral-500 font-medium">{f.user.email}</p>
                                 </div>
                                 {isQuizFeedback ? (
                                   <Badge
@@ -373,11 +462,11 @@ export default function AdminDashboard() {
                                         : "outline"
                                     }
                                     className={cn(
-                                      "text-[10px] py-0.5 px-2 font-semibold",
-                                      f.difficulty === "Hard" && "border-red-500/30 text-red-300 bg-red-950/20"
+                                      "text-[9px] py-0.5 px-2.5 font-extrabold uppercase tracking-wider",
+                                      f.difficulty === "Hard" && "border-red-500/30 text-red-400 bg-red-950/20"
                                     )}
                                   >
-                                    Difficulty: {f.difficulty}
+                                    Diff: {f.difficulty}
                                   </Badge>
                                 ) : (
                                   <Badge
@@ -389,8 +478,8 @@ export default function AdminDashboard() {
                                         : "default"
                                     }
                                     className={cn(
-                                      "text-[10px] py-0.5 px-2 font-semibold uppercase tracking-wider",
-                                      f.category === "Bug" && "border-red-500/30 text-red-300 bg-red-950/20"
+                                      "text-[9px] py-0.5 px-2.5 font-extrabold uppercase tracking-widest",
+                                      f.category === "Bug" && "border-red-500/30 text-red-450 bg-red-955/20"
                                     )}
                                   >
                                     {f.category === "Bug" ? "🐛 Bug" : f.category === "Suggestion" ? "💡 Suggestion" : "💬 General"}
@@ -398,51 +487,49 @@ export default function AdminDashboard() {
                                 )}
                               </div>
                             </CardHeader>
-                            <CardContent className="pt-4 space-y-3">
-                              {isQuizFeedback ? (
-                                <div className="flex items-center justify-between text-xs text-neutral-450 border-b border-neutral-900/30 pb-2">
-                                  <span className="font-semibold text-neutral-300 truncate max-w-[180px]">
-                                    Quiz: {f.attempt!.quiz.title}
-                                  </span>
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-violet-400">
-                                    <Award className="h-3.5 w-3.5" /> {f.attempt!.percentage}% ({f.attempt!.score} pts)
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="flex items-center justify-between text-xs text-neutral-450 border-b border-neutral-900/30 pb-2">
-                                  <span className="font-semibold text-violet-450">Platform Review</span>
-                                </div>
-                              )}
+                            <CardContent className="pt-4 space-y-4 flex-1 flex flex-col justify-between">
+                              <div className="space-y-3.5">
+                                {isQuizFeedback ? (
+                                  <div className="flex items-center justify-between text-xs text-neutral-500 border-b border-neutral-900/40 pb-2">
+                                    <span className="font-bold text-neutral-350 truncate max-w-[200px]">
+                                      Quiz: {f.attempt!.quiz.title}
+                                    </span>
+                                    <span className="flex items-center gap-1 text-[10px] font-extrabold text-violet-400 uppercase tracking-wider">
+                                      <Award className="h-3.5 w-3.5" /> {f.attempt!.percentage}% ({f.attempt!.score} pts)
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center justify-between text-xs border-b border-neutral-900/40 pb-2">
+                                    <span className="font-extrabold text-violet-450 uppercase tracking-widest text-[9px]">Platform Feedback Review</span>
+                                  </div>
+                                )}
 
-                              {/* Stars rating */}
-                              <div className="flex items-center gap-0.5">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    className={cn(
-                                      "h-4 w-4",
-                                      star <= f.rating
-                                        ? "fill-amber-500 text-amber-500"
-                                        : "text-neutral-800 fill-transparent"
-                                    )}
-                                  />
-                                ))}
+                                {/* Stars Rating */}
+                                <div className="flex items-center gap-0.5">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={cn(
+                                        "h-4 w-4 transition-all duration-200",
+                                        star <= f.rating
+                                          ? "fill-amber-500 text-amber-500 scale-100"
+                                          : "text-neutral-800 fill-transparent scale-90"
+                                      )}
+                                    />
+                                  ))}
+                                </div>
+
+                                {f.comments ? (
+                                  <div className="rounded-lg bg-neutral-900/60 border border-neutral-850 p-3.5 font-sans text-xs text-neutral-350 leading-relaxed italic whitespace-pre-wrap">
+                                    "{f.comments}"
+                                  </div>
+                                ) : (
+                                  <p className="text-[10px] text-neutral-550 italic">No textual comments provided.</p>
+                                )}
                               </div>
 
-                              {f.comments ? (
-                                <div className="rounded-lg bg-neutral-900/40 border border-neutral-850 p-3 font-sans text-xs text-neutral-300 leading-relaxed italic whitespace-pre-wrap">
-                                  "{f.comments}"
-                                </div>
-                              ) : (
-                                <p className="text-[10px] text-neutral-550 italic">No comments left.</p>
-                              )}
-
-                              <div className="text-[9px] text-neutral-500 text-right">
-                                Submitted: {new Date(f.createdAt).toLocaleDateString()} at{" "}
-                                {new Date(f.createdAt).toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
+                              <div className="text-[9px] text-neutral-550 font-bold uppercase tracking-widest text-right">
+                                Submitted: {new Date(f.createdAt).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}
                               </div>
                             </CardContent>
                           </Card>

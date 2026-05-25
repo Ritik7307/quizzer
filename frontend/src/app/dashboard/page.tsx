@@ -111,13 +111,52 @@ export default function CandidateDashboard() {
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
         
         {/* Welcome header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">Welcome, {user?.name}</h1>
-          <p className="mt-1 text-sm text-neutral-400 sm:text-base">
-            {activeTab === "quizzes" && "Available quizzes for the upskilling series"}
-            {activeTab === "coding" && "Practice your programming logic in C++, Java, and C"}
-            {activeTab === "history" && "Analyze your past code compile and run submissions"}
-          </p>
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-neutral-900 pb-5">
+          <div>
+            <h1 className="text-2xl font-bold text-white sm:text-3xl">Welcome, {user?.name}</h1>
+            <p className="mt-1 text-sm text-neutral-450 sm:text-base">
+              {activeTab === "quizzes" && "Available quizzes for the upskilling series"}
+              {activeTab === "coding" && "Practice your programming logic in C++, Java, and C"}
+              {activeTab === "history" && "Analyze your past code compile and run submissions"}
+            </p>
+          </div>
+
+          {/* Gamification Stats */}
+          {user && (
+            <div className="flex items-center gap-3 shrink-0">
+              {/* Active Days (Streak) */}
+              <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/25 bg-emerald-950/15 px-3.5 py-1.5 shadow-[0_0_15px_rgba(16,185,129,0.06)]">
+                <svg
+                  className="h-4.5 w-4.5 text-emerald-400 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                  <path d="M8 14l2 2 4-4" />
+                </svg>
+                <div>
+                  <p className="text-sm font-extrabold text-emerald-400 leading-none">{user.streak ?? 0}</p>
+                  <p className="text-[8px] font-extrabold text-emerald-550 uppercase tracking-widest mt-1 leading-none">Active Days</p>
+                </div>
+              </div>
+
+              {/* Points */}
+              <div className="flex items-center gap-2 rounded-xl border border-violet-500/20 bg-violet-950/20 px-3.5 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.08)]">
+                <span className="text-lg">✨</span>
+                <div>
+                  <p className="text-sm font-extrabold text-violet-400 leading-none">{user.points ?? 0}</p>
+                  <p className="text-[8px] font-extrabold text-violet-500 uppercase tracking-widest mt-1 leading-none">Total Points</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tab Selection */}
