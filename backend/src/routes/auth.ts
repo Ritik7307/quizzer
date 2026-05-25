@@ -6,6 +6,7 @@ import { signToken } from "../utils/jwt.js";
 import { isAdminEmail } from "../utils/admin.js";
 import { authenticate, type AuthRequest } from "../middleware/auth.js";
 import { Role } from "@prisma/client";
+import { syncUserStats } from "../utils/stats.js";
 
 const router = Router();
 
@@ -112,6 +113,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/me", authenticate, async (req: AuthRequest, res) => {
+  await syncUserStats(req.user!.userId);
   const user = await prisma.user.findUnique({
     where: { id: req.user!.userId },
     select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, points: true, streak: true, lastSolvedDate: true, createdAt: true },

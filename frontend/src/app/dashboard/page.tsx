@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Clock, Play, Search, Code, History, BookOpen, Loader2, ChevronDown, ChevronUp, AlertCircle, CheckCircle } from "lucide-react";
+import { Clock, Play, Search, Code, History, BookOpen, Loader2, ChevronDown, ChevronUp, AlertCircle, CheckCircle, Award } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Badge } from "@/components/ui/badge";
@@ -149,7 +149,7 @@ export default function CandidateDashboard() {
 
               {/* Points */}
               <div className="flex items-center gap-2 rounded-xl border border-violet-500/20 bg-violet-950/20 px-3.5 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.08)]">
-                <span className="text-lg">✨</span>
+                <Award className="h-4.5 w-4.5 text-violet-400 shrink-0" />
                 <div>
                   <p className="text-sm font-extrabold text-violet-400 leading-none">{user.points ?? 0}</p>
                   <p className="text-[8px] font-extrabold text-violet-500 uppercase tracking-widest mt-1 leading-none">Total Points</p>

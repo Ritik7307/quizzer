@@ -4,6 +4,7 @@ import { prisma } from "../lib/prisma.js";
 import { authenticate, requireRole, type AuthRequest } from "../middleware/auth.js";
 import { Role } from "@prisma/client";
 import { compileAndRun } from "../utils/compiler.js";
+import { syncUserStats } from "../utils/stats.js";
 
 const router = Router();
 
@@ -242,60 +243,11 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
       }
     }
 
-    let pointsToAward = 0;
-    let newStreak = 0;
-
-    if (finalStatus === "Accepted") {
-      const alreadySolved = await prisma.codingSubmission.findFirst({
-        where: {
-          userId: req.user!.userId,
-          codingQuestionId: question.id,
-          status: "Accepted",
-        },
-      });
-
-      if (!alreadySolved) {
-        if (question.difficulty === "Easy") pointsToAward = 10;
-        else if (question.difficulty === "Medium") pointsToAward = 20;
-        else if (question.difficulty === "Hard") pointsToAward = 30;
-      }
-
-      const user = await prisma.user.findUnique({
-        where: { id: req.user!.userId },
-      });
-
-      if (user) {
-        newStreak = user.streak;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        yesterday.setHours(0, 0, 0, 0);
-
-        if (!user.lastSolvedDate) {
-          newStreak = 1;
-        } else {
-          const lastSolved = new Date(user.lastSolvedDate);
-          lastSolved.setHours(0, 0, 0, 0);
-
-          if (lastSolved.getTime() === yesterday.getTime()) {
-            newStreak = user.streak + 1;
-          } else if (lastSolved.getTime() < yesterday.getTime()) {
-            newStreak = 1;
-          }
-        }
-
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            points: { increment: pointsToAward },
-            streak: newStreak,
-            lastSolvedDate: new Date(),
-          },
-        });
-      }
-    }
+    // Fetch user before sync to calculate pointsAwarded
+    const userBefore = await prisma.user.findUnique({
+      where: { id: req.user!.userId },
+      select: { points: true, streak: true },
+    });
 
     // Save submission record
     const submission = await prisma.codingSubmission.create({
@@ -311,14 +263,23 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
       },
     });
 
+    let pointsAwarded = 0;
+    let currentStreak = userBefore?.streak ?? 0;
+
+    if (finalStatus === "Accepted") {
+      const stats = await syncUserStats(req.user!.userId);
+      pointsAwarded = Math.max(0, stats.points - (userBefore?.points ?? 0));
+      currentStreak = stats.streak;
+    }
+
     return res.json({
       submissionId: submission.id,
       status: finalStatus,
       passedCount,
       totalCount: testCases.length,
       errorDetails: firstErrorDetails,
-      pointsAwarded: pointsToAward,
-      currentStreak: newStreak || undefined,
+      pointsAwarded,
+      currentStreak,
     });
   } catch (e) {
     if (e instanceof z.ZodError) {
@@ -355,50 +316,11 @@ router.post("/questions/:id/mark-solved", authenticate, async (req: AuthRequest,
       },
     });
 
-    let pointsToAward = 0;
-    let newStreak = 0;
-
-    if (!alreadySolved) {
-      if (question.difficulty === "Easy") pointsToAward = 10;
-      else if (question.difficulty === "Medium") pointsToAward = 20;
-      else if (question.difficulty === "Hard") pointsToAward = 30;
-    }
-
-    const user = await prisma.user.findUnique({
+    // Fetch user before sync to calculate pointsAwarded
+    const userBefore = await prisma.user.findUnique({
       where: { id: req.user!.userId },
+      select: { points: true, streak: true },
     });
-
-    if (user) {
-      newStreak = user.streak;
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      yesterday.setHours(0, 0, 0, 0);
-
-      if (!user.lastSolvedDate) {
-        newStreak = 1;
-      } else {
-        const lastSolved = new Date(user.lastSolvedDate);
-        lastSolved.setHours(0, 0, 0, 0);
-
-        if (lastSolved.getTime() === yesterday.getTime()) {
-          newStreak = user.streak + 1;
-        } else if (lastSolved.getTime() < yesterday.getTime()) {
-          newStreak = 1;
-        }
-      }
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          points: { increment: pointsToAward },
-          streak: newStreak,
-          lastSolvedDate: new Date(),
-        },
-      });
-    }
 
     // Create a dummy submission record
     const submission = await prisma.codingSubmission.create({
@@ -414,12 +336,17 @@ router.post("/questions/:id/mark-solved", authenticate, async (req: AuthRequest,
       },
     });
 
+    // Sync user stats
+    const stats = await syncUserStats(req.user!.userId);
+    const pointsAwarded = Math.max(0, stats.points - (userBefore?.points ?? 0));
+    const currentStreak = stats.streak;
+
     return res.json({
       success: true,
       submissionId: submission.id,
       status: "Accepted",
-      pointsAwarded: pointsToAward,
-      currentStreak: newStreak,
+      pointsAwarded,
+      currentStreak,
     });
   } catch (e) {
     console.error(e);
