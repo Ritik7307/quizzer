@@ -36,6 +36,7 @@ interface CodingQuestion {
 export default function PracticeSheetPage() {
   const { token, user, refresh: refreshUser } = useAuth();
   const [questions, setQuestions] = useState<CodingQuestion[]>([]);
+  const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedTopics, setExpandedTopics] = useState<Record<string, boolean>>({});
   const [markingIds, setMarkingIds] = useState<Record<string, boolean>>({});
@@ -69,6 +70,14 @@ export default function PracticeSheetPage() {
 
         // Refresh global user stats
         await refreshUser();
+
+        // Refresh submissions to update the activity grid immediately
+        try {
+          const sRes = await api<{ submissions: any[] }>("/api/coding/submissions", { token });
+          setSubmissions(sRes.submissions);
+        } catch (subErr) {
+          console.error("Failed to update submissions activity grid:", subErr);
+        }
       }
     } catch (err) {
       toast.error("Failed to mark question as solved: " + getApiErrorMessage(err));
@@ -79,11 +88,16 @@ export default function PracticeSheetPage() {
 
   useEffect(() => {
     if (!token) return;
-    api<{ questions: CodingQuestion[] }>("/api/coding/questions", { token })
-      .then((res) => {
-        setQuestions(res.questions);
+    setLoading(true);
+    Promise.all([
+      api<{ questions: CodingQuestion[] }>("/api/coding/questions", { token }),
+      api<{ submissions: any[] }>("/api/coding/submissions", { token }),
+    ])
+      .then(([qRes, sRes]) => {
+        setQuestions(qRes.questions);
+        setSubmissions(sRes.submissions);
         // Expand first 2 topics by default
-        const grouped = groupQuestions(res.questions);
+        const grouped = groupQuestions(qRes.questions);
         const topics = Object.keys(grouped);
         const initialExpanded: Record<string, boolean> = {};
         topics.forEach((t, index) => {
@@ -92,7 +106,7 @@ export default function PracticeSheetPage() {
         setExpandedTopics(initialExpanded);
       })
       .catch((err) => {
-        toast.error("Failed to load questions: " + getApiErrorMessage(err));
+        toast.error("Failed to load details: " + getApiErrorMessage(err));
       })
       .finally(() => setLoading(false));
   }, [token]);
@@ -144,6 +158,15 @@ export default function PracticeSheetPage() {
 
   const rank = getRankDetails();
 
+  const easyQuestions = questions.filter((q) => q.difficulty === "Easy");
+  const easySolved = easyQuestions.filter((q) => q.solved).length;
+
+  const mediumQuestions = questions.filter((q) => q.difficulty === "Medium");
+  const mediumSolved = mediumQuestions.filter((q) => q.solved).length;
+
+  const hardQuestions = questions.filter((q) => q.difficulty === "Hard");
+  const hardSolved = hardQuestions.filter((q) => q.solved).length;
+
   return (
     <ProtectedRoute>
       <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12 space-y-8">
@@ -166,97 +189,321 @@ export default function PracticeSheetPage() {
           </div>
         </div>
 
-        {/* Stats Dashboard Row */}
-        <div className="grid gap-6 sm:grid-cols-4">
-          {/* Progress Card */}
-          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl sm:col-span-2 hover:border-neutral-750 transition-colors duration-300">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
-                <Zap className="h-3.5 w-3.5 text-violet-450" />
-                Sheet Completion
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-end justify-between">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-extrabold text-white tracking-tight">{solvedCount}</span>
-                  <span className="text-xs text-neutral-500 font-medium">/ {totalCount} Problems Solved</span>
-                </div>
-                <span className="text-xs font-bold text-violet-400 bg-violet-950/50 px-2.5 py-1 rounded-lg border border-violet-900/30 shadow-[0_0_12px_rgba(139,92,246,0.15)]">
-                  {percentageSolved}% Complete
+        {/* Dashboard Grid (LeetCode & Codeforces Style) */}
+        <div className="grid gap-6 lg:grid-cols-4">
+          
+          {/* Left Column: Progress & Profile Rank Details */}
+          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl lg:col-span-1 hover:border-neutral-750 transition-colors duration-300 flex flex-col justify-between p-5">
+            <div className="space-y-5">
+              {/* Header: Rank */}
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-500">
+                  Current Rank
                 </span>
-              </div>
-              <div className="w-full h-3.5 bg-neutral-900 rounded-full border border-neutral-850 overflow-hidden p-0.5">
-                <div
-                  className="h-full bg-gradient-to-r from-violet-600 via-purple-550 to-fuchsia-500 rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(139,92,246,0.4)]"
-                  style={{ width: `${percentageSolved}%` }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Achievement Card */}
-          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl flex flex-col justify-between hover:border-neutral-750 transition-colors duration-300">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400">
-                User Ranking Title
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center gap-4 py-2 mt-auto">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-                <Trophy className="h-5 w-5" />
-              </div>
-              <div className="space-y-0.5">
-                <p className="font-bold text-xs text-neutral-200 tracking-tight">
-                  {rank.title}
-                </p>
-                <p className="text-[9px] text-neutral-500 leading-normal">
-                  {rank.desc}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Gamification Stats Card */}
-          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl hover:border-neutral-750 transition-colors duration-300">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400">
-                Coding Stats
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2.5 py-1.5 mt-auto">
-              {/* Active Days */}
-              <div className="flex items-center gap-2.5 rounded-lg border border-emerald-500/15 bg-emerald-950/10 px-2.5 py-1.5 shadow-[0_0_10px_rgba(16,185,129,0.04)]">
-                <svg
-                  className="h-4 w-4 text-emerald-400 shrink-0"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                  <path d="M8 14l2 2 4-4" />
-                </svg>
-                <div>
-                  <p className="text-xs font-extrabold text-emerald-400 leading-none">{user?.streak ?? 0}</p>
-                  <p className="text-[8px] font-extrabold text-emerald-550 uppercase tracking-widest mt-1 leading-none">Active Days</p>
+                <div className="flex items-center gap-2.5 mt-1.5">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+                    <Trophy className="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-xs text-neutral-200 tracking-tight leading-tight">
+                      {rank.title}
+                    </h3>
+                    <p className="text-[9px] text-neutral-500 font-medium leading-tight mt-0.5">
+                      {rank.desc}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Points */}
-              <div className="flex items-center gap-2.5 rounded-lg border border-violet-500/15 bg-violet-950/10 px-2.5 py-1.5 shadow-[0_0_10px_rgba(139,92,246,0.04)]">
-                <Sparkles className="h-4 w-4 text-violet-400 shrink-0 animate-pulse" />
-                <div>
-                  <p className="text-xs font-extrabold text-violet-400 leading-none">{user?.points ?? 0}</p>
-                  <p className="text-[8px] font-extrabold text-violet-500 uppercase tracking-widest mt-1 leading-none">Total Points</p>
+              {/* Sheet Completion progress bar */}
+              <div className="space-y-2 pt-2 border-t border-neutral-900">
+                <div className="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-widest text-neutral-500">
+                  <span>Sheet Progress</span>
+                  <span className="text-violet-400 font-extrabold">{percentageSolved}%</span>
+                </div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-2xl font-black text-white tracking-tight">{solvedCount}</span>
+                  <span className="text-[10px] text-neutral-500 font-bold">/ {totalCount} Solved</span>
+                </div>
+                <div className="w-full h-2.5 bg-neutral-900 rounded-full border border-neutral-850 overflow-hidden p-0.5">
+                  <div
+                    className="h-full bg-gradient-to-r from-violet-600 to-fuchsia-500 rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_rgba(139,92,246,0.3)]"
+                    style={{ width: `${percentageSolved}%` }}
+                  />
                 </div>
               </div>
-            </CardContent>
+
+              {/* Difficulty Breakdown (LeetCode style) */}
+              <div className="space-y-2.5 pt-3 border-t border-neutral-900">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-500 block">
+                  Difficulty Breakdown
+                </span>
+                
+                {/* Easy */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold">
+                    <span className="text-emerald-400">Easy</span>
+                    <span className="text-neutral-300">{easySolved}<span className="text-neutral-550">/{easyQuestions.length}</span></span>
+                  </div>
+                  <div className="w-full h-1.5 bg-neutral-900 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                      style={{ width: `${easyQuestions.length > 0 ? (easySolved / easyQuestions.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Medium */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold">
+                    <span className="text-amber-550">Medium</span>
+                    <span className="text-neutral-300">{mediumSolved}<span className="text-neutral-550">/{mediumQuestions.length}</span></span>
+                  </div>
+                  <div className="w-full h-1.5 bg-neutral-900 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                      style={{ width: `${mediumQuestions.length > 0 ? (mediumSolved / mediumQuestions.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Hard */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold">
+                    <span className="text-red-400">Hard</span>
+                    <span className="text-neutral-300">{hardSolved}<span className="text-neutral-550">/{hardQuestions.length}</span></span>
+                  </div>
+                  <div className="w-full h-1.5 bg-neutral-900 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-red-500 rounded-full transition-all duration-500"
+                      style={{ width: `${hardQuestions.length > 0 ? (hardSolved / hardQuestions.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Handles */}
+            {(user?.leetcodeHandle || user?.codeforcesHandle) && (
+              <div className="pt-4 mt-4 border-t border-neutral-900 space-y-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-500 block">
+                  Connected Profiles
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {user?.leetcodeHandle && (
+                    <a
+                      href={`https://leetcode.com/${user.leetcodeHandle}/`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded bg-neutral-900 hover:bg-neutral-850 px-2 py-1 text-[10px] font-bold text-amber-500 border border-neutral-800 transition-colors"
+                    >
+                      <svg className="h-3 w-3 fill-current" viewBox="0 0 24 24">
+                        <path d="M16.102 17.93l-2.697 2.607c-.466.45-1.111.587-1.685.387-.574-.2-1.039-.677-1.25-1.252l-.317-.866c-.347-.947-.133-2.023.548-2.738l2.697-2.607c.466-.45 1.111-.587 1.685-.387.574.2 1.039.677 1.25 1.252l.317.866c.347.947.133 2.023-.548 2.738zm-3.66-8.99l-2.697 2.607c-.466.45-1.111.587-1.685.387-.574-.2-1.039-.677-1.25-1.252l-.317-.866c-.347-.947-.133-2.023.548-2.738l2.697-2.607c.466-.45 1.111-.587 1.685-.387.574.2 1.039.677 1.25 1.252l.317.866c.347.947.133 2.023-.548 2.738z"/>
+                        <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-6.136-1.597l-2.697-2.607c-.754-.728-1.884-.967-2.884-.627-1 .34-1.802 1.155-2.158 2.156l-.317.866c-.593 1.616-.23 3.447.935 4.667l2.697 2.607c.754.728 1.884.967 2.884.627 1-.34 1.802-1.155 2.158-2.156l.317-.866c.593-1.616.23-3.447-.935-4.667z"/>
+                      </svg>
+                      LeetCode
+                    </a>
+                  )}
+                  {user?.codeforcesHandle && (
+                    <a
+                      href={`https://codeforces.com/profile/${user.codeforcesHandle}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded bg-neutral-900 hover:bg-neutral-850 px-2 py-1 text-[10px] font-bold text-red-400 border border-neutral-800 transition-colors"
+                    >
+                      <svg className="h-3 w-3 fill-current" viewBox="0 0 24 24">
+                        <path d="M4.5 12h3V24h-3zM10.5 0h3v24h-3zM16.5 6h3v18h-3z"/>
+                      </svg>
+                      Codeforces
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+          </Card>
+
+          {/* Right Column: LeetCode/Codeforces style Streak Contribution Grid */}
+          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl lg:col-span-3 hover:border-neutral-750 transition-colors duration-300 p-5 flex flex-col justify-between overflow-hidden">
+            <div>
+              {/* Header row with streak & points stats */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-900 pb-4 mb-4">
+                <div>
+                  <h2 className="text-sm font-extrabold text-white tracking-tight uppercase">
+                    Coding Activity & Streak Grid
+                  </h2>
+                  <p className="text-[10px] text-neutral-500 font-semibold mt-0.5">
+                    Track your daily solving consistency and points accumulation
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Streak widget */}
+                  <div className="flex items-center gap-2 rounded-lg border border-emerald-500/15 bg-emerald-950/10 px-3 py-1.5 shadow-[0_0_12px_rgba(16,185,129,0.06)]">
+                    <svg
+                      className="h-4.5 w-4.5 text-emerald-400 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                      <path d="M8 14l2 2 4-4" />
+                    </svg>
+                    <div>
+                      <p className="text-[9px] font-extrabold text-emerald-550 uppercase tracking-widest leading-none">Active Days</p>
+                      <p className="text-xs font-black text-emerald-400 mt-0.5 leading-none">{user?.streak ?? 0} Days</p>
+                    </div>
+                  </div>
+
+                  {/* Points widget */}
+                  <div className="flex items-center gap-2 rounded-lg border border-violet-500/15 bg-violet-950/10 px-3 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.06)]">
+                    <Sparkles className="h-4.5 w-4.5 text-violet-400 shrink-0 animate-pulse" />
+                    <div>
+                      <p className="text-[9px] font-extrabold text-violet-500 uppercase tracking-widest leading-none">Total Points</p>
+                      <p className="text-xs font-black text-violet-400 mt-0.5 leading-none">{user?.points ?? 0} PTS</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* The Calendar Grid Container */}
+              {(() => {
+                // Generate date grid for the last 365 days (ending today)
+                const data: Record<string, number> = {};
+                
+                // Count successful submissions per day (YYYY-MM-DD)
+                submissions.forEach((sub) => {
+                  if (sub.status === "Accepted") {
+                    const dateStr = new Date(sub.createdAt).toLocaleDateString("en-CA");
+                    data[dateStr] = (data[dateStr] || 0) + 1;
+                  }
+                });
+
+                const endDate = new Date();
+                const startDate = new Date();
+                startDate.setDate(endDate.getDate() - 364);
+
+                // Align to Sunday column start
+                const dayOfWeek = startDate.getDay();
+                if (dayOfWeek > 0) {
+                  startDate.setDate(startDate.getDate() - dayOfWeek);
+                }
+
+                const grid = [];
+                const current = new Date(startDate);
+
+                while (current <= endDate) {
+                  const dateStr = current.toLocaleDateString("en-CA");
+                  grid.push({
+                    date: new Date(current),
+                    dateStr,
+                    count: data[dateStr] || 0,
+                  });
+                  current.setDate(current.getDate() + 1);
+                }
+
+                // Chunk into columns of weeks (7 days each)
+                const weeksList: any[][] = [];
+                let currentWeek: any[] = [];
+                
+                grid.forEach((day, index) => {
+                  currentWeek.push(day);
+                  if (currentWeek.length === 7 || index === grid.length - 1) {
+                    weeksList.push(currentWeek);
+                    currentWeek = [];
+                  }
+                });
+
+                // Compute month labels
+                const months: { text: string; colIndex: number }[] = [];
+                let lastMonth = "";
+                weeksList.forEach((week, wIdx) => {
+                  if (week[0]) {
+                    const m = week[0].date.toLocaleString("en-US", { month: "short" });
+                    if (m !== lastMonth) {
+                      months.push({ text: m, colIndex: wIdx });
+                      lastMonth = m;
+                    }
+                  }
+                });
+
+                return (
+                  <div className="space-y-2 overflow-visible">
+                    {/* Month labels header row */}
+                    <div className="flex gap-[3.5px] select-none text-[8.5px] text-neutral-500 font-semibold h-4 pl-[26px]">
+                      <div className="relative w-full h-full">
+                        {months.map((m) => (
+                          <span
+                            key={`${m.text}-${m.colIndex}`}
+                            className="absolute"
+                            style={{ left: `${m.colIndex * 12.1}px` }}
+                          >
+                            {m.text}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-[3.5px] overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-neutral-800 scrollbar-track-transparent">
+                      {/* Weekday labels */}
+                      <div className="flex flex-col justify-between text-[8px] text-neutral-500 pr-1.5 select-none pt-[1.5px] h-[80px] shrink-0 font-medium leading-none">
+                        <span>Sun</span>
+                        <span>Tue</span>
+                        <span>Thu</span>
+                        <span>Sat</span>
+                      </div>
+
+                      {/* Weeks Columns */}
+                      <div className="flex gap-[3.5px]">
+                        {weeksList.map((week, wIdx) => (
+                          <div key={wIdx} className="flex flex-col gap-[3.5px]">
+                            {week.map((day) => {
+                              let colorClass = "bg-neutral-900/50 border-neutral-955";
+                              if (day.count === 1) colorClass = "bg-emerald-500/20 border-emerald-500/10 shadow-[0_0_6px_rgba(16,185,129,0.05)]";
+                              else if (day.count === 2) colorClass = "bg-emerald-500/40 border-emerald-500/25 shadow-[0_0_8px_rgba(16,185,129,0.15)]";
+                              else if (day.count >= 3) colorClass = "bg-emerald-400 border-emerald-450 shadow-[0_0_10px_rgba(52,211,153,0.3)]";
+
+                              return (
+                                <div
+                                  key={day.dateStr}
+                                  className={cn(
+                                    "w-[8.5px] h-[8.5px] rounded-[1.5px] border transition-all duration-150 hover:scale-125 hover:z-10 cursor-default",
+                                    colorClass
+                                  )}
+                                  title={`${day.count} solved on ${day.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+                                />
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Legend & Stats footer */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3 border-t border-neutral-900 text-[10px] text-neutral-500 select-none">
+              <div className="flex flex-wrap gap-x-3 gap-y-1">
+                <span>Total submissions: <strong className="text-neutral-350">{submissions.filter(s => s.status === "Accepted").length}</strong></span>
+                <span>•</span>
+                <span>Streak: <strong className="text-emerald-400">{user?.streak ?? 0} Days</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                <span>Less</span>
+                <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-neutral-900/50 border border-neutral-950" />
+                <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-emerald-500/20 border border-emerald-500/10" />
+                <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-emerald-500/40 border border-emerald-500/25" />
+                <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-emerald-400 border border-emerald-450" />
+                <span>More</span>
+              </div>
+            </div>
           </Card>
         </div>
 
