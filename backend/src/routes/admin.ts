@@ -357,4 +357,30 @@ router.get("/feedback", async (_req, res) => {
   }
 });
 
+router.delete("/feedback/:id", async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    await prisma.feedback.delete({ where: { id } });
+    return res.json({ success: true, message: "Feedback deleted" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to delete feedback" });
+  }
+});
+
+router.patch("/feedback/:id/respond", async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const { adminResponse } = req.body;
+    const feedback = await prisma.feedback.update({
+      where: { id },
+      data: { adminResponse },
+    });
+    return res.json({ success: true, feedback });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to respond to feedback" });
+  }
+});
+
 export default router;

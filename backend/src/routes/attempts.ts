@@ -120,8 +120,6 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
     answers: z.record(z.string(), z.number().int().min(0).max(3)).optional(),
   });
 
-  await flushProgressSave(attemptId);
-
   let inlineAnswers: Record<string, number> | undefined;
   try {
     inlineAnswers = bodySchema.parse(req.body ?? {}).answers;
@@ -129,11 +127,11 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
     return res.status(400).json({ error: "Invalid submit payload" });
   }
 
-  if (inlineAnswers) {
-    await prisma.attempt.update({
-      where: { id: attemptId },
-      data: { answers: stringifyAnswers(inlineAnswers) },
-    });
+  // Clear any pending progress save since we're submitting the final version now
+  const pendingJob = require("../lib/progress-queue.js").pending?.get(attemptId);
+  if (pendingJob) {
+    clearTimeout(pendingJob.timeout);
+    require("../lib/progress-queue.js").pending?.delete(attemptId);
   }
 
   const attempt = await prisma.attempt.findUnique({
@@ -151,7 +149,9 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
     return res.status(409).json({ error: "Already submitted" });
   }
 
-  const answers = parseAnswers(attempt.answers);
+  const baseAnswers = parseAnswers(attempt.answers);
+  const answers = inlineAnswers ? { ...baseAnswers, ...inlineAnswers } : baseAnswers;
+  
   const keys = attempt.quiz.questions.map((q) => ({ id: q.id, correctOptionIndex: q.correctOptionIndex }));
   const result = evaluateAnswers(keys, answers);
 

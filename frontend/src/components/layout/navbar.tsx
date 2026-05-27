@@ -39,7 +39,8 @@ export function Navbar() {
     ...(user ? [
       { href: dashHref, label: "Dashboard", icon: LayoutDashboard },
       { href: "/practice", label: "Practice Sheet", icon: BookOpen },
-      { href: "/compiler", label: "Compiler", icon: Code }
+      { href: "/compiler", label: "Compiler", icon: Code },
+      { href: "/codeforces-gym", label: "CF Gym", icon: Trophy }
     ] : []),
     ...(user?.role === "ADMIN" ? [
       { href: "/admin/users", label: "Users", icon: Users },
@@ -96,7 +97,6 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-neutral-800 bg-black/90 backdrop-blur-md">
       <div className="mx-auto flex h-14 min-h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-violet-400" onClick={() => setMobileOpen(false)}>
-          <Brain className="h-6 w-6 sm:h-7 sm:w-7" />
           <span className="text-base text-white sm:text-lg">Quizzer</span>
         </Link>
 

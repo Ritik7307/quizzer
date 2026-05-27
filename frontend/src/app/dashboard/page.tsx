@@ -120,6 +120,25 @@ export default function CandidateDashboard() {
     return lang.toUpperCase();
   };
 
+  const handleDownload = async (resource: Resource) => {
+    if (!token) return;
+    try {
+      const res = await fetch(`/api/resources/${resource.id}/download`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Failed to download");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = resource.fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error("Download failed");
+    }
+  };
+
   return (
     <ProtectedRoute role="CANDIDATE">
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
@@ -438,10 +457,8 @@ export default function CandidateDashboard() {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
                       {(resource.fileSize / 1024 / 1024).toFixed(2)} MB
                     </span>
-                    <Button size="sm" variant="outline" className="h-8 text-xs font-bold border-neutral-800 text-neutral-350 bg-black/30 hover:bg-neutral-800 hover:text-white" asChild>
-                      <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" download={resource.fileName}>
-                        <Download className="mr-1.5 h-3.5 w-3.5" /> Download
-                      </a>
+                    <Button size="sm" variant="outline" className="h-8 text-xs font-bold border-neutral-800 text-neutral-350 bg-black/30 hover:bg-neutral-800 hover:text-white" onClick={() => handleDownload(resource)}>
+                      <Download className="mr-1.5 h-3.5 w-3.5" /> Download
                     </Button>
                   </CardContent>
                 </Card>

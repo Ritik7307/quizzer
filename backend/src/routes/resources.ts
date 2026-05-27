@@ -148,4 +148,23 @@ router.delete("/admin/:id", authenticate, requireRole(Role.ADMIN), async (req, r
   }
 });
 
+// GET /api/resources/:id/download - Download a resource
+router.get("/:id/download", authenticate, async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const resource = await prisma.resource.findUnique({ where: { id } });
+    if (!resource) return res.status(404).json({ error: "Resource not found" });
+    
+    const filePath = path.join(UPLOADS_DIR, resource.fileName);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: "File not found on server" });
+    }
+    
+    res.download(filePath, resource.fileName);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to download resource" });
+  }
+});
+
 export default router;

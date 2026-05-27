@@ -158,8 +158,9 @@ model Feedback {
   rating      Int
   difficulty  String   @default("Medium")
   category    String   @default("General")
-  comments    String?
-  createdAt   DateTime @default(now())
+  comments      String?
+  adminResponse String?
+  createdAt     DateTime @default(now())
 }
 
 model CompilerNote {

@@ -45,6 +45,7 @@ interface FeedbackItem {
   difficulty: string;
   category: string;
   comments: string | null;
+  adminResponse: string | null;
   createdAt: string;
   user: { name: string; email: string };
   attempt: {
@@ -111,6 +112,33 @@ export default function AdminDashboard() {
     },
     { Easy: 0, Medium: 0, Hard: 0 } as Record<string, number>
   );
+
+  const handleDeleteFeedback = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this feedback?")) return;
+    try {
+      await api(`/api/admin/feedback/${id}`, { method: "DELETE", token });
+      setFeedbacks((prev) => prev.filter((f) => f.id !== id));
+      toast.success("Feedback deleted");
+    } catch (err) {
+      toast.error("Failed to delete feedback");
+    }
+  };
+
+  const handleRespondFeedback = async (id: string) => {
+    const response = prompt("Enter your response:");
+    if (response === null) return;
+    try {
+      const res = await api<{ feedback: FeedbackItem }>(`/api/admin/feedback/${id}/respond`, {
+        method: "PATCH",
+        token,
+        body: JSON.stringify({ adminResponse: response }),
+      });
+      setFeedbacks((prev) => prev.map((f) => (f.id === id ? { ...f, adminResponse: res.feedback.adminResponse } : f)));
+      toast.success("Response saved");
+    } catch (err) {
+      toast.error("Failed to save response");
+    }
+  };
 
   return (
     <ProtectedRoute role="ADMIN">
@@ -521,6 +549,19 @@ export default function AdminDashboard() {
                                 ) : (
                                   <p className="text-[10px] text-neutral-550 italic">No textual comments provided.</p>
                                 )}
+                                {f.adminResponse && (
+                                  <div className="rounded-lg bg-violet-900/30 border border-violet-500/20 p-3.5 font-sans text-xs text-violet-200 leading-relaxed italic whitespace-pre-wrap">
+                                    <strong>Admin Response:</strong> {f.adminResponse}
+                                  </div>
+                                )}
+                                <div className="flex gap-2 mt-2">
+                                  <Button size="sm" variant="outline" className="text-[10px] h-6 py-0 bg-neutral-900 text-neutral-300 border-neutral-700" onClick={() => handleRespondFeedback(f.id)}>
+                                    {f.adminResponse ? "Edit Response" : "Respond"}
+                                  </Button>
+                                  <Button size="sm" variant="destructive" className="text-[10px] h-6 py-0 bg-red-900/50 hover:bg-red-900 text-red-200" onClick={() => handleDeleteFeedback(f.id)}>
+                                    Delete
+                                  </Button>
+                                </div>
                               </div>
 
                               <div className="text-[9px] text-neutral-550 font-bold uppercase tracking-widest text-right">

@@ -125,6 +125,25 @@ export default function AdminResourcesPage() {
       });
   };
 
+  const handleDownload = async (resource: Resource) => {
+    if (!token) return;
+    try {
+      const res = await fetch(`/api/resources/${resource.id}/download`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Failed to download");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = resource.fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error("Download failed");
+    }
+  };
+
   return (
     <ProtectedRoute role="ADMIN">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 space-y-8 animate-fade-in">
@@ -268,12 +287,10 @@ export default function AdminResourcesPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            asChild
                             className="h-8 border-neutral-800 text-[10px] font-extrabold uppercase text-neutral-350 bg-black/40 hover:bg-neutral-850 hover:text-white"
+                            onClick={() => handleDownload(resource)}
                           >
-                            <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" download={resource.fileName}>
-                              <Download className="mr-1.5 h-3.5 w-3.5" /> Download
-                            </a>
+                            <Download className="mr-1.5 h-3.5 w-3.5" /> Download
                           </Button>
                           <Button
                             variant="ghost"

@@ -117,7 +117,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/me", authenticate, async (req: AuthRequest, res) => {
-  await syncUserStats(req.user!.userId);
+  syncUserStats(req.user!.userId).catch(console.error);
   const user = await prisma.user.findUnique({
     where: { id: req.user!.userId },
     select: { id: true, email: true, name: true, avatarUrl: true, role: true, leetcodeHandle: true, codeforcesHandle: true, points: true, streak: true, lastSolvedDate: true, createdAt: true },
