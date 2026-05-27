@@ -126,7 +126,10 @@ export default function CandidateDashboard() {
       const res = await fetch(`/api/resources/${resource.id}/download`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (!res.ok) throw new Error("Failed to download");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to download");
+      }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -134,8 +137,8 @@ export default function CandidateDashboard() {
       a.download = resource.fileName;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (err) {
-      toast.error("Download failed");
+    } catch (err: any) {
+      toast.error(err.message || "Download failed");
     }
   };
 
