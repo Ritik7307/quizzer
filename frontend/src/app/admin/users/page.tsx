@@ -62,7 +62,7 @@ export default function UsersPage() {
             <h1 className="text-2xl font-bold text-white sm:text-3xl">Users Management</h1>
             <p className="text-sm text-neutral-400 sm:text-base">View and export all registered users</p>
           </div>
-          <Button variant="outline" asChild className="w-full sm:w-auto bg-violet-600/10 text-violet-400 hover:bg-violet-600/20 border-violet-600/20">
+          <Button variant="outline" asChild className="w-full sm:w-auto bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 border-indigo-600/20">
             <a
               href={exportUsersCsvUrl()}
               onClick={(e) => {
@@ -188,9 +188,9 @@ export default function UsersPage() {
                                 setSelectedUser(u);
                                 setIsModalOpen(true);
                               }}
-                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-violet-600/10 text-violet-400 border border-violet-600/25 hover:bg-violet-600/20 hover:text-violet-300 transition cursor-pointer"
+                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-600/10 text-indigo-400 border border-indigo-600/25 hover:bg-indigo-600/20 hover:text-indigo-300 transition cursor-pointer"
                             >
-                              <CheckCircle2 className="h-3.5 w-3.5 text-violet-400" />
+                              <CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" />
                               {u.solvedCount}
                             </button>
                           ) : (
@@ -221,7 +221,7 @@ export default function UsersPage() {
                 </span>
               </DialogTitle>
               <DialogDescription className="text-xs text-neutral-400">
-                Total Solved: <span className="font-semibold text-white">{selectedUser?.solvedCount ?? 0}</span> | Streak: <span className="font-semibold text-orange-400">{selectedUser?.streak ?? 0} days</span> | Points: <span className="font-semibold text-violet-400">{selectedUser?.points ?? 0}</span>
+                Total Solved: <span className="font-semibold text-white">{selectedUser?.solvedCount ?? 0}</span> | Streak: <span className="font-semibold text-orange-400">{selectedUser?.streak ?? 0} days</span> | Points: <span className="font-semibold text-indigo-400">{selectedUser?.points ?? 0}</span>
               </DialogDescription>
             </DialogHeader>
 

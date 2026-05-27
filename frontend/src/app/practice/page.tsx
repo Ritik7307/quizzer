@@ -172,7 +172,7 @@ export default function PracticeSheetPage() {
     return (
       <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
           <p className="text-sm text-neutral-400">Loading Coding Sheet...</p>
         </div>
       </div>
@@ -186,10 +186,10 @@ export default function PracticeSheetPage() {
       <ProtectedRoute>
         <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-8">
           <Card className="w-full max-w-md border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl p-6 relative overflow-hidden">
-            <div className="absolute right-0 top-0 -mr-16 -mt-16 h-32 w-32 rounded-full bg-violet-650/10 blur-2xl" />
+            <div className="absolute right-0 top-0 -mr-16 -mt-16 h-32 w-32 rounded-full bg-indigo-650/10 blur-2xl" />
             <CardHeader className="space-y-2 pb-4 px-0 pt-0">
               <CardTitle className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                <Code2 className="h-6 w-6 text-violet-450" />
+                <Code2 className="h-6 w-6 text-indigo-450" />
                 Submit Coding Profiles
               </CardTitle>
               <CardDescription className="text-xs text-neutral-400 leading-relaxed">
@@ -207,7 +207,7 @@ export default function PracticeSheetPage() {
                     placeholder="e.g. leetcode_user"
                     value={leetcodeInput}
                     onChange={(e) => setLeetcodeInput(e.target.value)}
-                    className="border-neutral-800 bg-black/60 focus:border-violet-500"
+                    className="border-neutral-800 bg-black/60 focus:border-indigo-500"
                   />
                 </div>
                 <div className="space-y-2">
@@ -218,10 +218,10 @@ export default function PracticeSheetPage() {
                     placeholder="e.g. cf_user"
                     value={codeforcesInput}
                     onChange={(e) => setCodeforcesInput(e.target.value)}
-                    className="border-neutral-800 bg-black/60 focus:border-violet-500"
+                    className="border-neutral-800 bg-black/60 focus:border-indigo-500"
                   />
                 </div>
-                <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-750 text-white font-extrabold text-xs uppercase tracking-wider h-10 mt-2" disabled={submittingHandles}>
+                <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-extrabold text-xs uppercase tracking-wider h-10 mt-2" disabled={submittingHandles}>
                   {submittingHandles ? (
                     <Loader2 className="h-4 w-4 animate-spin mx-auto" />
                   ) : (
@@ -240,7 +240,7 @@ export default function PracticeSheetPage() {
   const getRankDetails = () => {
     if (percentageSolved === 100) return { title: "Grandmaster", desc: "You have conquered all problems!", color: "text-red-400 bg-red-950/20 border-red-500/30" };
     if (percentageSolved >= 75) return { title: "Expert Solver", desc: "Almost finished! Keep pushing.", color: "text-amber-400 bg-amber-950/20 border-amber-500/30" };
-    if (percentageSolved >= 40) return { title: "Specialist", desc: "Good logical grasp. Keep practicing.", color: "text-violet-400 bg-violet-950/20 border-violet-500/30" };
+    if (percentageSolved >= 40) return { title: "Specialist", desc: "Good logical grasp. Keep practicing.", color: "text-indigo-400 bg-indigo-950/20 border-indigo-500/30" };
     if (percentageSolved >= 10) return { title: "Apprentice", desc: "Making solid progress on fundamental tracks.", color: "text-blue-400 bg-blue-950/20 border-blue-500/30" };
     return { title: "Newbie", desc: "Welcome to the sheets! Begin your journey.", color: "text-emerald-455 bg-emerald-950/10 border-emerald-500/20" };
   };
@@ -261,18 +261,18 @@ export default function PracticeSheetPage() {
       <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12 space-y-8">
         
         {/* Header Section */}
-        <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-gradient-to-r from-violet-900/10 via-purple-900/5 to-transparent p-6 sm:p-8">
-          <div className="absolute right-0 top-0 -mr-16 -mt-16 h-40 w-40 rounded-full bg-violet-650/10 blur-3xl" />
+        <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-gradient-to-r from-indigo-900/10 via-purple-900/5 to-transparent p-6 sm:p-8">
+          <div className="absolute right-0 top-0 -mr-16 -mt-16 h-40 w-40 rounded-full bg-indigo-650/10 blur-3xl" />
           <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-white tracking-tight sm:text-3xl flex items-center gap-2.5">
-                <Code2 className="h-7 w-7 text-violet-450" /> Coding Practice Sheet
+                <Code2 className="h-7 w-7 text-indigo-450" /> Coding Practice Sheet
               </h1>
               <p className="text-neutral-400 text-sm max-w-2xl leading-relaxed">
                 Curated programming lists to master data structures, algorithms, and technical interview patterns. Grouped by data structure tracks to optimize learning.
               </p>
             </div>
-            <Badge className="w-fit border-violet-500/30 text-violet-400 bg-violet-950/30 px-3 py-1 font-bold text-xs uppercase tracking-widest shrink-0">
+            <Badge className="w-fit border-indigo-500/30 text-indigo-400 bg-indigo-950/30 px-3 py-1 font-bold text-xs uppercase tracking-widest shrink-0">
               SDE Sheet Active
             </Badge>
           </div>
@@ -308,7 +308,7 @@ export default function PracticeSheetPage() {
               <div className="space-y-2 pt-2 border-t border-neutral-900">
                 <div className="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-widest text-neutral-500">
                   <span>Sheet Progress</span>
-                  <span className="text-violet-400 font-extrabold">{percentageSolved}%</span>
+                  <span className="text-indigo-400 font-extrabold">{percentageSolved}%</span>
                 </div>
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-2xl font-black text-white tracking-tight">{solvedCount}</span>
@@ -316,7 +316,7 @@ export default function PracticeSheetPage() {
                 </div>
                 <div className="w-full h-2.5 bg-neutral-900 rounded-full border border-neutral-850 overflow-hidden p-0.5">
                   <div
-                    className="h-full bg-gradient-to-r from-violet-600 to-fuchsia-500 rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_rgba(139,92,246,0.3)]"
+                    className="h-full bg-gradient-to-r from-indigo-600 to-fuchsia-500 rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_rgba(139,92,246,0.3)]"
                     style={{ width: `${percentageSolved}%` }}
                   />
                 </div>
@@ -450,11 +450,11 @@ export default function PracticeSheetPage() {
                   </div>
 
                   {/* Points widget */}
-                  <div className="flex items-center gap-2 rounded-lg border border-violet-500/15 bg-violet-950/10 px-3 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.06)]">
-                    <Award className="h-4.5 w-4.5 text-violet-400 shrink-0" />
+                  <div className="flex items-center gap-2 rounded-lg border border-indigo-500/15 bg-indigo-950/10 px-3 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.06)]">
+                    <Award className="h-4.5 w-4.5 text-indigo-400 shrink-0" />
                     <div>
-                      <p className="text-[9px] font-extrabold text-violet-500 uppercase tracking-widest leading-none">Total Points</p>
-                      <p className="text-xs font-black text-violet-400 mt-0.5 leading-none">{user?.points ?? 0} PTS</p>
+                      <p className="text-[9px] font-extrabold text-indigo-500 uppercase tracking-widest leading-none">Total Points</p>
+                      <p className="text-xs font-black text-indigo-400 mt-0.5 leading-none">{user?.points ?? 0} PTS</p>
                     </div>
                   </div>
                 </div>
@@ -683,14 +683,14 @@ export default function PracticeSheetPage() {
                                   href={q.referenceUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-xs font-semibold text-neutral-300 hover:text-violet-400 transition-colors truncate leading-none flex items-center gap-1"
+                                  className="text-xs font-semibold text-neutral-300 hover:text-indigo-400 transition-colors truncate leading-none flex items-center gap-1"
                                 >
                                   {q.title} <span className="text-[9px] text-neutral-500 font-normal uppercase tracking-wider bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-850">External</span>
                                 </a>
                               ) : (
                                 <Link
                                   href={`/coding/${q.id}`}
-                                  className="text-xs font-semibold text-neutral-300 hover:text-violet-400 transition-colors truncate leading-none"
+                                  className="text-xs font-semibold text-neutral-300 hover:text-indigo-400 transition-colors truncate leading-none"
                                 >
                                   {q.title}
                                 </Link>
@@ -758,7 +758,7 @@ export default function PracticeSheetPage() {
                                       size="sm"
                                       onClick={() => handleMarkSolved(q.id)}
                                       disabled={markingIds[q.id]}
-                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider bg-violet-600 hover:bg-violet-750 text-white"
+                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider bg-indigo-600 hover:bg-indigo-750 text-white"
                                     >
                                       {markingIds[q.id] ? (
                                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -776,7 +776,7 @@ export default function PracticeSheetPage() {
                                   className={cn(
                                     "h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider",
                                     q.solved
-                                      ? "text-neutral-500 hover:text-violet-400 hover:bg-violet-955/15"
+                                      ? "text-neutral-500 hover:text-indigo-400 hover:bg-indigo-955/15"
                                       : "border-neutral-800 text-neutral-350 bg-black/40 hover:bg-neutral-800 hover:text-white"
                                   )}
                                 >

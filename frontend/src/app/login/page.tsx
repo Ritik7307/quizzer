@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-8 sm:py-12">
-      <Card className="w-full max-w-md animate-fade-in">
+      <Card className="w-full max-w-md animate-fade-in border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md shadow-2xl">
         <CardHeader>
           <CardTitle>Sign in to Quizzer</CardTitle>
           <CardDescription>Enter your credentials to continue</CardDescription>
@@ -49,7 +49,7 @@ export default function LoginPage() {
                 <Label htmlFor="password">Password</Label>
                 <Link
                   href="/forgot-password"
-                  className="text-xs font-medium text-violet-400 hover:underline"
+                  className="text-xs font-medium text-indigo-400 hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -62,7 +62,7 @@ export default function LoginPage() {
           </form>
           <p className="mt-4 text-center text-sm text-neutral-500">
             No account?{" "}
-            <Link href="/signup" className="font-medium text-violet-400 hover:underline">
+            <Link href="/signup" className="font-medium text-indigo-400 hover:underline">
               Sign up
             </Link>
           </p>

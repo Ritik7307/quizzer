@@ -8,7 +8,7 @@ export default function HomePage() {
     <div>
       <section className="relative overflow-hidden border-b border-neutral-800 bg-gradient-to-b from-neutral-950 via-black to-black px-4 py-12 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-5xl text-center animate-fade-in">
-          <p className="mb-4 inline-flex rounded-full bg-violet-900/40 px-4 py-1 text-xs font-medium text-violet-300 sm:text-sm">
+          <p className="mb-4 inline-flex rounded-full bg-indigo-900/40 px-4 py-1 text-xs font-medium text-indigo-300 sm:text-sm">
             Development Upskilling Series
           </p>
           <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">Quizzer</h1>
@@ -39,9 +39,9 @@ export default function HomePage() {
             { icon: BookOpen, title: "SDE Practice Sheets", desc: "Curated DSA tracks with external solving support" },
             { icon: Code2, title: "LeetCode Streak Grid", desc: "A 365-day contribution heatmap with active days & points" },
           ].map((f) => (
-            <Card key={f.title} className="animate-fade-in transition-shadow hover:shadow-md hover:shadow-violet-900/10">
+            <Card key={f.title} className="animate-fade-in transition-shadow hover:shadow-md hover:shadow-indigo-900/10">
               <CardHeader>
-                <f.icon className="mb-2 h-8 w-8 text-violet-400" />
+                <f.icon className="mb-2 h-8 w-8 text-indigo-400" />
                 <CardTitle className="text-base">{f.title}</CardTitle>
                 <CardDescription>{f.desc}</CardDescription>
               </CardHeader>

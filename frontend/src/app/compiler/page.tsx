@@ -238,7 +238,7 @@ export default function StandaloneCompilerPage() {
     return (
       <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
           <p className="text-sm text-neutral-400">Loading Compiler Workspace...</p>
         </div>
       </div>
@@ -258,7 +258,7 @@ export default function StandaloneCompilerPage() {
             </Link>
           </Button>
           <div className="flex items-center gap-2">
-            <Code className="h-5 w-5 text-violet-400" />
+            <Code className="h-5 w-5 text-indigo-400" />
             <h1 className="text-base font-semibold">Online Sandbox Compiler</h1>
           </div>
         </div>
@@ -267,7 +267,7 @@ export default function StandaloneCompilerPage() {
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="rounded-lg border border-neutral-850 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-500"
+            className="rounded-lg border border-neutral-850 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
           >
             <option value="cpp">C++ (GCC)</option>
             <option value="c">C (GCC)</option>
@@ -278,7 +278,7 @@ export default function StandaloneCompilerPage() {
             size="sm"
             onClick={handleRunCode}
             disabled={running}
-            className="flex items-center gap-1.5 text-xs bg-violet-600 hover:bg-violet-700 text-white font-medium px-4"
+            className="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4"
           >
             {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
             Run Code
@@ -291,7 +291,7 @@ export default function StandaloneCompilerPage() {
         {/* Left Section: Monaco Editor (3/5 width) */}
         <div className="lg:col-span-3 flex flex-col border-r border-neutral-800 overflow-hidden bg-neutral-950">
           <div className="flex items-center gap-1.5 border-b border-neutral-900 px-4 py-2 bg-neutral-950/80">
-            <Code className="h-4 w-4 text-violet-400" />
+            <Code className="h-4 w-4 text-indigo-400" />
             <span className="text-xs font-semibold uppercase text-neutral-400 tracking-wider">Source Editor</span>
           </div>
 
@@ -319,7 +319,7 @@ export default function StandaloneCompilerPage() {
               }}
               loading={
                 <div className="flex h-full items-center justify-center bg-black text-sm text-neutral-400">
-                  <Loader2 className="h-6 w-6 animate-spin text-violet-500 mr-2" />
+                  <Loader2 className="h-6 w-6 animate-spin text-indigo-500 mr-2" />
                   Loading Code Editor...
                 </div>
               }
@@ -336,7 +336,7 @@ export default function StandaloneCompilerPage() {
               className={cn(
                 "flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider outline-none border-b-2 transition-all select-none",
                 activeRightTab === "console"
-                  ? "text-violet-400 border-violet-500 bg-violet-600/5 font-bold"
+                  ? "text-indigo-400 border-indigo-500 bg-indigo-600/5 font-bold"
                   : "text-neutral-500 border-transparent hover:text-neutral-300"
               )}
             >
@@ -348,7 +348,7 @@ export default function StandaloneCompilerPage() {
               className={cn(
                 "flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider outline-none border-b-2 transition-all select-none",
                 activeRightTab === "notes"
-                  ? "text-violet-400 border-violet-500 bg-violet-600/5 font-bold"
+                  ? "text-indigo-400 border-indigo-500 bg-indigo-600/5 font-bold"
                   : "text-neutral-500 border-transparent hover:text-neutral-300"
               )}
             >
@@ -368,7 +368,7 @@ export default function StandaloneCompilerPage() {
                   id="customInput"
                   value={customInput}
                   onChange={(e) => setCustomInput(e.target.value)}
-                  className="flex-1 resize-none w-full rounded-lg border border-neutral-800 bg-black p-3 font-mono text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-violet-500 placeholder:text-neutral-600"
+                  className="flex-1 resize-none w-full rounded-lg border border-neutral-800 bg-black p-3 font-mono text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-neutral-600"
                   placeholder="Provide inputs here (each input on a new line)..."
                 />
               </div>
@@ -415,7 +415,7 @@ export default function StandaloneCompilerPage() {
               {/* Add Note Form */}
               <div className="p-4 border-b border-neutral-900 bg-neutral-950/20">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3 flex items-center gap-1">
-                  <Plus className="h-3.5 w-3.5 text-violet-400" />
+                  <Plus className="h-3.5 w-3.5 text-indigo-400" />
                   Save Question & Analysis
                 </h3>
                 <form onSubmit={handleSaveNote} className="space-y-3">
@@ -426,7 +426,7 @@ export default function StandaloneCompilerPage() {
                       value={noteTitle}
                       onChange={(e) => setNoteTitle(e.target.value)}
                       required
-                      className="w-full rounded-lg border border-neutral-850 bg-neutral-900/60 p-2 px-3 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-violet-500 placeholder:text-neutral-500"
+                      className="w-full rounded-lg border border-neutral-850 bg-neutral-900/60 p-2 px-3 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-neutral-500"
                     />
                   </div>
                   <div>
@@ -436,7 +436,7 @@ export default function StandaloneCompilerPage() {
                       onChange={(e) => setNoteContent(e.target.value)}
                       required
                       rows={3}
-                      className="w-full rounded-lg border border-neutral-850 bg-neutral-900/60 p-2.5 px-3 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-violet-500 placeholder:text-neutral-500 resize-none"
+                      className="w-full rounded-lg border border-neutral-850 bg-neutral-900/60 p-2.5 px-3 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-neutral-500 resize-none"
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -447,7 +447,7 @@ export default function StandaloneCompilerPage() {
                       type="submit"
                       disabled={savingNote}
                       size="sm"
-                      className="bg-violet-600 hover:bg-violet-750 text-white text-xs px-3 font-semibold flex items-center gap-1 py-1 h-8"
+                      className="bg-indigo-600 hover:bg-indigo-750 text-white text-xs px-3 font-semibold flex items-center gap-1 py-1 h-8"
                     >
                       {savingNote ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                       Save Note
@@ -461,7 +461,7 @@ export default function StandaloneCompilerPage() {
                 <h4 className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Your Saved Items</h4>
                 {loadingNotes ? (
                   <div className="flex flex-col items-center justify-center py-10 gap-2">
-                    <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
+                    <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
                     <p className="text-xs text-neutral-500">Loading saved list...</p>
                   </div>
                 ) : notes.length === 0 ? (
@@ -483,7 +483,7 @@ export default function StandaloneCompilerPage() {
                                   type="text"
                                   value={editTitle}
                                   onChange={(e) => setEditTitle(e.target.value)}
-                                  className="w-full rounded-lg border border-neutral-800 bg-black p-2 mt-1 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-violet-500"
+                                  className="w-full rounded-lg border border-neutral-800 bg-black p-2 mt-1 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                               </div>
                               <div>
@@ -492,7 +492,7 @@ export default function StandaloneCompilerPage() {
                                   value={editContent}
                                   onChange={(e) => setEditContent(e.target.value)}
                                   rows={3}
-                                  className="w-full rounded-lg border border-neutral-800 bg-black p-2 mt-1 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-violet-500 resize-none"
+                                  className="w-full rounded-lg border border-neutral-800 bg-black p-2 mt-1 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
                                 />
                               </div>
                               <div className="flex gap-2 justify-end">
@@ -507,7 +507,7 @@ export default function StandaloneCompilerPage() {
                                 <Button
                                   size="sm"
                                   onClick={() => handleUpdateNote(n.id)}
-                                  className="h-7 text-[10px] bg-violet-600 text-white hover:bg-violet-750 font-semibold"
+                                  className="h-7 text-[10px] bg-indigo-600 text-white hover:bg-indigo-750 font-semibold"
                                 >
                                   Save Changes
                                 </Button>
@@ -532,7 +532,7 @@ export default function StandaloneCompilerPage() {
                                     <button
                                       onClick={() => handleLoadCode(n)}
                                       title="Load code into editor"
-                                      className="text-[9px] font-bold text-violet-400 hover:text-violet-300 bg-violet-955/20 border border-violet-900/30 px-2 py-0.5 rounded transition-all"
+                                      className="text-[9px] font-bold text-indigo-400 hover:text-indigo-300 bg-indigo-955/20 border border-indigo-900/30 px-2 py-0.5 rounded transition-all"
                                     >
                                       Load Code
                                     </button>

@@ -139,7 +139,7 @@ export default function AdminNewCodingQuestionPage() {
       <Card className="border-neutral-800 bg-neutral-950/40 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-600/20 text-violet-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400">
               <Code className="h-5 w-5" />
             </div>
             <div>
@@ -171,7 +171,7 @@ export default function AdminNewCodingQuestionPage() {
                   id="difficulty"
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 sm:h-10 sm:text-sm"
+                  className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
                 >
                   <option value="Easy">🟢 Easy</option>
                   <option value="Medium">🟡 Medium</option>
@@ -186,7 +186,7 @@ export default function AdminNewCodingQuestionPage() {
                   id="topic"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 sm:h-10 sm:text-sm"
+                  className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
                 >
                   <option value="Arrays">Arrays</option>
                   <option value="Strings">Strings</option>
@@ -219,7 +219,7 @@ export default function AdminNewCodingQuestionPage() {
                     }
                   }
                 }}
-                className="h-4 w-4 rounded border-neutral-800 bg-neutral-900 text-violet-600 focus:ring-violet-500 focus:ring-offset-black"
+                className="h-4 w-4 rounded border-neutral-800 bg-neutral-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-black"
               />
               <div className="space-y-0.5">
                 <Label htmlFor="isExternalOnly" className="text-sm font-semibold text-neutral-200 cursor-pointer">
@@ -243,7 +243,7 @@ export default function AdminNewCodingQuestionPage() {
                 value={referenceUrl}
                 onChange={(e) => setReferenceUrl(e.target.value)}
                 required={isExternalOnly}
-                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
               />
             </div>
 
@@ -257,7 +257,7 @@ export default function AdminNewCodingQuestionPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
               />
             </div>
 
@@ -273,7 +273,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={inputFormat}
                       onChange={(e) => setInputFormat(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
 
@@ -286,7 +286,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={outputFormat}
                       onChange={(e) => setOutputFormat(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export default function AdminNewCodingQuestionPage() {
                     rows={3}
                     value={constraints}
                     onChange={(e) => setConstraints(e.target.value)}
-                    className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                    className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
                   />
                 </div>
 
@@ -314,7 +314,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={sampleInput}
                       onChange={(e) => setSampleInput(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
+                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
 
@@ -327,7 +327,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={sampleOutput}
                       onChange={(e) => setSampleOutput(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-violet-500"
+                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
                 </div>
@@ -344,7 +344,7 @@ export default function AdminNewCodingQuestionPage() {
                     value={testCasesJson}
                     onChange={(e) => setTestCasesJson(e.target.value)}
                     required
-                    className="bg-black border-neutral-800 text-neutral-100 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-violet-500"
+                    className="bg-black border-neutral-800 text-neutral-100 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-indigo-500"
                   />
                 </div>
               </>
@@ -359,7 +359,7 @@ export default function AdminNewCodingQuestionPage() {
                 rows={6}
                 value={editorial}
                 onChange={(e) => setEditorial(e.target.value)}
-                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
               />
             </div>
 
@@ -374,7 +374,7 @@ export default function AdminNewCodingQuestionPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-750 text-white font-semibold">
+              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-750 text-white font-semibold">
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />

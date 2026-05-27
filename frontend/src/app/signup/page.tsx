@@ -41,7 +41,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-8 sm:py-12">
-      <Card className="w-full max-w-md animate-fade-in">
+      <Card className="w-full max-w-md animate-fade-in border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md shadow-2xl">
         <CardHeader>
           <CardTitle>Create your account</CardTitle>
           <CardDescription>
@@ -80,7 +80,7 @@ export default function SignupPage() {
                 name="recoveryQuestion"
                 required
                 defaultValue=""
-                className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 sm:h-10 sm:text-sm"
+                className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
               >
                 <option value="" disabled>Select a security question</option>
                 <option value="What was the name of your first pet?">What was the name of your first pet?</option>
@@ -99,7 +99,7 @@ export default function SignupPage() {
           </form>
           <p className="mt-4 text-center text-sm text-neutral-500">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-violet-400 hover:underline">
+            <Link href="/login" className="font-medium text-indigo-400 hover:underline">
               Sign in
             </Link>
           </p>

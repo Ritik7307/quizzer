@@ -165,11 +165,11 @@ export default function CandidateDashboard() {
               </div>
 
               {/* Points */}
-              <div className="flex items-center gap-2 rounded-xl border border-violet-500/20 bg-violet-950/20 px-3.5 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.08)]">
-                <Award className="h-4.5 w-4.5 text-violet-400 shrink-0" />
+              <div className="flex items-center gap-2 rounded-xl border border-indigo-500/20 bg-indigo-950/20 px-3.5 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.08)]">
+                <Award className="h-4.5 w-4.5 text-indigo-400 shrink-0" />
                 <div>
-                  <p className="text-sm font-extrabold text-violet-400 leading-none">{user.points ?? 0}</p>
-                  <p className="text-[8px] font-extrabold text-violet-500 uppercase tracking-widest mt-1 leading-none">Total Points</p>
+                  <p className="text-sm font-extrabold text-indigo-400 leading-none">{user.points ?? 0}</p>
+                  <p className="text-[8px] font-extrabold text-indigo-500 uppercase tracking-widest mt-1 leading-none">Total Points</p>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function CandidateDashboard() {
               }}
               className={`flex items-center gap-1.5 border-b-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
                 activeTab === t.id
-                  ? "border-violet-500 text-violet-400"
+                  ? "border-indigo-500 text-indigo-400"
                   : "border-transparent text-neutral-400 hover:text-neutral-200"
               }`}
             >
@@ -238,7 +238,7 @@ export default function CandidateDashboard() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredQuizzes.map((quiz) => (
-                <Card key={quiz.id} className="flex flex-col transition-shadow border-neutral-800 bg-neutral-950/20 hover:shadow-md">
+                <Card key={quiz.id} className="flex flex-col transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 hover:bg-neutral-900/60 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                       <CardTitle className="text-lg">{quiz.title}</CardTitle>
@@ -291,7 +291,7 @@ export default function CandidateDashboard() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredCoding.map((question) => (
-                <Card key={question.id} className="flex flex-col transition-shadow border-neutral-800 bg-neutral-950/20 hover:shadow-md">
+                <Card key={question.id} className="flex flex-col transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 hover:bg-neutral-900/60 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                       <CardTitle className="text-lg">{question.title}</CardTitle>
@@ -328,7 +328,7 @@ export default function CandidateDashboard() {
           /* 3. SUBMISSION HISTORY TAB */
           loadingSubmissions ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+              <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
             </div>
           ) : submissions.length === 0 ? (
             <Card className="border-neutral-800">
@@ -337,7 +337,7 @@ export default function CandidateDashboard() {
           ) : (
             <div className="space-y-4">
               {submissions.map((sub) => (
-                <Card key={sub.id} className="border-neutral-800 bg-neutral-950/20">
+                <Card key={sub.id} className="border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md">
                   <div
                     onClick={() => setExpandedSubId(expandedSubId === sub.id ? null : sub.id)}
                     className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 cursor-pointer hover:bg-neutral-900/10 transition-colors"
@@ -414,19 +414,19 @@ export default function CandidateDashboard() {
               ))}
             </div>
           ) : filteredResources.length === 0 ? (
-            <Card className="border-neutral-850 bg-neutral-950/20">
+            <Card className="border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md">
               <CardContent className="py-12 text-center text-neutral-500">No resources found.</CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredResources.map((resource) => (
-                <Card key={resource.id} className="flex flex-col justify-between transition-all duration-300 border-neutral-850 bg-neutral-950/20 hover:border-neutral-700 hover:shadow-lg rounded-xl overflow-hidden">
+                <Card key={resource.id} className="flex flex-col justify-between transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 rounded-xl overflow-hidden">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2">
                       <CardTitle className="text-base font-bold text-white truncate max-w-[200px]" title={resource.title}>
                         {resource.title}
                       </CardTitle>
-                      <Badge className="bg-violet-500/10 text-violet-400 border border-violet-500/20 text-[10px] font-bold uppercase tracking-wider">
+                      <Badge className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold uppercase tracking-wider">
                         {resource.fileType.toUpperCase()}
                       </Badge>
                     </div>

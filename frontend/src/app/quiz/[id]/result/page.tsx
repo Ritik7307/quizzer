@@ -108,7 +108,7 @@ export default function QuizResultPage() {
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
                 <div className="text-center">
-                  <p className="text-5xl font-extrabold text-violet-500">{data.attempt.percentage}%</p>
+                  <p className="text-5xl font-extrabold text-indigo-500">{data.attempt.percentage}%</p>
                   <p className="mt-1.5 text-neutral-300 text-sm font-medium">
                     Score: {data.attempt.score} / {data.attempt.totalQuestions}
                   </p>
@@ -137,7 +137,7 @@ export default function QuizResultPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-3 justify-center pt-4 border-t border-neutral-900/50">
-                  <Button asChild className="bg-violet-600 hover:bg-violet-750 text-white font-semibold">
+                  <Button asChild className="bg-indigo-600 hover:bg-indigo-750 text-white font-semibold">
                     <Link href="/leaderboard">View Leaderboard</Link>
                   </Button>
                   <Button variant="outline" asChild className="border-neutral-750 text-neutral-300 hover:bg-neutral-850">
@@ -149,7 +149,7 @@ export default function QuizResultPage() {
 
             {/* Feedback form */}
             {!feedbackSubmitted ? (
-              <Card className="border-violet-900/30 bg-neutral-900/20 backdrop-blur-sm shadow-xl">
+              <Card className="border-indigo-900/30 bg-neutral-900/20 backdrop-blur-sm shadow-xl">
                 <CardHeader>
                   <CardTitle className="text-lg font-bold text-neutral-100">Rate this Quiz</CardTitle>
                   <CardDescription className="text-xs text-neutral-400">
@@ -194,7 +194,7 @@ export default function QuizResultPage() {
                           className={cn(
                             "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
                             difficulty === diff
-                              ? "border-violet-500 bg-violet-950/40 text-white font-bold"
+                              ? "border-indigo-500 bg-indigo-950/40 text-white font-bold"
                               : "border-neutral-800 bg-neutral-900/40 text-neutral-400 hover:border-neutral-750"
                           )}
                         >
@@ -213,14 +213,14 @@ export default function QuizResultPage() {
                       placeholder="Tell us what you liked or what can be improved in this quiz..."
                       value={comments}
                       onChange={(e) => setComments(e.target.value)}
-                      className="w-full rounded-lg border border-neutral-800 bg-black/40 p-3 text-sm text-neutral-300 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+                      className="w-full rounded-lg border border-neutral-800 bg-black/40 p-3 text-sm text-neutral-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
 
                   <Button
                     onClick={handleSubmitFeedback}
                     disabled={submittingFeedback}
-                    className="w-full bg-violet-600 hover:bg-violet-750 text-white font-semibold py-2.5"
+                    className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-semibold py-2.5"
                   >
                     {submittingFeedback ? "Submitting Review..." : "Submit Review"}
                   </Button>

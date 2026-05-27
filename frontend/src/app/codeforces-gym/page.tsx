@@ -99,7 +99,7 @@ export default function CodeforcesGymPage() {
             <Button 
               onClick={fetchStandings} 
               disabled={loading}
-              className="bg-violet-600 hover:bg-violet-700 text-white"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load"}
             </Button>
@@ -109,7 +109,7 @@ export default function CodeforcesGymPage() {
         {/* Results */}
         {standings && (
           <div className="space-y-6">
-            <Card className="border-neutral-850 bg-neutral-950/40 backdrop-blur-md">
+            <Card className="transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 backdrop-blur-md">
               <CardHeader className="pb-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
@@ -120,7 +120,7 @@ export default function CodeforcesGymPage() {
                       Phase: {standings.contest.phase} • Duration: {Math.floor(standings.contest.durationSeconds / 60)} mins
                     </CardDescription>
                   </div>
-                  <Badge variant="outline" className="border-violet-500/30 text-violet-300 bg-violet-500/10 w-fit">
+                  <Badge variant="outline" className="border-indigo-500/30 text-indigo-300 bg-indigo-500/10 w-fit">
                     {standings.contest.type}
                   </Badge>
                 </div>
@@ -157,7 +157,7 @@ export default function CodeforcesGymPage() {
                               row.party.members[0].handle
                             )}
                           </td>
-                          <td className="px-4 py-3 text-center font-bold text-violet-400">
+                          <td className="px-4 py-3 text-center font-bold text-indigo-400">
                             {row.points}
                           </td>
                           {row.problemResults.map((pr, j) => (

@@ -88,7 +88,7 @@ export default function LeaderboardPage() {
                 onClick={() => setSelectedQuiz(q.id)}
                 className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors sm:px-4 sm:text-sm ${
                   selectedQuiz === q.id
-                    ? "bg-violet-600 text-white"
+                    ? "bg-indigo-600 text-white"
                     : "bg-neutral-800 text-neutral-200 hover:bg-neutral-700"
                 }`}
               >
@@ -154,7 +154,7 @@ export default function LeaderboardPage() {
                           </td>
                           <td className="py-3 pr-3 font-medium text-white">{e.name}</td>
                           <td className="py-3 pr-3">{e.score}</td>
-                          <td className="py-3 pr-3 font-semibold text-violet-400">{e.percentage}%</td>
+                          <td className="py-3 pr-3 font-semibold text-indigo-400">{e.percentage}%</td>
                           <td className="py-3 text-neutral-500">
                             {new Date(e.submittedAt).toLocaleString()}
                           </td>

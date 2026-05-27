@@ -168,7 +168,7 @@ export default function CodingWorkspacePage() {
     return (
       <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
           <p className="text-sm text-neutral-400">Loading IDE Workspace...</p>
         </div>
       </div>
@@ -207,7 +207,7 @@ export default function CodingWorkspacePage() {
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-500 font-medium"
+            className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-medium"
           >
             <option value="cpp">C++ (GCC)</option>
             <option value="c">C (GCC)</option>
@@ -229,7 +229,7 @@ export default function CodingWorkspacePage() {
             size="sm"
             onClick={handleSubmitCode}
             disabled={running || submitting}
-            className="flex items-center gap-1.5 text-xs bg-violet-600 text-white hover:bg-violet-750 font-semibold"
+            className="flex items-center gap-1.5 text-xs bg-indigo-600 text-white hover:bg-indigo-750 font-semibold"
           >
             {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             Submit
@@ -250,7 +250,7 @@ export default function CodingWorkspacePage() {
               className={cn(
                 "text-xs font-bold uppercase tracking-wider pb-1.5 outline-none select-none border-b-2 transition-all",
                 activeTab === "problem"
-                  ? "text-violet-400 border-violet-500"
+                  ? "text-indigo-400 border-indigo-500"
                   : "text-neutral-500 border-transparent hover:text-neutral-300"
               )}
             >
@@ -261,7 +261,7 @@ export default function CodingWorkspacePage() {
               className={cn(
                 "text-xs font-bold uppercase tracking-wider pb-1.5 outline-none select-none border-b-2 transition-all flex items-center gap-1",
                 activeTab === "editorial"
-                  ? "text-violet-400 border-violet-500"
+                  ? "text-indigo-400 border-indigo-500"
                   : "text-neutral-500 border-transparent hover:text-neutral-300"
               )}
             >
@@ -377,7 +377,7 @@ export default function CodingWorkspacePage() {
         <div className="flex flex-col overflow-hidden bg-neutral-950">
           {/* Editor Header */}
           <div className="flex items-center gap-1.5 border-b border-neutral-900 px-4 py-2 bg-neutral-950/80">
-            <Code className="h-4 w-4 text-violet-400" />
+            <Code className="h-4 w-4 text-indigo-400" />
             <span className="text-xs font-semibold uppercase text-neutral-400 tracking-wider">Source Editor</span>
           </div>
 
@@ -406,7 +406,7 @@ export default function CodingWorkspacePage() {
               }}
               loading={
                 <div className="flex h-full items-center justify-center bg-black text-sm text-neutral-400">
-                  <Loader2 className="h-6 w-6 animate-spin text-violet-500 mr-2" />
+                  <Loader2 className="h-6 w-6 animate-spin text-indigo-500 mr-2" />
                   Loading Code Editor...
                 </div>
               }
@@ -433,7 +433,7 @@ export default function CodingWorkspacePage() {
                   id="customInput"
                   value={customInput}
                   onChange={(e) => setCustomInput(e.target.value)}
-                  className="flex-1 resize-none w-full rounded-lg border border-neutral-800 bg-black p-2 font-mono text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-violet-500"
+                  className="flex-1 resize-none w-full rounded-lg border border-neutral-800 bg-black p-2 font-mono text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   placeholder="Input variables here..."
                 />
               </div>

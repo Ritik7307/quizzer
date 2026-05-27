@@ -103,7 +103,7 @@ export function NotificationBell() {
       >
         <Bell className="h-4.5 w-4.5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-violet-600 px-1 text-[10px] font-bold text-white ring-2 ring-black">
+          <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white ring-2 ring-black">
             {unreadCount}
           </span>
         )}
@@ -118,7 +118,7 @@ export function NotificationBell() {
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="flex items-center gap-1 text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
+                className="flex items-center gap-1 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
               >
                 <Check className="h-3 w-3" />
                 Mark all read
@@ -139,7 +139,7 @@ export function NotificationBell() {
                   key={item.id}
                   onClick={() => handleMarkRead(item.id, item.read)}
                   className={`flex flex-col gap-1 p-4 transition-colors cursor-pointer text-left ${
-                    item.read ? "bg-transparent hover:bg-neutral-900/50" : "bg-violet-600/5 hover:bg-violet-600/10"
+                    item.read ? "bg-transparent hover:bg-neutral-900/50" : "bg-indigo-600/5 hover:bg-indigo-600/10"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -147,7 +147,7 @@ export function NotificationBell() {
                       {item.title}
                     </span>
                     {!item.read && (
-                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-violet-500" />
+                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
                     )}
                   </div>
                   <p className="text-xs text-neutral-400 line-clamp-3 leading-relaxed">

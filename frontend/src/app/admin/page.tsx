@@ -166,7 +166,7 @@ export default function AdminDashboard() {
                 <Plus className="mr-2 h-4 w-4" /> New Coding Problem
               </Link>
             </Button>
-            <Button asChild className="w-full sm:w-auto bg-violet-600 hover:bg-violet-750 text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all">
+            <Button asChild className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-750 text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all">
               <Link href="/admin/quizzes/new">
                 <Plus className="mr-2 h-4 w-4" /> New Quiz
               </Link>
@@ -186,11 +186,11 @@ export default function AdminDashboard() {
               className={cn(
                 "flex items-center gap-2.5 border-b-2 px-5 py-3.5 text-xs sm:text-sm font-extrabold uppercase tracking-wider transition-all select-none focus:outline-none",
                 activeTab === t.id
-                  ? "border-violet-500 text-violet-400 bg-violet-950/5"
+                  ? "border-indigo-500 text-indigo-400 bg-indigo-950/5"
                   : "border-transparent text-neutral-500 hover:text-neutral-300 hover:bg-neutral-950/10"
               )}
             >
-              <t.icon className={cn("h-4 w-4 transition-colors", activeTab === t.id ? "text-violet-400" : "text-neutral-500")} />
+              <t.icon className={cn("h-4 w-4 transition-colors", activeTab === t.id ? "text-indigo-400" : "text-neutral-500")} />
               {t.label}
             </button>
           ))}
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
                       value: data?.stats.quizCount,
                       icon: ClipboardList,
                       desc: "Constructed evaluation models",
-                      color: "text-violet-400 border-violet-500/10 bg-violet-950/10 shadow-[0_0_20px_rgba(139,92,246,0.03)]",
+                      color: "text-indigo-400 border-indigo-500/10 bg-indigo-950/10 shadow-[0_0_20px_rgba(139,92,246,0.03)]",
                     },
                     {
                       label: "Total Submissions",
@@ -235,7 +235,7 @@ export default function AdminDashboard() {
                     <Card
                       key={s.label}
                       className={cn(
-                        "border bg-neutral-950/50 backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-[1.01] hover:border-neutral-800",
+                        "border border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30",
                         s.color.split(" ").slice(1).join(" ")
                       )}
                     >
@@ -257,10 +257,10 @@ export default function AdminDashboard() {
                 <div className="grid gap-8 lg:grid-cols-2">
                   
                   {/* Quizzes list */}
-                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl">
+                  <Card className="border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md shadow-xl">
                     <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
                       <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                        <ClipboardList className="h-5 w-5 text-violet-400" /> Managed Quizzes
+                        <ClipboardList className="h-5 w-5 text-indigo-400" /> Managed Quizzes
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
                   <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl">
                     <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
                       <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5 text-violet-400" /> Recent Quiz Activity
+                        <TrendingUp className="h-5 w-5 text-indigo-400" /> Recent Quiz Activity
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -351,7 +351,7 @@ export default function AdminDashboard() {
                               
                               <div className="flex items-center gap-4">
                                 <div className="text-right">
-                                  <p className="font-extrabold text-violet-400 text-sm">{a.percentage}%</p>
+                                  <p className="font-extrabold text-indigo-400 text-sm">{a.percentage}%</p>
                                   <p className="text-[9px] font-bold text-neutral-550 uppercase tracking-widest">{a.score} pts</p>
                                 </div>
                                 <div className="text-[10px] text-neutral-500 font-semibold bg-neutral-900 border border-neutral-850 px-2 py-0.5 rounded shrink-0">
@@ -453,7 +453,7 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                   ) : feedbacks.length === 0 ? (
-                    <Card className="border-neutral-850 bg-neutral-950/40 text-center py-16">
+                    <Card className="transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 text-center py-16">
                       <CardContent className="space-y-3">
                         <MessageSquare className="h-10 w-10 text-neutral-750 mx-auto" />
                         <p className="text-neutral-400 font-semibold">No feedback reviews submitted yet</p>
@@ -468,7 +468,7 @@ export default function AdminDashboard() {
                         const isQuizFeedback = f.attempt !== null;
 
                         return (
-                          <Card key={f.id} className="border-neutral-850 bg-neutral-950/40 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300 flex flex-col justify-between overflow-hidden">
+                          <Card key={f.id} className="transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300 flex flex-col justify-between overflow-hidden">
                             <CardHeader className="pb-3.5 border-b border-neutral-900 bg-neutral-900/10">
                               <div className="flex items-start justify-between gap-3">
                                 <div className="space-y-0.5">
@@ -517,13 +517,13 @@ export default function AdminDashboard() {
                                     <span className="font-bold text-neutral-350 truncate max-w-[200px]">
                                       Quiz: {f.attempt!.quiz.title}
                                     </span>
-                                    <span className="flex items-center gap-1 text-[10px] font-extrabold text-violet-400 uppercase tracking-wider">
+                                    <span className="flex items-center gap-1 text-[10px] font-extrabold text-indigo-400 uppercase tracking-wider">
                                       <Award className="h-3.5 w-3.5" /> {f.attempt!.percentage}% ({f.attempt!.score} pts)
                                     </span>
                                   </div>
                                 ) : (
                                   <div className="flex items-center justify-between text-xs border-b border-neutral-900/40 pb-2">
-                                    <span className="font-extrabold text-violet-450 uppercase tracking-widest text-[9px]">Platform Feedback Review</span>
+                                    <span className="font-extrabold text-indigo-450 uppercase tracking-widest text-[9px]">Platform Feedback Review</span>
                                   </div>
                                 )}
 
@@ -550,7 +550,7 @@ export default function AdminDashboard() {
                                   <p className="text-[10px] text-neutral-550 italic">No textual comments provided.</p>
                                 )}
                                 {f.adminResponse && (
-                                  <div className="rounded-lg bg-violet-900/30 border border-violet-500/20 p-3.5 font-sans text-xs text-violet-200 leading-relaxed italic whitespace-pre-wrap">
+                                  <div className="rounded-lg bg-indigo-900/30 border border-indigo-500/20 p-3.5 font-sans text-xs text-indigo-200 leading-relaxed italic whitespace-pre-wrap">
                                     <strong>Admin Response:</strong> {f.adminResponse}
                                   </div>
                                 )}

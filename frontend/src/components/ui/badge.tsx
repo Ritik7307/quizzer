@@ -6,7 +6,7 @@ export function Badge({
   ...props
 }: React.HTMLAttributes<HTMLSpanElement> & { variant?: "default" | "success" | "warning" | "outline" | "destructive" }) {
   const variants = {
-    default: "bg-violet-900/50 text-violet-300",
+    default: "bg-indigo-900/50 text-indigo-300",
     success: "bg-emerald-900/50 text-emerald-300",
     warning: "bg-amber-900/50 text-amber-300",
     outline: "border border-neutral-700 text-neutral-300",

@@ -241,7 +241,7 @@ export default function TakeQuizPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-300 sm:text-base">{instructions}</p>
-              <Button className="w-full bg-violet-600 text-white hover:bg-violet-750" onClick={() => setShowInstructions(false)}>
+              <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-750" onClick={() => setShowInstructions(false)}>
                 I understand, start quiz
               </Button>
             </CardContent>
@@ -297,7 +297,7 @@ export default function TakeQuizPage() {
         <p className="text-[10px] text-center text-neutral-500 mt-2">Click a question number to jump to it directly.</p>
       </div>
 
-      <Button onClick={submitQuiz} className="w-full bg-violet-600 hover:bg-violet-750 text-white font-semibold py-2.5 mt-2">
+      <Button onClick={submitQuiz} className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-semibold py-2.5 mt-2">
         Finish & Submit Exam
       </Button>
     </div>
@@ -335,7 +335,7 @@ export default function TakeQuizPage() {
                 "w-fit rounded-lg px-4 py-2 font-mono text-lg font-bold tabular-nums shadow-md border",
                 timeLeft < 60
                   ? "bg-red-950/40 text-red-300 border-red-500/30 animate-pulse"
-                  : "bg-violet-950/40 text-violet-300 border-violet-500/20"
+                  : "bg-indigo-950/40 text-indigo-300 border-indigo-500/20"
               )}
             >
               {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
@@ -365,7 +365,7 @@ export default function TakeQuizPage() {
         <div className="mb-6 space-y-2 bg-neutral-900/40 border border-neutral-900 rounded-xl p-3 sm:p-4">
           <div className="flex items-center justify-between text-xs font-semibold text-neutral-400 sm:text-sm">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-violet-500 animate-pulse"></span>
+              <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
               Completion Progress
             </span>
             <span>
@@ -374,7 +374,7 @@ export default function TakeQuizPage() {
           </div>
           <div className="w-full bg-neutral-800 border border-neutral-700/30 rounded-full h-2.5 overflow-hidden">
             <div
-              className="bg-violet-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+              className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progressPercent}%` }}
             ></div>
           </div>
@@ -409,14 +409,14 @@ export default function TakeQuizPage() {
                     className={cn(
                       "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none",
                       answers[q.id] === i
-                        ? "border-violet-500 bg-violet-950/40 text-white font-medium ring-1 ring-violet-500"
-                        : "border-neutral-800 text-neutral-300 hover:border-violet-500/50 hover:bg-neutral-800/20"
+                        ? "border-indigo-500 bg-indigo-950/40 text-white font-medium ring-1 ring-indigo-500"
+                        : "border-neutral-800 text-neutral-300 hover:border-indigo-500/50 hover:bg-neutral-800/20"
                     )}
                   >
                     <span className={cn(
                       "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
                       answers[q.id] === i
-                        ? "bg-violet-600 text-white"
+                        ? "bg-indigo-600 text-white"
                         : "bg-neutral-900 text-neutral-400"
                     )}>
                       {String.fromCharCode(65 + i)}
@@ -470,7 +470,7 @@ export default function TakeQuizPage() {
                         "w-full sm:w-auto font-semibold gap-1",
                         answers[q?.id] === undefined
                           ? "bg-neutral-800 text-neutral-300 border border-neutral-700 hover:bg-neutral-700"
-                          : "bg-violet-600 hover:bg-violet-750 text-white"
+                          : "bg-indigo-600 hover:bg-indigo-750 text-white"
                       )}
                     >
                       {answers[q?.id] === undefined ? "Skip Question" : "Next"}
@@ -523,7 +523,7 @@ export default function TakeQuizPage() {
                         className={cn(
                           "relative flex h-9 w-9 items-center justify-center rounded-lg text-xs font-semibold border transition-all duration-200 outline-none select-none",
                           isSel
-                            ? "ring-2 ring-violet-500 bg-violet-950/40 text-violet-200 border-transparent scale-105"
+                            ? "ring-2 ring-indigo-500 bg-indigo-950/40 text-indigo-200 border-transparent scale-105"
                             : isFlg
                             ? "bg-amber-950/20 text-amber-300 border-amber-500/30 hover:bg-amber-950/30"
                             : isAns

@@ -53,7 +53,7 @@ export function Navbar() {
     cn(
       "flex items-center gap-1.5 rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium transition-colors whitespace-nowrap",
       pathname === href || pathname.startsWith(href + "/")
-        ? "bg-violet-600/20 text-violet-400"
+        ? "bg-indigo-600/20 text-indigo-400"
         : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
     );
 
@@ -96,7 +96,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-800 bg-black/90 backdrop-blur-md">
       <div className="mx-auto flex h-14 min-h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-violet-400" onClick={() => setMobileOpen(false)}>
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-indigo-400" onClick={() => setMobileOpen(false)}>
           <span className="text-base text-white sm:text-lg">Quizzer</span>
         </Link>
 
@@ -147,7 +147,7 @@ export function Navbar() {
                             className={cn(
                               "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
                               category === cat
-                                ? "border-violet-500 bg-violet-950/40 text-white font-bold"
+                                ? "border-indigo-500 bg-indigo-950/40 text-white font-bold"
                                 : "border-neutral-800 bg-neutral-900/40 text-neutral-400 hover:border-neutral-750"
                             )}
                           >
@@ -191,14 +191,14 @@ export function Navbar() {
                         value={comments}
                         onChange={(e) => setComments(e.target.value)}
                         required
-                        className="w-full rounded-lg border border-neutral-800 bg-black/40 p-3 text-sm text-neutral-300 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+                        className="w-full rounded-lg border border-neutral-800 bg-black/40 p-3 text-sm text-neutral-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                       />
                     </div>
 
                     <Button
                       type="submit"
                       disabled={submittingFeedback}
-                      className="w-full bg-violet-600 hover:bg-violet-750 text-white font-semibold py-2.5"
+                      className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-semibold py-2.5"
                     >
                       {submittingFeedback ? "Submitting..." : "Submit Feedback"}
                     </Button>
@@ -221,7 +221,7 @@ export function Navbar() {
                 {user.avatarUrl ? (
                   <img src={user.avatarUrl} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
                 ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600/20 text-violet-400">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600/20 text-indigo-400">
                     <User className="h-4 w-4" />
                   </div>
                 )}
@@ -241,7 +241,7 @@ export function Navbar() {
                   Login
                 </Link>
               </Button>
-              <Button size="sm" asChild className="bg-violet-600 hover:bg-violet-750 font-semibold text-white">
+              <Button size="sm" asChild className="bg-indigo-600 hover:bg-indigo-750 font-semibold text-white">
                 <Link href="/signup" className="text-white no-underline">
                   Sign up
                 </Link>

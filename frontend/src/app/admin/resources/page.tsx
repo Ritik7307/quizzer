@@ -153,7 +153,7 @@ export default function AdminResourcesPage() {
             <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl sticky top-8">
               <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
                 <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                  <FileUp className="h-5 w-5 text-violet-400" /> Upload Resource
+                  <FileUp className="h-5 w-5 text-indigo-400" /> Upload Resource
                 </CardTitle>
                 <CardDescription className="text-xs text-neutral-400">
                   Provide reference files (PDF, DOC, ZIP, Image) up to 10MB.
@@ -208,7 +208,7 @@ export default function AdminResourcesPage() {
                   <Button
                     type="submit"
                     disabled={uploading}
-                    className="w-full bg-violet-600 hover:bg-violet-750 text-white font-semibold transition-all mt-2"
+                    className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-semibold transition-all mt-2"
                   >
                     {uploading ? (
                       <>
@@ -228,7 +228,7 @@ export default function AdminResourcesPage() {
             <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl">
               <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
                 <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-violet-400" /> Active Resources
+                  <BookOpen className="h-5 w-5 text-indigo-400" /> Active Resources
                 </CardTitle>
                 <CardDescription className="text-xs text-neutral-400">
                   Currently uploaded files visible to candidates.
@@ -237,7 +237,7 @@ export default function AdminResourcesPage() {
               <CardContent className="space-y-4">
                 {loading ? (
                   <div className="flex justify-center py-12">
-                    <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+                    <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
                   </div>
                 ) : resources.length === 0 ? (
                   <p className="text-xs text-neutral-500 italic py-12 text-center">No study resources uploaded yet.</p>
@@ -253,7 +253,7 @@ export default function AdminResourcesPage() {
                             <p className="font-extrabold text-sm text-neutral-200 tracking-tight truncate max-w-[280px]" title={resource.title}>
                               {resource.title}
                             </p>
-                            <Badge className="bg-violet-500/10 text-violet-400 border border-violet-500/20 text-[9px] uppercase font-extrabold tracking-wider py-0.5 px-2.5">
+                            <Badge className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[9px] uppercase font-extrabold tracking-wider py-0.5 px-2.5">
                               {resource.fileType}
                             </Badge>
                           </div>

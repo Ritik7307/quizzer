@@ -114,7 +114,7 @@ export default function ProfilePage() {
                           id="avatarUrl"
                           type="url"
                           placeholder="https://example.com/image.png"
-                          className="pl-9 bg-black border-neutral-800 focus-visible:ring-violet-500"
+                          className="pl-9 bg-black border-neutral-800 focus-visible:ring-indigo-500"
                           value={avatarUrl}
                           onChange={(e) => setAvatarUrl(e.target.value)}
                         />
@@ -135,7 +135,7 @@ export default function ProfilePage() {
                         minLength={2}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="bg-black border-neutral-800 focus-visible:ring-violet-500"
+                        className="bg-black border-neutral-800 focus-visible:ring-indigo-500"
                       />
                     </div>
 
@@ -163,7 +163,7 @@ export default function ProfilePage() {
                         placeholder="e.g. janesmith"
                         value={leetcodeHandle}
                         onChange={(e) => setLeetcodeHandle(e.target.value)}
-                        className="bg-black border-neutral-800 focus-visible:ring-violet-500 font-mono text-xs"
+                        className="bg-black border-neutral-800 focus-visible:ring-indigo-500 font-mono text-xs"
                       />
                     </div>
 
@@ -178,13 +178,13 @@ export default function ProfilePage() {
                         placeholder="e.g. Tourist"
                         value={codeforcesHandle}
                         onChange={(e) => setCodeforcesHandle(e.target.value)}
-                        className="bg-black border-neutral-800 focus-visible:ring-violet-500 font-mono text-xs"
+                        className="bg-black border-neutral-800 focus-visible:ring-indigo-500 font-mono text-xs"
                       />
                     </div>
                   </div>
 
                   <div className="flex justify-end pt-3">
-                    <Button type="submit" disabled={loading} className="bg-violet-600 hover:bg-violet-750 text-white font-semibold px-6">
+                    <Button type="submit" disabled={loading} className="bg-indigo-600 hover:bg-indigo-750 text-white font-semibold px-6">
                       {loading ? "Saving Changes..." : "Save Profile Details"}
                     </Button>
                   </div>
