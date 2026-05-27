@@ -148,7 +148,6 @@ router.delete("/admin/:id", authenticate, requireRole(Role.ADMIN), async (req, r
   }
 });
 
-// GET /api/resources/:id/download - Download a resource
 router.get("/:id/download", authenticate, async (req, res) => {
   try {
     const id = String(req.params.id);
@@ -156,11 +155,27 @@ router.get("/:id/download", authenticate, async (req, res) => {
     if (!resource) return res.status(404).json({ error: "Resource not found" });
     
     const filePath = path.join(UPLOADS_DIR, resource.fileName);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: "File not found on server" });
+    if (fs.existsSync(filePath)) {
+      return res.download(filePath, resource.fileName);
+    }
+
+    // Fallback: If not found locally, proxy from the remote fileUrl if it exists
+    if (resource.fileUrl && resource.fileUrl.startsWith("http")) {
+      try {
+        const remoteRes = await fetch(resource.fileUrl);
+        if (!remoteRes.ok) throw new Error("Remote file not found");
+        
+        res.setHeader("Content-Disposition", `attachment; filename="${resource.fileName}"`);
+        res.setHeader("Content-Type", remoteRes.headers.get("content-type") || "application/octet-stream");
+        
+        const arrayBuffer = await remoteRes.arrayBuffer();
+        return res.send(Buffer.from(arrayBuffer));
+      } catch (err) {
+        return res.status(404).json({ error: "File not found on server or remote storage" });
+      }
     }
     
-    res.download(filePath, resource.fileName);
+    return res.status(404).json({ error: "File not found on server" });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Failed to download resource" });
