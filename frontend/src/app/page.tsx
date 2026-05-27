@@ -15,12 +15,7 @@ export default function HomePage() {
         <div className="absolute top-0 left-0 -z-10 w-[600px] h-[600px] bg-emerald-400/10 rounded-full blur-3xl opacity-50 mix-blend-multiply transform -translate-x-1/3 -translate-y-1/4"></div>
 
         <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center animate-fade-in">
-          
-          <Badge className="mb-6 inline-flex items-center gap-1.5 rounded-full bg-white/80 backdrop-blur-md px-4 py-1.5 text-xs font-semibold text-indigo-600 border border-indigo-200 shadow-sm sm:text-sm hover:bg-white transition-colors">
-            <Sparkles className="h-3.5 w-3.5 fill-indigo-400 text-indigo-400" />
-            Development Upskilling Series
-          </Badge>
-          
+
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl md:text-7xl lg:leading-[1.1]">
             Master your skills with <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">Quizzer</span>
           </h1>
