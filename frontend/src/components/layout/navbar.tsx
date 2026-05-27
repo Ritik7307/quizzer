@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "./notification-bell";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Dialog,
   DialogContent,
@@ -46,10 +47,10 @@ export function Navbar() {
 
   const linkClass = (href: string) =>
     cn(
-      "flex items-center gap-1.5 rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium transition-colors whitespace-nowrap",
+      "flex items-center gap-1.5 rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium transition-all duration-200 whitespace-nowrap",
       pathname === href || pathname.startsWith(href + "/")
-        ? "bg-indigo-100 text-indigo-700"
-        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400"
+        : "text-muted-foreground hover:bg-muted hover:text-foreground"
     );
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
@@ -89,10 +90,10 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-slate-50/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-border bg-card/85 backdrop-blur-md">
       <div className="mx-auto flex h-14 min-h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-indigo-400" onClick={() => setMobileOpen(false)}>
-          <span className="text-base text-slate-900 sm:text-lg">Quizzer</span>
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-indigo-500" onClick={() => setMobileOpen(false)}>
+          <span className="text-base text-foreground font-bold tracking-tight sm:text-lg">Quizzer</span>
         </Link>
 
         <nav className="hidden items-center gap-0.5 lg:gap-1.5 md:flex">
@@ -113,16 +114,16 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="hidden md:flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
+                  className="hidden md:flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
                 >
                   <MessageSquare className="h-4 w-4" />
                   <span>Feedback</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="border-slate-200 bg-white shadow-2xl max-w-sm sm:max-w-md">
+              <DialogContent className="border-border bg-card shadow-2xl max-w-sm sm:max-w-md text-foreground">
                 <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-center">Share your Feedback</DialogTitle>
-                  <DialogDescription className="text-center text-slate-500 text-xs mt-1">
+                  <DialogTitle className="text-xl font-bold text-center text-foreground">Share your Feedback</DialogTitle>
+                  <DialogDescription className="text-center text-muted-foreground text-xs mt-1">
                     Help us improve Quizzer! Let us know your thoughts, report bugs, or request features.
                   </DialogDescription>
                 </DialogHeader>
@@ -209,6 +210,7 @@ export function Navbar() {
             </Dialog>
           )}
 
+          <ThemeToggle />
           {user && <NotificationBell />}
           {user ? (
             <>
@@ -220,11 +222,11 @@ export function Navbar() {
                     <User className="h-4 w-4" />
                   </div>
                 )}
-                <span className="hidden max-w-[120px] truncate text-sm text-slate-600 md:inline lg:max-w-[180px]">
+                <span className="hidden max-w-[120px] truncate text-sm text-muted-foreground md:inline lg:max-w-[180px]">
                   {user.name}
                 </span>
               </Link>
-              <Button variant="outline" size="sm" onClick={logout} className="hidden sm:inline-flex border-neutral-750 text-slate-700 hover:bg-slate-50">
+              <Button variant="outline" size="sm" onClick={logout} className="hidden sm:inline-flex">
                 <LogOut className="h-4 w-4" />
                 <span className="hidden md:inline">Logout</span>
               </Button>
@@ -257,7 +259,7 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-slate-200 bg-slate-50 px-4 py-3 md:hidden">
+        <div className="border-t border-border bg-card px-4 py-3 md:hidden">
           <nav className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} className={linkClass(link.href)} onClick={() => setMobileOpen(false)}>

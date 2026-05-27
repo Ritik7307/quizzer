@@ -12,6 +12,7 @@ import Link from "next/link";
 import Editor from "@monaco-editor/react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const templates: Record<string, string> = {
   cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Online C++ Compiler\n    cout << "Hello, C++ World!" << endl;\n    \n    // Example of reading standard input\n    int n;\n    if (cin >> n) {\n        cout << "Standard input received: " << n << endl;\n    }\n    return 0;\n}`,
@@ -22,6 +23,7 @@ const templates: Record<string, string> = {
 export default function StandaloneCompilerPage() {
   const router = useRouter();
   const { token, loading: authLoading } = useAuth();
+  const { resolvedTheme } = useTheme();
 
   const [running, setRunning] = useState(false);
   const [language, setLanguage] = useState("cpp");
@@ -236,10 +238,10 @@ export default function StandaloneCompilerPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-2">
+      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-foreground">
+        <div className="flex flex-col items-center gap-2.5">
           <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-          <p className="text-sm text-slate-600">Loading Compiler Workspace...</p>
+          <p className="text-sm font-semibold text-muted-foreground">Loading Compiler Workspace...</p>
         </div>
       </div>
     );
@@ -248,18 +250,18 @@ export default function StandaloneCompilerPage() {
   if (!token) return null;
 
   return (
-    <div className="flex flex-col min-h-[calc(100dvh-4rem)] bg-slate-50 text-slate-900">
+    <div className="flex flex-col min-h-[calc(100dvh-4rem)] bg-background text-foreground">
       {/* Top Header Row */}
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2 bg-white">
+      <div className="flex items-center justify-between border-b border-border px-4 py-2 bg-card">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild className="text-slate-600 hover:text-slate-900">
-            <Link href="/dashboard" className="flex items-center gap-1.5">
+          <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
+            <Link href="/dashboard" className="flex items-center gap-1.5 font-semibold">
               <ArrowLeft className="h-4 w-4" /> Back to Dashboard
             </Link>
           </Button>
           <div className="flex items-center gap-2">
-            <Code className="h-5 w-5 text-indigo-400" />
-            <h1 className="text-base font-semibold">Online Sandbox Compiler</h1>
+            <Code className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
+            <h1 className="text-base font-bold">Online Sandbox Compiler</h1>
           </div>
         </div>
 
@@ -267,7 +269,7 @@ export default function StandaloneCompilerPage() {
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+            className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-semibold"
           >
             <option value="cpp">C++ (GCC)</option>
             <option value="c">C (GCC)</option>
@@ -278,9 +280,9 @@ export default function StandaloneCompilerPage() {
             size="sm"
             onClick={handleRunCode}
             disabled={running}
-            className="flex items-center gap-1.5 text-xs bg-indigo-600 text-white font-medium px-4"
+            className="flex items-center gap-1.5 text-xs bg-indigo-600 text-white hover:bg-indigo-750 font-bold px-4 h-9 rounded-lg shadow-sm"
           >
-            {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
+            {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5 fill-current" />}
             Run Code
           </Button>
         </div>
@@ -289,17 +291,17 @@ export default function StandaloneCompilerPage() {
       {/* Main Workspace Panels */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 overflow-hidden h-[calc(100vh-6.5rem)]">
         {/* Left Section: Monaco Editor (3/5 width) */}
-        <div className="lg:col-span-3 flex flex-col border-r border-slate-200 overflow-hidden bg-white">
-          <div className="flex items-center gap-1.5 border-b border-slate-200 px-4 py-2 bg-white/80">
-            <Code className="h-4 w-4 text-indigo-400" />
-            <span className="text-xs font-semibold uppercase text-slate-600 tracking-wider">Source Editor</span>
+        <div className="lg:col-span-3 flex flex-col border-r border-border overflow-hidden bg-card">
+          <div className="flex items-center gap-1.5 border-b border-border px-4 py-2 bg-card">
+            <Code className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+            <span className="text-[10px] font-extrabold uppercase text-muted-foreground tracking-wider">Source Editor</span>
           </div>
 
           <div className="flex-1 relative min-h-[300px]">
             <Editor
               height="100%"
               language={language === "cpp" ? "cpp" : language === "c" ? "c" : "java"}
-              theme="vs-dark"
+              theme={resolvedTheme === "dark" ? "vs-dark" : "vs"}
               value={code}
               onChange={(value) => setCode(value || "")}
               options={{
@@ -318,7 +320,7 @@ export default function StandaloneCompilerPage() {
                 cursorStyle: "line",
               }}
               loading={
-                <div className="flex h-full items-center justify-center bg-slate-50 text-sm text-slate-600">
+                <div className="flex h-full items-center justify-center bg-card text-sm text-muted-foreground font-semibold">
                   <Loader2 className="h-6 w-6 animate-spin text-indigo-500 mr-2" />
                   Loading Code Editor...
                 </div>
@@ -328,16 +330,16 @@ export default function StandaloneCompilerPage() {
         </div>
 
         {/* Right Section: Console & Saved Notes (2/5 width) */}
-        <div className="lg:col-span-2 flex flex-col overflow-hidden bg-white">
+        <div className="lg:col-span-2 flex flex-col overflow-hidden bg-card">
           {/* Tabs header */}
-          <div className="flex border-b border-slate-200 bg-white/85">
+          <div className="flex border-b border-border bg-card">
             <button
               onClick={() => setActiveRightTab("console")}
               className={cn(
-                "flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider outline-none border-b-2 transition-all select-none",
+                "flex items-center gap-1.5 px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider outline-none border-b-2 transition-all select-none",
                 activeRightTab === "console"
-                  ? "text-indigo-400 border-indigo-500 bg-indigo-600/5 font-bold"
-                  : "text-slate-500 border-transparent hover:text-slate-700"
+                  ? "text-indigo-650 dark:text-indigo-400 border-indigo-500 bg-indigo-500/5 font-black"
+                  : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/10"
               )}
             >
               <Terminal className="h-3.5 w-3.5" />
@@ -346,10 +348,10 @@ export default function StandaloneCompilerPage() {
             <button
               onClick={() => setActiveRightTab("notes")}
               className={cn(
-                "flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider outline-none border-b-2 transition-all select-none",
+                "flex items-center gap-1.5 px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider outline-none border-b-2 transition-all select-none",
                 activeRightTab === "notes"
-                  ? "text-indigo-400 border-indigo-500 bg-indigo-600/5 font-bold"
-                  : "text-slate-500 border-transparent hover:text-slate-700"
+                  ? "text-indigo-650 dark:text-indigo-400 border-indigo-500 bg-indigo-500/5 font-black"
+                  : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/10"
               )}
             >
               <MessageSquare className="h-3.5 w-3.5" />
@@ -360,35 +362,35 @@ export default function StandaloneCompilerPage() {
           {activeRightTab === "console" ? (
             <>
               {/* Stdin Panel (40% height) */}
-              <div className="flex-1 flex flex-col p-4 border-b border-slate-200 min-h-[150px] overflow-hidden bg-white">
-                <Label htmlFor="customInput" className="text-[10px] uppercase font-semibold text-slate-600 mb-2 tracking-wider">
+              <div className="flex-1 flex flex-col p-4 border-b border-border min-h-[150px] overflow-hidden bg-card">
+                <Label htmlFor="customInput" className="text-[10px] uppercase font-extrabold text-muted-foreground mb-2 tracking-wider">
                   Standard Input (Stdin)
                 </Label>
                 <textarea
                   id="customInput"
                   value={customInput}
                   onChange={(e) => setCustomInput(e.target.value)}
-                  className="flex-1 resize-none w-full rounded-lg border border-slate-200 bg-slate-50 p-3 font-mono text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-neutral-600"
+                  className="flex-1 resize-none w-full rounded-lg border border-border bg-muted/20 p-3 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-muted-foreground/60"
                   placeholder="Provide inputs here (each input on a new line)..."
                 />
               </div>
 
               {/* Stdout Output Panel (60% height) */}
-              <div className="flex-[1.5] flex flex-col p-4 overflow-hidden bg-slate-50">
+              <div className="flex-[1.5] flex flex-col p-4 overflow-hidden bg-muted/10">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase font-semibold text-slate-600 tracking-wider">
+                  <span className="text-[10px] uppercase font-extrabold text-muted-foreground tracking-wider">
                     Execution Output
                   </span>
 
                   {runStatus && (
                     <div className="flex items-center gap-1">
                       {runStatus === "Accepted" ? (
-                        <span className="flex items-center gap-1 text-[10px] font-bold text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded border border-green-500/20">
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded border border-green-500/20">
                           <CheckCircle2 className="h-3 w-3" />
                           Success
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-[10px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded border border-red-500/20">
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-red-500 dark:text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded border border-red-500/20">
                           <AlertCircle className="h-3 w-3" />
                           {runStatus}
                         </span>
@@ -397,11 +399,11 @@ export default function StandaloneCompilerPage() {
                   )}
                 </div>
 
-                <div className="flex-1 overflow-y-auto rounded-lg border border-slate-200 bg-white p-3 font-mono text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">
+                <div className="flex-1 overflow-y-auto rounded-lg border border-border bg-card p-3 font-mono text-xs leading-relaxed text-foreground/90 whitespace-pre-wrap shadow-inner">
                   {terminalOutput}
                   {errorDetails && (
-                    <div className="mt-3 text-red-400 border-t border-slate-200 pt-3 text-[11px] leading-relaxed">
-                      <p className="font-bold uppercase tracking-wider text-[9px] text-red-500 mb-1">Compilation/Runtime Logs</p>
+                    <div className="mt-3 text-red-500 dark:text-red-400 border-t border-border pt-3 text-[11px] leading-relaxed">
+                      <p className="font-extrabold uppercase tracking-wider text-[9px] text-red-650 mb-1">Compilation/Runtime Logs</p>
                       {errorDetails}
                     </div>
                   )}
@@ -410,12 +412,12 @@ export default function StandaloneCompilerPage() {
             </>
           ) : (
             /* Tab 2: Saved Notes & Questions */
-            <div className="flex-1 flex flex-col overflow-hidden bg-slate-50/40">
+            <div className="flex-1 flex flex-col overflow-hidden bg-muted/5">
               
               {/* Add Note Form */}
-              <div className="p-4 border-b border-slate-200 bg-white/20">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3 flex items-center gap-1">
-                  <Plus className="h-3.5 w-3.5 text-indigo-400" />
+              <div className="p-4 border-b border-border bg-card/45 backdrop-blur-sm">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1">
+                  <Plus className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                   Save Question & Analysis
                 </h3>
                 <form onSubmit={handleSaveNote} className="space-y-3">
@@ -426,7 +428,7 @@ export default function StandaloneCompilerPage() {
                       value={noteTitle}
                       onChange={(e) => setNoteTitle(e.target.value)}
                       required
-                      className="w-full rounded-lg border border-slate-200 bg-white/60 p-2 px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-500"
+                      className="w-full rounded-lg border border-border bg-card p-2 px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-muted-foreground/60 shadow-sm"
                     />
                   </div>
                   <div>
@@ -436,18 +438,18 @@ export default function StandaloneCompilerPage() {
                       onChange={(e) => setNoteContent(e.target.value)}
                       required
                       rows={3}
-                      className="w-full rounded-lg border border-slate-200 bg-white/60 p-2.5 px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-500 resize-none"
+                      className="w-full rounded-lg border border-border bg-card p-2.5 px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-muted-foreground/60 resize-none shadow-sm"
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500 font-medium">
+                    <span className="text-[10px] text-muted-foreground font-semibold">
                       Current Code & Language ({language.toUpperCase()}) will be attached.
                     </span>
                     <Button
                       type="submit"
                       disabled={savingNote}
                       size="sm"
-                      className="bg-indigo-600 text-white text-xs px-3 font-semibold flex items-center gap-1 py-1 h-8"
+                      className="bg-indigo-600 text-white hover:bg-indigo-755 text-xs px-3 font-extrabold flex items-center gap-1 py-1 h-8 rounded-lg shadow-sm"
                     >
                       {savingNote ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                       Save Note
@@ -458,41 +460,41 @@ export default function StandaloneCompilerPage() {
 
               {/* Notes List */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Your Saved Items</h4>
+                <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">Your Saved Items</h4>
                 {loadingNotes ? (
                   <div className="flex flex-col items-center justify-center py-10 gap-2">
-                    <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
-                    <p className="text-xs text-slate-500">Loading saved list...</p>
+                    <Loader2 className="h-6 w-6 animate-spin text-indigo-550" />
+                    <p className="text-xs text-muted-foreground font-semibold">Loading saved list...</p>
                   </div>
                 ) : notes.length === 0 ? (
-                  <div className="text-center py-10 border border-dashed border-slate-200 rounded-xl bg-white/20">
-                    <p className="text-xs text-slate-500">No saved questions or notes yet.</p>
-                    <p className="text-[10px] text-neutral-550 mt-1">Capture your current editor screen and logic notes above.</p>
+                  <div className="text-center py-10 border border-dashed border-border rounded-2xl bg-card/30">
+                    <p className="text-xs text-muted-foreground font-semibold">No saved questions or notes yet.</p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-1">Capture your current editor screen and logic notes above.</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-3.5">
                     {notes.map((n) => {
                       const isEditing = editingNoteId === n.id;
                       return (
-                        <div key={n.id} className="rounded-xl border border-slate-200 bg-white/45 p-3.5 space-y-2.5 transition-all hover:border-slate-200">
+                        <div key={n.id} className="rounded-xl border border-border bg-card/60 p-3.5 space-y-2.5 transition-all hover:border-indigo-500/20 hover:shadow-sm">
                           {isEditing ? (
                             <div className="space-y-3">
                               <div>
-                                <Label className="text-[9px] uppercase font-bold text-slate-500">Edit Title</Label>
+                                <Label className="text-[9px] uppercase font-extrabold text-muted-foreground">Edit Title</Label>
                                 <input
                                   type="text"
                                   value={editTitle}
                                   onChange={(e) => setEditTitle(e.target.value)}
-                                  className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2 mt-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                  className="w-full rounded-lg border border-border bg-muted/20 p-2 mt-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                               </div>
                               <div>
-                                <Label className="text-[9px] uppercase font-bold text-slate-500">Edit Note</Label>
+                                <Label className="text-[9px] uppercase font-extrabold text-muted-foreground">Edit Note</Label>
                                 <textarea
                                   value={editContent}
                                   onChange={(e) => setEditContent(e.target.value)}
                                   rows={3}
-                                  className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2 mt-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                                  className="w-full rounded-lg border border-border bg-muted/20 p-2 mt-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
                                 />
                               </div>
                               <div className="flex gap-2 justify-end">
@@ -500,14 +502,14 @@ export default function StandaloneCompilerPage() {
                                   variant="outline"
                                   size="sm"
                                   onClick={handleCancelEdit}
-                                  className="h-7 text-[10px] border-slate-200 text-slate-600 hover:bg-slate-100"
+                                  className="h-7 text-[10px] rounded-lg"
                                 >
                                   Cancel
                                 </Button>
                                 <Button
                                   size="sm"
                                   onClick={() => handleUpdateNote(n.id)}
-                                  className="h-7 text-[10px] bg-indigo-600 text-white hover:bg-indigo-750 font-semibold"
+                                  className="h-7 text-[10px] bg-indigo-600 text-white hover:bg-indigo-700 font-extrabold rounded-lg shadow-sm"
                                 >
                                   Save Changes
                                 </Button>
@@ -517,14 +519,14 @@ export default function StandaloneCompilerPage() {
                             <>
                               <div className="flex items-start justify-between gap-2">
                                 <div>
-                                  <h5 className="font-bold text-slate-800 text-xs">{n.title}</h5>
-                                  <span className="text-[8px] text-slate-500">
+                                  <h5 className="font-extrabold text-foreground text-xs leading-snug">{n.title}</h5>
+                                  <span className="text-[8px] font-semibold text-muted-foreground">
                                     Saved: {new Date(n.createdAt).toLocaleDateString()}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
                                   {n.language && (
-                                    <Badge className="bg-white border border-slate-200 text-slate-600 text-[9px] px-1.5 py-0">
+                                    <Badge className="bg-card border border-border text-foreground text-[9px] px-1.5 py-0 font-bold uppercase tracking-wider">
                                       {n.language.toUpperCase()}
                                     </Badge>
                                   )}
@@ -532,7 +534,7 @@ export default function StandaloneCompilerPage() {
                                     <button
                                       onClick={() => handleLoadCode(n)}
                                       title="Load code into editor"
-                                      className="text-[9px] font-bold text-indigo-400 hover:text-indigo-300 bg-indigo-955/20 border border-indigo-900/30 px-2 py-0.5 rounded transition-all"
+                                      className="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10 border border-indigo-500/10 px-2 py-0.5 rounded transition-all shadow-sm"
                                     >
                                       Load Code
                                     </button>
@@ -540,21 +542,21 @@ export default function StandaloneCompilerPage() {
                                 </div>
                               </div>
 
-                              <div className="rounded-lg bg-white/30 border border-slate-200/60 p-2.5 text-xs text-slate-600 italic whitespace-pre-wrap leading-relaxed">
+                              <div className="rounded-lg bg-muted/20 border border-border/60 p-2.5 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap shadow-inner">
                                 {n.note}
                               </div>
 
-                              <div className="flex justify-end gap-2 text-[10px]">
+                              <div className="flex justify-end gap-3 text-[10px] font-bold">
                                 <button
                                   onClick={() => handleStartEdit(n)}
-                                  className="text-slate-500 hover:text-slate-700 flex items-center gap-1 px-1"
+                                  className="text-muted-foreground hover:text-foreground flex items-center gap-1 px-1 transition-colors"
                                 >
                                   <Edit2 className="h-3 w-3" />
                                   Edit Note
                                 </button>
                                 <button
                                   onClick={() => handleDeleteNote(n.id)}
-                                  className="text-red-500/80 hover:text-red-400 flex items-center gap-1 px-1"
+                                  className="text-red-500/80 hover:text-red-500 flex items-center gap-1 px-1 transition-colors"
                                 >
                                   <Trash2 className="h-3 w-3" />
                                   Delete

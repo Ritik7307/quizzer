@@ -24,8 +24,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="min-h-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-500/30">
+    <html lang="en" className={`${inter.variable} h-full`} suppressHydrationWarning>
+      <body className="min-h-full font-sans antialiased bg-background text-foreground">
         <Providers>
           <Navbar />
           <main className="min-h-[calc(100dvh-3.5rem)] w-full overflow-x-hidden sm:min-h-[calc(100dvh-4rem)]">

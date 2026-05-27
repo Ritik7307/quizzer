@@ -6,46 +6,48 @@ import { Badge } from "@/components/ui/badge";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50">
+    <div className="flex flex-col min-h-screen bg-transparent">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24">
         {/* Background Gradients */}
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]"></div>
-        <div className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-3xl opacity-50 mix-blend-multiply transform translate-x-1/3 -translate-y-1/4"></div>
-        <div className="absolute top-0 left-0 -z-10 w-[600px] h-[600px] bg-emerald-400/10 rounded-full blur-3xl opacity-50 mix-blend-multiply transform -translate-x-1/3 -translate-y-1/4"></div>
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),transparent)]"></div>
+        <div className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-3xl opacity-50 mix-blend-multiply dark:mix-blend-screen transform translate-x-1/3 -translate-y-1/4"></div>
+        <div className="absolute top-0 left-0 -z-10 w-[600px] h-[600px] bg-emerald-400/10 rounded-full blur-3xl opacity-50 mix-blend-multiply dark:mix-blend-screen transform -translate-x-1/3 -translate-y-1/4"></div>
 
         <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center animate-fade-in">
+          <Badge variant="outline" className="mb-6 rounded-full border-indigo-200 dark:border-indigo-900 bg-indigo-500/5 text-indigo-600 dark:text-indigo-400 px-4 py-1 text-sm font-semibold tracking-wide">
+            <Sparkles className="mr-1.5 h-3.5 w-3.5 inline animate-pulse" /> Introducing Premium Upskilling
+          </Badge>
 
-          <h1 className="text-4xl font-bold tracking-tight text-slate-800 sm:text-5xl md:text-6xl">
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl leading-[1.15]">
             Master your skills <br className="hidden sm:block" />
-            with <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Quizzer</span>
+            with <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-500 dark:from-indigo-400 dark:via-indigo-300 dark:to-violet-400">Quizzer</span>
           </h1>
           
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 sm:text-xl leading-relaxed">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl leading-relaxed">
             A premium upskilling platform featuring timed quizzes, curated DSA coding sheets, Codeforces integration, and interactive learning streaks.
           </p>
           
           <div className="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center">
-            <Button size="lg" className="w-full sm:w-auto rounded-full px-8 h-12 text-base font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-600/20 transition-all hover:-translate-y-0.5" asChild>
+            <Button size="lg" className="w-full sm:w-auto rounded-full px-8 h-12 text-base font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-600/20 transition-all duration-200 hover:-translate-y-0.5" asChild>
               <Link href="/signup">
                 Start Learning <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full px-8 h-12 text-base font-bold border-slate-200 bg-white/50 backdrop-blur-sm text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-all shadow-sm hover:-translate-y-0.5" asChild>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full px-8 h-12 text-base font-bold bg-card/60 hover:bg-muted/80 text-foreground transition-all duration-200 hover:-translate-y-0.5 border-border backdrop-blur-sm" asChild>
               <Link href="/leaderboard">
                 <Trophy className="mr-2 h-4 w-4 text-amber-500" /> View Leaderboard
               </Link>
             </Button>
           </div>
-
         </div>
       </section>
 
       {/* Features Grid */}
       <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 animate-fade-in z-10">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-4">Everything you need to level up</h2>
-          <p className="text-slate-500 max-w-xl mx-auto">Comprehensive tools designed to test your knowledge, track your progress, and build consistent habits.</p>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-foreground tracking-tight mb-4">Everything you need to level up</h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">Comprehensive tools designed to test your knowledge, track your progress, and build consistent habits.</p>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -57,15 +59,15 @@ export default function HomePage() {
             { icon: Shield, color: "text-rose-500", bg: "bg-rose-500/10", border: "hover:border-rose-500/30 hover:shadow-rose-500/10", title: "Secure Platform", desc: "Admin whitelists, protected routes, and robust authentication built-in." },
             { icon: BrainCircuit, color: "text-violet-500", bg: "bg-violet-500/10", border: "hover:border-violet-500/30 hover:shadow-violet-500/10", title: "Smart Analytics", desc: "Detailed insights into your scores, ranks, and question-level completion rates." },
           ].map((f) => (
-            <Card key={f.title} className={`group border border-slate-200 bg-white/70 backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-1 ${f.border}`}>
+            <Card key={f.title} className={`group border border-border bg-card/75 backdrop-blur-md shadow-md transition-all duration-300 hover:-translate-y-1 ${f.border}`}>
               <CardHeader className="pb-4">
-                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl ${f.bg} transition-transform group-hover:scale-110`}>
+                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl ${f.bg} transition-transform duration-300 group-hover:scale-110`}>
                   <f.icon className={`h-6 w-6 ${f.color}`} />
                 </div>
-                <CardTitle className="text-xl font-bold text-slate-900">{f.title}</CardTitle>
+                <CardTitle className="text-xl font-bold text-foreground">{f.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-sm text-slate-600 leading-relaxed">{f.desc}</CardDescription>
+                <CardDescription className="text-sm text-muted-foreground leading-relaxed">{f.desc}</CardDescription>
               </CardContent>
             </Card>
           ))}
@@ -73,8 +75,8 @@ export default function HomePage() {
       </section>
       
       {/* Footer minimal */}
-      <footer className="mt-auto border-t border-slate-200/60 bg-white/50 backdrop-blur-md py-8">
-        <div className="mx-auto max-w-6xl px-4 text-center text-sm font-medium text-slate-400">
+      <footer className="mt-auto border-t border-border/60 bg-card/50 backdrop-blur-md py-8">
+        <div className="mx-auto max-w-6xl px-4 text-center text-sm font-medium text-muted-foreground/60">
           © {new Date().getFullYear()} Quizzer Platform. Built for learning.
         </div>
       </footer>

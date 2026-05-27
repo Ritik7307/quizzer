@@ -93,54 +93,54 @@ export default function QuizResultPage() {
 
   return (
     <ProtectedRoute>
-      <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 animate-fade-in">
+      <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 animate-fade-in text-foreground">
         {loading ? (
-          <Skeleton className="h-80 w-full" />
+          <Skeleton className="h-80 w-full rounded-2xl" />
         ) : data ? (
           <div className="space-y-6">
             
             {/* Results card */}
-            <Card className="border-slate-200 bg-white/40 backdrop-blur-sm shadow-xl">
-              <CardHeader className="text-center border-b border-slate-200/50 pb-6">
-                <Trophy className="mx-auto mb-2 h-12 w-12 text-amber-500" />
-                <CardTitle className="text-2xl font-extrabold text-slate-900 tracking-tight">{data.attempt.quiz.title}</CardTitle>
-                <p className="text-slate-600 text-sm">Performance Summary</p>
+            <Card className="border border-border bg-card/45 backdrop-blur-md shadow-sm rounded-2xl">
+              <CardHeader className="text-center border-b border-border pb-6 bg-muted/5">
+                <Trophy className="mx-auto mb-2 h-12 w-12 text-amber-500 animate-pulse" />
+                <CardTitle className="text-2xl font-extrabold text-foreground tracking-tight">{data.attempt.quiz.title}</CardTitle>
+                <p className="text-muted-foreground text-sm font-semibold mt-1">Performance Summary</p>
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
                 <div className="text-center">
-                  <p className="text-5xl font-extrabold text-indigo-500">{data.attempt.percentage}%</p>
-                  <p className="mt-1.5 text-slate-700 text-sm font-medium">
+                  <p className="text-5xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">{data.attempt.percentage}%</p>
+                  <p className="mt-2 text-foreground/80 text-sm font-bold">
                     Score: {data.attempt.score} / {data.attempt.totalQuestions}
                   </p>
                   {data.attempt.rank !== null && (
-                    <p className="mt-2 flex items-center justify-center gap-1.5 font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 w-fit mx-auto px-3 py-1 rounded-full text-sm">
+                    <p className="mt-3.5 flex items-center justify-center gap-1.5 font-extrabold text-amber-550 bg-amber-500/10 border border-amber-500/20 w-fit mx-auto px-3.5 py-1 rounded-full text-xs uppercase tracking-wider shadow-sm">
                       <Award className="h-4 w-4" /> Rank #{data.attempt.rank}
                     </p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2 rounded-xl bg-emerald-950/20 border border-emerald-900/20 p-4">
-                    <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+                  <div className="flex items-center gap-3 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/10 px-4 py-3.5 shadow-sm">
+                    <CheckCircle2 className="h-8 w-8 text-emerald-550" />
                     <div>
-                      <p className="text-2xl font-bold text-emerald-400">{data.attempt.correctCount}</p>
-                      <p className="text-xs text-slate-600 font-medium">Correct</p>
+                      <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 leading-none">{data.attempt.correctCount}</p>
+                      <p className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-wider mt-1 leading-none">Correct</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 rounded-xl bg-red-950/20 border border-red-900/20 p-4">
+                  <div className="flex items-center gap-3 rounded-2xl bg-red-500/5 dark:bg-red-500/10 border border-red-500/10 px-4 py-3.5 shadow-sm">
                     <XCircle className="h-8 w-8 text-red-500" />
                     <div>
-                      <p className="text-2xl font-bold text-red-400">{data.attempt.wrongCount}</p>
-                      <p className="text-xs text-slate-600 font-medium">Wrong</p>
+                      <p className="text-2xl font-black text-red-550 dark:text-red-400 leading-none">{data.attempt.wrongCount}</p>
+                      <p className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-wider mt-1 leading-none">Wrong</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-3 justify-center pt-4 border-t border-slate-200/50">
-                  <Button asChild className="bg-indigo-600 text-white font-semibold">
+                <div className="flex flex-wrap gap-3 justify-center pt-4 border-t border-border mt-4">
+                  <Button asChild className="bg-indigo-650 text-white hover:bg-indigo-700 font-bold px-5 rounded-lg h-10 shadow-sm">
                     <Link href="/leaderboard">View Leaderboard</Link>
                   </Button>
-                  <Button variant="outline" asChild className="border-neutral-750 text-slate-700 hover:bg-slate-50">
+                  <Button variant="outline" asChild className="rounded-lg h-10 px-5 font-bold">
                     <Link href="/dashboard">Back to Dashboard</Link>
                   </Button>
                 </div>
@@ -149,18 +149,18 @@ export default function QuizResultPage() {
 
             {/* Feedback form */}
             {!feedbackSubmitted ? (
-              <Card className="border-indigo-900/30 bg-white/20 backdrop-blur-sm shadow-xl">
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-slate-900">Rate this Quiz</CardTitle>
-                  <CardDescription className="text-xs text-slate-600">
+              <Card className="border border-border bg-card/45 backdrop-blur-md shadow-sm rounded-2xl overflow-hidden">
+                <CardHeader className="pb-3 bg-muted/5 border-b border-border">
+                  <CardTitle className="text-lg font-bold text-foreground">Rate this Quiz</CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground mt-0.5">
                     Your feedback helps Kode Club improve future quiz questions and difficulty scaling.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-5 pt-5">
                   
                   {/* Star Rating */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Rating</label>
+                    <label className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground block">Rating</label>
                     <div className="flex items-center gap-1.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -173,7 +173,7 @@ export default function QuizResultPage() {
                             className={cn(
                               "h-7 w-7 transition-colors",
                               star <= rating
-                                ? "fill-amber-400 text-amber-400"
+                                ? "fill-amber-450 text-amber-500"
                                 : "text-neutral-700 fill-transparent hover:text-slate-500"
                             )}
                           />
@@ -184,7 +184,7 @@ export default function QuizResultPage() {
 
                   {/* Perceived Difficulty */}
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Perceived Difficulty</label>
+                    <label className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground block">Perceived Difficulty</label>
                     <div className="grid grid-cols-3 gap-2">
                       {(["Easy", "Medium", "Hard"] as const).map((diff) => (
                         <button
@@ -192,10 +192,10 @@ export default function QuizResultPage() {
                           type="button"
                           onClick={() => setDifficulty(diff)}
                           className={cn(
-                            "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
+                            "rounded-lg border py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 outline-none shadow-sm",
                             difficulty === diff
-                              ? "border-indigo-500 bg-indigo-600 text-white font-bold"
-                              : "border-slate-200 bg-white/40 text-slate-600 hover:border-neutral-750"
+                              ? "border-indigo-500 bg-indigo-650 text-white font-bold"
+                              : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
                           )}
                         >
                           {diff === "Easy" ? "🟢 Easy" : diff === "Medium" ? "🟡 Medium" : "🔴 Hard"}
@@ -206,41 +206,41 @@ export default function QuizResultPage() {
 
                   {/* Suggestions Comments */}
                   <div className="space-y-1.5">
-                    <label htmlFor="comments" className="text-xs font-bold uppercase tracking-wider text-slate-600">Comments & Suggestions</label>
+                    <label htmlFor="comments" className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground block">Comments & Suggestions</label>
                     <textarea
                       id="comments"
                       rows={3}
                       placeholder="Tell us what you liked or what can be improved in this quiz..."
                       value={comments}
                       onChange={(e) => setComments(e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 bg-slate-50/40 p-3 text-sm text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full rounded-lg border border-border bg-muted/20 p-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-muted-foreground/60 shadow-inner"
                     />
                   </div>
 
                   <Button
                     onClick={handleSubmitFeedback}
                     disabled={submittingFeedback}
-                    className="w-full bg-indigo-600 text-white font-semibold py-2.5"
+                    className="w-full bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-2.5 rounded-lg shadow-sm"
                   >
                     {submittingFeedback ? "Submitting Review..." : "Submit Review"}
                   </Button>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="border-emerald-900/30 bg-emerald-950/5 shadow-md">
-                <CardContent className="py-6 text-center space-y-2">
-                  <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto" />
-                  <h3 className="font-bold text-slate-900">Thank you for your feedback!</h3>
-                  <p className="text-xs text-slate-600">Your review helps us curate better quality questions for Kode Club events.</p>
+              <Card className="border border-emerald-500/10 bg-emerald-500/5 shadow-sm rounded-2xl overflow-hidden p-5 text-center">
+                <CardContent className="py-2 text-center space-y-3">
+                  <CheckCircle2 className="h-8 w-8 text-emerald-555 mx-auto" />
+                  <h3 className="font-extrabold text-foreground text-base">Thank you for your feedback!</h3>
+                  <p className="text-xs text-muted-foreground font-semibold leading-relaxed">Your review has been captured and helps us scale events successfully.</p>
                 </CardContent>
               </Card>
             )}
 
           </div>
         ) : (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p>No result found. Complete a quiz first.</p>
+          <Card className="border border-border bg-card text-center rounded-2xl p-6">
+            <CardContent className="py-6 text-center space-y-2">
+              <p className="font-semibold text-muted-foreground">No result found. Complete a quiz first.</p>
               <Button className="mt-4" asChild>
                 <Link href="/dashboard">Go to Dashboard</Link>
               </Button>
@@ -251,51 +251,54 @@ export default function QuizResultPage() {
         {/* Detailed Breakdown Review */}
         {data?.breakdown && (
           <div className="mt-8 space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Detailed Review</h2>
+            <h2 className="text-xl font-bold text-foreground tracking-tight">Detailed Review</h2>
             {data.breakdown.map((q, idx) => (
-              <Card key={q.questionId} className={q.isCorrect ? "border-emerald-950 bg-emerald-950/5" : "border-red-950 bg-red-950/5"}>
-                <CardHeader className="pb-3 border-b border-slate-200/20">
+              <Card key={q.questionId} className={cn(
+                "border overflow-hidden rounded-2xl shadow-sm",
+                q.isCorrect ? "border-emerald-500/15 bg-emerald-500/5" : "border-red-500/15 bg-red-500/5"
+              )}>
+                <CardHeader className="pb-3 border-b border-border/40 bg-muted/10">
                   <div className="flex items-start gap-3">
                     <div className="mt-1">
                       {q.isCorrect ? (
-                        <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                        <CheckCircle2 className="h-5 w-5 text-emerald-555" />
                       ) : (
-                        <XCircle className="h-5 w-5 text-red-500" />
+                        <XCircle className="h-5 w-5 text-red-550" />
                       )}
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Question {idx + 1}</p>
-                      <CardTitle className="text-base font-semibold text-slate-900 mt-1 leading-snug">{q.text}</CardTitle>
+                      <p className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest">Question {idx + 1}</p>
+                      <CardTitle className="text-base font-extrabold text-foreground mt-1 leading-snug">{q.text}</CardTitle>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="pl-11 pt-4">
-                  <div className="space-y-2">
+                <CardContent className="pl-11 pt-4.5 pb-4.5 bg-card/20">
+                  <div className="space-y-2.5">
                     {q.options.map((opt, i) => {
                       const isSelected = q.selected === i;
                       const isCorrect = q.correct === i;
-                      let optionClass = "border-slate-200 bg-white/30 text-slate-700";
+                      let optionClass = "border-border bg-card text-foreground/90";
                       
                       if (isCorrect) {
-                        optionClass = "border-emerald-550/40 bg-emerald-950/20 text-emerald-400 font-medium";
+                        optionClass = "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 font-bold";
                       } else if (isSelected && !isCorrect) {
-                        optionClass = "border-red-550/40 bg-red-950/20 text-red-400 font-medium";
+                        optionClass = "border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400 font-bold";
                       }
 
                       return (
                         <div
                           key={i}
-                          className={`rounded-lg border p-3.5 text-sm transition-colors ${optionClass}`}
+                          className={`rounded-xl border p-3.5 text-xs font-semibold leading-relaxed transition-colors shadow-sm ${optionClass}`}
                         >
-                          <span className="font-semibold mr-1.5">{String.fromCharCode(65 + i)}.</span>
+                          <span className="font-extrabold mr-1.5">{String.fromCharCode(65 + i)}.</span>
                           {opt}
                         </div>
                       );
                     })}
                   </div>
                   {q.selected === null && (
-                    <p className="mt-3 text-xs text-amber-500 font-medium flex items-center gap-1">
-                      <HelpCircle className="h-3.5 w-3.5" /> You did not answer this question.
+                    <p className="mt-3 text-xs text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1.5">
+                      <HelpCircle className="h-4 w-4" /> You did not answer this question.
                     </p>
                   )}
                 </CardContent>
