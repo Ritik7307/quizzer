@@ -108,6 +108,8 @@ router.post("/admin", authenticate, requireRole(Role.ADMIN), async (req, res) =>
           `,
         }).catch((err) => console.error(`Failed to send resource email to ${u.email}:`, err));
       });
+    }
+
     res.json({ message: "Resource uploaded successfully", resource });
   } catch (error) {
     console.error("Upload error:", error);
@@ -141,7 +143,7 @@ router.get("/", authenticate, async (_req, res) => {
 });
 
 // DELETE a resource (Admin only)
-router.delete("/admin/:id", authenticate, requireAdmin, async (req, res) => {
+router.delete("/admin/:id", authenticate, requireRole(Role.ADMIN), async (req, res) => {
   try {
     const { prisma } = await import("../lib/prisma.js");
     const id = String(req.params.id);
