@@ -185,6 +185,7 @@ model Resource {
   fileUrl     String
   fileType    String   // e.g. pdf, image, doc, zip
   fileSize    Int      // in bytes
+  fileData    String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

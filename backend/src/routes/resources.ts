@@ -65,6 +65,7 @@ router.post("/admin", authenticate, requireRole(Role.ADMIN), async (req, res) =>
         fileUrl,
         fileType,
         fileSize,
+        fileData,
       },
     });
 
@@ -107,78 +108,83 @@ router.post("/admin", authenticate, requireRole(Role.ADMIN), async (req, res) =>
           `,
         }).catch((err) => console.error(`Failed to send resource email to ${u.email}:`, err));
       });
-    }
-
-    return res.status(201).json({ success: true, resource });
-  } catch (err) {
-    if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: err.errors[0]?.message ?? "Invalid input" });
-    }
-    console.error(err);
-    return res.status(500).json({ error: "Failed to upload resource" });
+    res.json({ message: "Resource uploaded successfully", resource });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({ error: "Failed to upload resource" });
   }
 });
 
-// DELETE /api/resources/admin/:id - Delete a resource (Admin only)
-router.delete("/admin/:id", authenticate, requireRole(Role.ADMIN), async (req, res) => {
+// GET all resources (for dashboard and admin)
+router.get("/", authenticate, async (_req, res) => {
   try {
-    const id = String(req.params.id);
-    const resource = await prisma.resource.findUnique({
-      where: { id },
+    const { prisma } = await import("../lib/prisma.js");
+    // Don't select fileData when listing to avoid huge payload!
+    const resources = await prisma.resource.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        fileName: true,
+        fileUrl: true,
+        fileType: true,
+        fileSize: true,
+        createdAt: true,
+      }
     });
-
-    if (!resource) {
-      return res.status(404).json({ error: "Resource not found" });
-    }
-
-    // Delete the file from the uploads directory
-    const filePath = path.join(UPLOADS_DIR, resource.fileName);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-
-    await prisma.resource.delete({
-      where: { id },
-    });
-
-    return res.json({ success: true, message: "Resource deleted successfully" });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Failed to delete resource" });
+    res.json({ resources });
+  } catch (error) {
+    console.error("Fetch resources error:", error);
+    res.status(500).json({ error: "Failed to fetch resources" });
   }
 });
 
-router.get("/:id/download", authenticate, async (req, res) => {
+// DELETE a resource (Admin only)
+router.delete("/admin/:id", authenticate, requireAdmin, async (req, res) => {
   try {
+    const { prisma } = await import("../lib/prisma.js");
     const id = String(req.params.id);
     const resource = await prisma.resource.findUnique({ where: { id } });
     if (!resource) return res.status(404).json({ error: "Resource not found" });
+
+    await prisma.resource.delete({ where: { id } });
+    res.json({ message: "Resource deleted" });
+  } catch (error) {
+    console.error("Delete resource error:", error);
+    res.status(500).json({ error: "Failed to delete resource" });
+  }
+});
+
+// GET (download) a resource
+router.get("/:id/download", authenticate, async (req, res) => {
+  try {
+    const { prisma } = await import("../lib/prisma.js");
+    const id = String(req.params.id);
+    const resource = await prisma.resource.findUnique({ where: { id } });
     
-    const filePath = path.join(UPLOADS_DIR, resource.fileName);
-    if (fs.existsSync(filePath)) {
-      return res.download(filePath, resource.fileName);
+    if (!resource) return res.status(404).json({ error: "Resource not found" });
+
+    if (resource.fileData) {
+      const buffer = Buffer.from(resource.fileData, "base64");
+      
+      let contentType = "application/octet-stream";
+      const ext = resource.fileType.toLowerCase();
+      if (ext === "pdf") contentType = "application/pdf";
+      else if (ext === "png") contentType = "image/png";
+      else if (ext === "jpg" || ext === "jpeg") contentType = "image/jpeg";
+      
+      res.setHeader("Content-Disposition", `inline; filename="${resource.fileName}"`);
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Content-Length", buffer.length);
+      
+      return res.end(buffer);
     }
 
-    // Fallback: If not found locally, proxy from the remote fileUrl if it exists
-    if (resource.fileUrl && resource.fileUrl.startsWith("http")) {
-      try {
-        const remoteRes = await fetch(resource.fileUrl);
-        if (!remoteRes.ok) throw new Error("Remote file not found");
-        
-        res.setHeader("Content-Disposition", `attachment; filename="${resource.fileName}"`);
-        res.setHeader("Content-Type", remoteRes.headers.get("content-type") || "application/octet-stream");
-        
-        const arrayBuffer = await remoteRes.arrayBuffer();
-        return res.send(Buffer.from(arrayBuffer));
-      } catch (err) {
-        return res.status(404).json({ error: "File not found on server or remote storage" });
-      }
-    }
-    
-    return res.status(404).json({ error: "File not found on server" });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Failed to download resource" });
+    return res.status(404).json({ error: "File not found on server or remote storage" });
+  } catch (error) {
+    console.error("Download error:", error);
+    res.status(500).json({ error: "Failed to download resource" });
   }
 });
 
