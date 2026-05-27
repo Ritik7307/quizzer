@@ -125,27 +125,7 @@ export default function AdminResourcesPage() {
       });
   };
 
-  const handleDownload = async (resource: Resource) => {
-    if (!token) return;
-    try {
-      const res = await fetch(`/api/resources/${resource.id}/download`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to download");
-      }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = resource.fileName;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (err: any) {
-      toast.error(err.message || "Download failed");
-    }
-  };
+  // Using anchor tags directly for downloads
 
   return (
     <ProtectedRoute role="ADMIN">
@@ -287,14 +267,13 @@ export default function AdminResourcesPage() {
                           </p>
                         </div>
                         <div className="flex items-center gap-2 justify-end sm:shrink-0">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 border-neutral-800 text-[10px] font-extrabold uppercase text-neutral-350 bg-black/40 hover:bg-neutral-850 hover:text-white"
-                            onClick={() => handleDownload(resource)}
+                          <a
+                            href={`/api/resources/${resource.id}/download?token=${token}`}
+                            download={resource.fileName}
+                            className="inline-flex h-8 items-center justify-center rounded-md border border-neutral-800 bg-black/40 px-3 text-[10px] font-extrabold uppercase text-neutral-350 transition-colors hover:bg-neutral-850 hover:text-white"
                           >
                             <Download className="mr-1.5 h-3.5 w-3.5" /> Download
-                          </Button>
+                          </a>
                           <Button
                             variant="ghost"
                             size="icon"

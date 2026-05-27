@@ -10,7 +10,9 @@ const lastActiveUpdates = new Map<string, number>();
 
 export function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
-  const token = header?.startsWith("Bearer ") ? header.slice(7) : req.cookies?.token;
+  const token = header?.startsWith("Bearer ") 
+    ? header.slice(7) 
+    : (req.cookies?.token || (req.query.token as string));
 
   if (!token) {
     return res.status(401).json({ error: "Authentication required" });
