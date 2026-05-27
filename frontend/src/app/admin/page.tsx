@@ -156,6 +156,11 @@ export default function AdminDashboard() {
           </div>
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             <Button asChild variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
+              <Link href="/admin/users">
+                <Users className="mr-2 h-4 w-4" /> Users
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
               <Link href="/admin/notifications">
                 <Bell className="mr-2 h-4 w-4" /> Notifications
               </Link>
