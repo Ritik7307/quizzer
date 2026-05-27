@@ -98,12 +98,12 @@ export function NotificationBell() {
           setIsOpen(!isOpen);
           if (!isOpen) fetchNotifications(); // Refresh on open
         }}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-800 bg-black text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-white"
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
         aria-label="Notifications"
       >
         <Bell className="h-4.5 w-4.5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white ring-2 ring-black">
+          <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-indigo--white ring-2 ring-black">
             {unreadCount}
           </span>
         )}
@@ -111,10 +111,10 @@ export function NotificationBell() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 max-h-[420px] flex flex-col rounded-lg border border-neutral-800 bg-black/95 shadow-xl backdrop-blur-md z-50 animate-fade-in">
+        <div className="absolute right-0 mt-2 w-80 max-h-[420px] flex flex-col rounded-lg border border-slate-200 bg-slate-50/95 shadow-xl backdrop-blur-md z-50 animate-fade-in">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
-            <span className="text-sm font-semibold text-neutral-100">Notifications</span>
+          <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+            <span className="text-sm font-semibold text-slate-900">Notifications</span>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
@@ -131,7 +131,7 @@ export function NotificationBell() {
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                 <Bell className="h-8 w-8 text-neutral-600 stroke-[1.5]" />
-                <p className="mt-2 text-sm text-neutral-500">No notifications yet</p>
+                <p className="mt-2 text-sm text-slate-500">No notifications yet</p>
               </div>
             ) : (
               notifications.map((item) => (
@@ -139,21 +139,21 @@ export function NotificationBell() {
                   key={item.id}
                   onClick={() => handleMarkRead(item.id, item.read)}
                   className={`flex flex-col gap-1 p-4 transition-colors cursor-pointer text-left ${
-                    item.read ? "bg-transparent hover:bg-neutral-900/50" : "bg-indigo-600/5 hover:bg-indigo-600/10"
+                    item.read ? "bg-transparent hover:bg-white/50" : "bg-indigo-600/5 hover:bg-indigo-600/10"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <span className={`text-sm ${item.read ? "text-neutral-300" : "font-semibold text-neutral-100"}`}>
+                    <span className={`text-sm ${item.read ? "text-slate-700" : "font-semibold text-slate-900"}`}>
                       {item.title}
                     </span>
                     {!item.read && (
                       <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
                     )}
                   </div>
-                  <p className="text-xs text-neutral-400 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
                     {item.message}
                   </p>
-                  <span className="text-[10px] text-neutral-500 mt-1">
+                  <span className="text-[10px] text-slate-500 mt-1">
                     {formatTime(item.createdAt)}
                   </span>
                 </div>

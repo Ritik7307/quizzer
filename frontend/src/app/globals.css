@@ -18,23 +18,23 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
     scroll-behavior: smooth;
   }
 
   body {
     min-height: 100vh;
-    background: radial-gradient(100% 50% at 50% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 100%), #0a0a0a;
+    background: radial-gradient(100% 50% at 50% 0%, rgba(99, 102, 241, 0.05) 0%, transparent 100%), #f8fafc;
     background-attachment: fixed;
-    color: #ededed;
+    color: #0f172a;
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background-color: rgba(99, 102, 241, 0.3);
-    color: #fff;
+    background-color: rgba(99, 102, 241, 0.2);
+    color: #0f172a;
   }
 }
 

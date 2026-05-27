@@ -99,9 +99,9 @@ export default function ForgotPasswordPage() {
           ) : (
             /* Step 2: Answer question & reset password */
             <form onSubmit={handleResetPassword} className="space-y-4">
-              <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-                <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Security Question</p>
-                <p className="mt-1 text-sm font-medium text-neutral-100">{recoveryQuestion}</p>
+              <div className="rounded-lg border border-slate-200 bg-white p-4">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Security Question</p>
+                <p className="mt-1 text-sm font-medium text-slate-900">{recoveryQuestion}</p>
               </div>
 
               <div className="space-y-2">
@@ -156,7 +156,7 @@ export default function ForgotPasswordPage() {
             </form>
           )}
 
-          <p className="mt-4 text-center text-sm text-neutral-500">
+          <p className="mt-4 text-center text-sm text-slate-500">
             Remembered your password?{" "}
             <Link href="/login" className="font-medium text-indigo-400 hover:underline">
               Sign in

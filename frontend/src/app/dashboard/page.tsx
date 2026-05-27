@@ -127,10 +127,10 @@ export default function CandidateDashboard() {
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
         
         {/* Welcome header */}
-        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-neutral-900 pb-5">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-5">
           <div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">Welcome, {user?.name}</h1>
-            <p className="mt-1 text-sm text-neutral-450 sm:text-base">
+            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Welcome, {user?.name}</h1>
+            <p className="mt-1 text-sm text-slate-500 sm:text-base">
               {activeTab === "quizzes" && "Available quizzes for the upskilling series"}
               {activeTab === "coding" && "Practice your programming logic in C++, Java, and C"}
               {activeTab === "history" && "Analyze your past code compile and run submissions"}
@@ -177,7 +177,7 @@ export default function CandidateDashboard() {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex gap-1 sm:gap-2 border-b border-neutral-800 pb-px mb-6">
+        <div className="flex gap-1 sm:gap-2 border-b border-slate-200 pb-px mb-6">
           {[
             { id: "quizzes", label: "Quizzes", icon: BookOpen },
             { id: "coding", label: "Coding Practice", icon: Code },
@@ -194,7 +194,7 @@ export default function CandidateDashboard() {
               className={`flex items-center gap-1.5 border-b-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
                 activeTab === t.id
                   ? "border-indigo-500 text-indigo-400"
-                  : "border-transparent text-neutral-400 hover:text-neutral-200"
+                  : "border-transparent text-slate-600 hover:text-slate-800"
               }`}
             >
               <t.icon className="h-4 w-4" />
@@ -206,7 +206,7 @@ export default function CandidateDashboard() {
         {/* Search input (not needed for history tab) */}
         {activeTab !== "history" && (
           <div className="relative mb-6 max-w-md animate-fade-in">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" />
             <Input
               className="pl-10"
               placeholder={
@@ -232,13 +232,13 @@ export default function CandidateDashboard() {
               ))}
             </div>
           ) : filteredQuizzes.length === 0 ? (
-            <Card className="border-neutral-800">
-              <CardContent className="py-12 text-center text-neutral-500">No quizzes found.</CardContent>
+            <Card className="border-slate-200">
+              <CardContent className="py-12 text-center text-slate-500">No quizzes found.</CardContent>
             </Card>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredQuizzes.map((quiz) => (
-                <Card key={quiz.id} className="flex flex-col transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 hover:bg-neutral-900/60 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
+                <Card key={quiz.id} className="flex flex-col transition-all duration-300 border-slate-200/60 bg-white/40 backdrop-blur-md hover:border-indigo-500/30 hover:bg-white/60 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                       <CardTitle className="text-lg">{quiz.title}</CardTitle>
@@ -251,7 +251,7 @@ export default function CandidateDashboard() {
                     <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="mt-auto flex items-center justify-between">
-                    <span className="flex items-center gap-1 text-sm text-neutral-500">
+                    <span className="flex items-center gap-1 text-sm text-slate-500">
                       <Clock className="h-4 w-4" /> {quiz.duration} min · {quiz._count?.questions ?? 0} Qs
                     </span>
                     {quiz.attempt?.submittedAt ? (
@@ -285,13 +285,13 @@ export default function CandidateDashboard() {
               ))}
             </div>
           ) : filteredCoding.length === 0 ? (
-            <Card className="border-neutral-800">
-              <CardContent className="py-12 text-center text-neutral-500">No coding questions found.</CardContent>
+            <Card className="border-slate-200">
+              <CardContent className="py-12 text-center text-slate-500">No coding questions found.</CardContent>
             </Card>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredCoding.map((question) => (
-                <Card key={question.id} className="flex flex-col transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 hover:bg-neutral-900/60 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
+                <Card key={question.id} className="flex flex-col transition-all duration-300 border-slate-200/60 bg-white/40 backdrop-blur-md hover:border-indigo-500/30 hover:bg-white/60 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                       <CardTitle className="text-lg">{question.title}</CardTitle>
@@ -331,20 +331,20 @@ export default function CandidateDashboard() {
               <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
             </div>
           ) : submissions.length === 0 ? (
-            <Card className="border-neutral-800">
-              <CardContent className="py-12 text-center text-neutral-500">No coding attempts recorded yet.</CardContent>
+            <Card className="border-slate-200">
+              <CardContent className="py-12 text-center text-slate-500">No coding attempts recorded yet.</CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
               {submissions.map((sub) => (
-                <Card key={sub.id} className="border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md">
+                <Card key={sub.id} className="border-slate-200/60 bg-white/40 backdrop-blur-md">
                   <div
                     onClick={() => setExpandedSubId(expandedSubId === sub.id ? null : sub.id)}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 cursor-pointer hover:bg-neutral-900/10 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 cursor-pointer hover:bg-white/10 transition-colors"
                   >
                     <div className="space-y-1">
-                      <h3 className="text-base font-semibold text-neutral-200">{sub.codingQuestion.title}</h3>
-                      <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-500">
+                      <h3 className="text-base font-semibold text-slate-800">{sub.codingQuestion.title}</h3>
+                      <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
                         <span>Language: {getLanguageLabel(sub.language)}</span>
                         <span>•</span>
                         <span>Date: {formatDate(sub.createdAt)}</span>
@@ -353,7 +353,7 @@ export default function CandidateDashboard() {
 
                     <div className="flex items-center justify-between sm:justify-end gap-4">
                       {/* Score / Cases Passed */}
-                      <span className="text-sm font-medium text-neutral-400">
+                      <span className="text-sm font-medium text-slate-600">
                         {sub.passedCount}/{sub.totalCount} Cases
                       </span>
 
@@ -379,7 +379,7 @@ export default function CandidateDashboard() {
 
                   {/* Expanded Submission Detail (Code Inspection) */}
                   {expandedSubId === sub.id && (
-                    <CardContent className="border-t border-neutral-900 pt-4 bg-black/40">
+                    <CardContent className="border-t border-slate-200 pt-4 bg-slate-50/40">
                       <div className="space-y-3">
                         {/* Error info (if any failed) */}
                         {sub.errorDetails && (
@@ -391,8 +391,8 @@ export default function CandidateDashboard() {
 
                         {/* Submitted Code Block */}
                         <div className="space-y-1">
-                          <Label className="text-[10px] uppercase font-bold text-neutral-500">Submitted Code</Label>
-                          <pre className="rounded-lg border border-neutral-850 bg-neutral-950 p-4 font-mono text-xs text-neutral-300 overflow-x-auto max-h-72 whitespace-pre leading-relaxed">
+                          <Label className="text-[10px] uppercase font-bold text-slate-500">Submitted Code</Label>
+                          <pre className="rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs text-slate-700 overflow-x-auto max-h-72 whitespace-pre leading-relaxed">
                             {sub.code}
                           </pre>
                         </div>
@@ -414,16 +414,16 @@ export default function CandidateDashboard() {
               ))}
             </div>
           ) : filteredResources.length === 0 ? (
-            <Card className="border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md">
-              <CardContent className="py-12 text-center text-neutral-500">No resources found.</CardContent>
+            <Card className="border-slate-200/60 bg-white/40 backdrop-blur-md">
+              <CardContent className="py-12 text-center text-slate-500">No resources found.</CardContent>
             </Card>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredResources.map((resource) => (
-                <Card key={resource.id} className="flex flex-col justify-between transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 rounded-xl overflow-hidden">
+                <Card key={resource.id} className="flex flex-col justify-between transition-all duration-300 border-slate-200/60 bg-white/40 backdrop-blur-md hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 rounded-xl overflow-hidden">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="text-base font-bold text-white truncate max-w-[200px]" title={resource.title}>
+                      <CardTitle className="text-base font-bold text-slate-900 truncate max-w-[200px]" title={resource.title}>
                         {resource.title}
                       </CardTitle>
                       <Badge className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold uppercase tracking-wider">
@@ -431,13 +431,13 @@ export default function CandidateDashboard() {
                       </Badge>
                     </div>
                     {resource.description && (
-                      <CardDescription className="text-xs text-neutral-450 line-clamp-3 leading-relaxed mt-1">
+                      <CardDescription className="text-xs text-slate-500 line-clamp-3 leading-relaxed mt-1">
                         {resource.description}
                       </CardDescription>
                     )}
                   </CardHeader>
-                  <CardContent className="pt-2 flex items-center justify-between border-t border-neutral-900/60 bg-neutral-950/40 px-6 py-3.5 mt-auto">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                  <CardContent className="pt-2 flex items-center justify-between border-t border-slate-200/60 bg-white/40 px-6 py-3.5 mt-auto">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                       {(resource.fileSize / 1024 / 1024).toFixed(2)} MB
                     </span>
                     <div className="flex items-center gap-2">
@@ -445,14 +445,14 @@ export default function CandidateDashboard() {
                         href={`/api/resources/${resource.id}/download?token=${token}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex h-8 items-center justify-center rounded-md bg-neutral-900/50 px-3 text-[10px] font-extrabold uppercase tracking-wider text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white"
+                        className="inline-flex h-8 items-center justify-center rounded-md bg-white/50 px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
                       >
                         <BookOpen className="mr-1.5 h-3.5 w-3.5" /> View
                       </a>
                       <a
                         href={`/api/resources/${resource.id}/download?token=${token}`}
                         download={resource.fileName}
-                        className="inline-flex h-8 items-center justify-center rounded-md border border-neutral-800 bg-black/30 px-3 text-[10px] font-extrabold uppercase tracking-wider text-neutral-350 transition-colors hover:bg-neutral-800 hover:text-white"
+                        className="inline-flex h-8 items-center justify-center rounded-md border border-slate-200 bg-slate-50/30 px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
                       >
                         <Download className="mr-1.5 h-3.5 w-3.5" /> Download
                       </a>

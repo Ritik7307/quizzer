@@ -90,7 +90,7 @@ export default function AdminNotificationsPage() {
       <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-          <p className="text-sm text-neutral-400">Loading user records...</p>
+          <p className="text-sm text-slate-600">Loading user records...</p>
         </div>
       </div>
     );
@@ -98,7 +98,7 @@ export default function AdminNotificationsPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
-      <Card className="border-neutral-800 bg-neutral-950/40 backdrop-blur-sm">
+      <Card className="border-slate-200 bg-white/40 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400">
@@ -121,7 +121,7 @@ export default function AdminNotificationsPage() {
                 id="recipient"
                 value={targetUserId}
                 onChange={(e) => setTargetUserId(e.target.value)}
-                className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
+                className="flex h-11 w-full min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-base text-slate-900 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
               >
                 <option value="all">📢 All Registered Users (Broadcast)</option>
                 <optgroup label="Candidates & Admins">
@@ -156,7 +156,7 @@ export default function AdminNotificationsPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
-                className="bg-black border-neutral-800 text-neutral-100 placeholder:text-neutral-500 focus-visible:ring-indigo-500 focus-visible:ring-2"
+                className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-500 focus-visible:ring-indigo-500 focus-visible:ring-2"
               />
             </div>
 

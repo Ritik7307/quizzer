@@ -72,8 +72,8 @@ export default function LeaderboardPage() {
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
       <div className="mb-6 text-center sm:mb-8">
         <Trophy className="mx-auto mb-2 h-10 w-10 text-amber-500 sm:h-12 sm:w-12" />
-        <h1 className="text-2xl font-bold text-white sm:text-3xl">Public Leaderboard</h1>
-        <p className="text-sm text-neutral-400 sm:text-base">Live rankings — updates in real time</p>
+        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Public Leaderboard</h1>
+        <p className="text-sm text-slate-600 sm:text-base">Live rankings — updates in real time</p>
       </div>
 
       {loading ? (
@@ -88,8 +88,8 @@ export default function LeaderboardPage() {
                 onClick={() => setSelectedQuiz(q.id)}
                 className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors sm:px-4 sm:text-sm ${
                   selectedQuiz === q.id
-                    ? "bg-indigo-600 text-white"
-                    : "bg-neutral-800 text-neutral-200 hover:bg-neutral-700"
+                    ? "bg-indigo--white"
+                    : "bg-slate-100 text-slate-800 hover:bg-neutral-700"
                 }`}
               >
                 {q.title}
@@ -99,7 +99,7 @@ export default function LeaderboardPage() {
 
           <div className="mb-4 grid gap-4 sm:grid-cols-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" />
               <Input
                 className="pl-10"
                 placeholder="Filter by name..."
@@ -122,12 +122,12 @@ export default function LeaderboardPage() {
             </CardHeader>
             <CardContent>
               {entries.length === 0 ? (
-                <p className="py-8 text-center text-neutral-500">No submissions yet.</p>
+                <p className="py-8 text-center text-slate-500">No submissions yet.</p>
               ) : (
                 <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
                   <table className="w-full min-w-[520px] text-sm">
                     <thead>
-                      <tr className="border-b border-neutral-800 text-left text-neutral-500">
+                      <tr className="border-b border-slate-200 text-left text-slate-500">
                         <th className="py-3 pr-3">Rank</th>
                         <th className="py-3 pr-3">Name</th>
                         <th className="py-3 pr-3">Score</th>
@@ -139,7 +139,7 @@ export default function LeaderboardPage() {
                       {entries.map((e, i) => (
                         <tr
                           key={e.id}
-                          className="border-b border-neutral-800 transition-colors hover:bg-neutral-800/50"
+                          className="border-b border-slate-200 transition-colors hover:bg-slate-100/50"
                         >
                           <td className="py-3 pr-3">
                             {e.rank === 1 ? (
@@ -152,10 +152,10 @@ export default function LeaderboardPage() {
                               <span className="font-medium">#{e.rank ?? i + 1}</span>
                             )}
                           </td>
-                          <td className="py-3 pr-3 font-medium text-white">{e.name}</td>
+                          <td className="py-3 pr-3 font-medium text-slate-900">{e.name}</td>
                           <td className="py-3 pr-3">{e.score}</td>
                           <td className="py-3 pr-3 font-semibold text-indigo-400">{e.percentage}%</td>
-                          <td className="py-3 text-neutral-500">
+                          <td className="py-3 text-slate-500">
                             {new Date(e.submittedAt).toLocaleString()}
                           </td>
                         </tr>

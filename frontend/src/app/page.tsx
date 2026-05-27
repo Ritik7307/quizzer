@@ -6,13 +6,13 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 export default function HomePage() {
   return (
     <div>
-      <section className="relative overflow-hidden border-b border-neutral-800 bg-gradient-to-b from-neutral-950 via-black to-black px-4 py-12 sm:px-6 sm:py-20">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-b from-neutral-950 via-black to-black px-4 py-12 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-5xl text-center animate-fade-in">
           <p className="mb-4 inline-flex rounded-full bg-indigo-900/40 px-4 py-1 text-xs font-medium text-indigo-300 sm:text-sm">
             Development Upskilling Series
           </p>
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">Quizzer</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-neutral-300 sm:mt-6 sm:text-lg">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">Quizzer</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-base text-slate-700 sm:mt-6 sm:text-lg">
             A modern development upskilling platform featuring timed MCQ quizzes, curated SDE coding sheets, 
             LeetCode/Codeforces profile sync, and interactive streaks with a contribution heatmap grid.
           </p>

@@ -235,13 +235,13 @@ export default function TakeQuizPage() {
     return (
       <ProtectedRoute role="CANDIDATE">
         <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-          <Card className="max-w-lg w-full border-neutral-800 bg-neutral-900/90 shadow-2xl">
+          <Card className="max-w-lg w-full border-slate-200 bg-white/90 shadow-2xl">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-white sm:text-2xl">{title} — Instructions</CardTitle>
+              <CardTitle className="text-xl font-bold text-slate-900 sm:text-2xl">{title} — Instructions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-300 sm:text-base">{instructions}</p>
-              <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-750" onClick={() => setShowInstructions(false)}>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 sm:text-base">{instructions}</p>
+              <Button className="w-full bg-indigo--white hover:bg-indigo-750" onClick={() => setShowInstructions(false)}>
                 I understand, start quiz
               </Button>
             </CardContent>
@@ -261,13 +261,13 @@ export default function TakeQuizPage() {
         <Badge variant="outline" className="border-amber-500/50 bg-amber-950/20 text-amber-400 gap-1 px-3 py-1">
           <Flag className="h-3 w-3" /> {flaggedCount} Flagged
         </Badge>
-        <Badge variant="outline" className="border-neutral-700 bg-neutral-800 text-neutral-300 gap-1 px-3 py-1">
+        <Badge variant="outline" className="border-neutral-700 bg-slate-100 text-slate-700 gap-1 px-3 py-1">
           <HelpCircle className="h-3 w-3" /> {remainingCount} Unanswered
         </Badge>
       </div>
 
-      <div className="border-t border-neutral-800 pt-4">
-        <p className="text-xs font-semibold text-neutral-400 mb-3 text-center uppercase tracking-wider">Question Review Grid</p>
+      <div className="border-t border-slate-200 pt-4">
+        <p className="text-xs font-semibold text-slate-600 mb-3 text-center uppercase tracking-wider">Question Review Grid</p>
         <div className="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto px-1">
           {questions.map((question, i) => {
             const isAns = answers[question.id] !== undefined;
@@ -286,7 +286,7 @@ export default function TakeQuizPage() {
                     ? "bg-amber-950/30 text-amber-300 border-amber-500/40"
                     : isAns
                     ? "bg-emerald-950/30 text-emerald-300 border-emerald-800/40"
-                    : "bg-neutral-900 text-neutral-400 border-neutral-800"
+                    : "bg-white text-slate-600 border-slate-200"
                 )}
               >
                 {i + 1}
@@ -294,10 +294,10 @@ export default function TakeQuizPage() {
             );
           })}
         </div>
-        <p className="text-[10px] text-center text-neutral-500 mt-2">Click a question number to jump to it directly.</p>
+        <p className="text-[10px] text-center text-slate-500 mt-2">Click a question number to jump to it directly.</p>
       </div>
 
-      <Button onClick={submitQuiz} className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-semibold py-2.5 mt-2">
+      <Button onClick={submitQuiz} className="w-full bg-indigo--white font-semibold py-2.5 mt-2">
         Finish & Submit Exam
       </Button>
     </div>
@@ -308,12 +308,12 @@ export default function TakeQuizPage() {
       <div className="mx-auto max-w-6xl px-3 py-4 sm:px-6 sm:py-6 animate-fade-in">
         
         {/* Header Section */}
-        <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-900 pb-4">
+        <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
           <div>
-            <h1 className="text-xl font-extrabold text-white sm:text-2xl tracking-tight">{title}</h1>
+            <h1 className="text-xl font-extrabold text-slate-900 sm:text-2xl tracking-tight">{title}</h1>
             
             {/* Auto-save Status */}
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-neutral-400">
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-600">
               <span className={cn(
                 "h-2.5 w-2.5 rounded-full inline-block transition-colors duration-300",
                 savingStatus === "saving" && "bg-amber-500 animate-pulse",
@@ -344,14 +344,14 @@ export default function TakeQuizPage() {
             {/* Quick Submit Button */}
             <Dialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-md">
+                <Button className="bg-emerald-600 hover:bg-emerald-700 text-slate-900 font-semibold shadow-md">
                   <Send className="h-4 w-4 mr-1.5" /> Submit
                 </Button>
               </DialogTrigger>
-              <DialogContent className="border-neutral-800 bg-neutral-900 shadow-2xl max-w-sm sm:max-w-md">
+              <DialogContent className="border-slate-200 bg-white shadow-2xl max-w-sm sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-center">Submit Quiz</DialogTitle>
-                  <DialogDescription className="text-center text-neutral-400">
+                  <DialogDescription className="text-center text-slate-600">
                     Are you ready to submit your attempt? Here is your progress summary:
                   </DialogDescription>
                 </DialogHeader>
@@ -362,8 +362,8 @@ export default function TakeQuizPage() {
         </div>
 
         {/* Visual Progress Bar */}
-        <div className="mb-6 space-y-2 bg-neutral-900/40 border border-neutral-900 rounded-xl p-3 sm:p-4">
-          <div className="flex items-center justify-between text-xs font-semibold text-neutral-400 sm:text-sm">
+        <div className="mb-6 space-y-2 bg-white/40 border border-slate-200 rounded-xl p-3 sm:p-4">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-600 sm:text-sm">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
               Completion Progress
@@ -372,7 +372,7 @@ export default function TakeQuizPage() {
               {answeredCount} of {totalQuestions} answered ({remainingCount} left)
             </span>
           </div>
-          <div className="w-full bg-neutral-800 border border-neutral-700/30 rounded-full h-2.5 overflow-hidden">
+          <div className="w-full bg-slate-100 border border-neutral-700/30 rounded-full h-2.5 overflow-hidden">
             <div
               className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progressPercent}%` }}
@@ -383,10 +383,10 @@ export default function TakeQuizPage() {
         <div className="grid gap-4 lg:grid-cols-[1fr_250px] lg:gap-6">
           
           {/* Main Question Card */}
-          <Card className="order-2 animate-fade-in lg:order-1 border-neutral-800 bg-neutral-900/40 backdrop-blur-sm shadow-xl flex flex-col justify-between">
-            <CardHeader className="border-b border-neutral-900/50 pb-4">
+          <Card className="order-2 animate-fade-in lg:order-1 border-slate-200 bg-white/40 backdrop-blur-sm shadow-xl flex flex-col justify-between">
+            <CardHeader className="border-b border-slate-200/50 pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base sm:text-lg font-bold text-neutral-100">
+                <CardTitle className="text-base sm:text-lg font-bold text-slate-900">
                   Question {current + 1} of {totalQuestions}
                 </CardTitle>
                 {flagged[q?.id] && (
@@ -397,7 +397,7 @@ export default function TakeQuizPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6 pt-6">
-              <p className="text-base leading-relaxed text-neutral-100 sm:text-lg font-medium">{q?.text}</p>
+              <p className="text-base leading-relaxed text-slate-900 sm:text-lg font-medium">{q?.text}</p>
               
               {/* Options list */}
               <div className="space-y-3">
@@ -409,15 +409,15 @@ export default function TakeQuizPage() {
                     className={cn(
                       "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none",
                       answers[q.id] === i
-                        ? "border-indigo-500 bg-indigo-950/40 text-white font-medium ring-1 ring-indigo-500"
-                        : "border-neutral-800 text-neutral-300 hover:border-indigo-500/50 hover:bg-neutral-800/20"
+                        ? "border-indigo-500 bg-indigo--white font-medium ring-1 ring-indigo-500"
+                        : "border-slate-200 text-slate-700 hover:border-indigo-500/50 hover:bg-slate-100/20"
                     )}
                   >
                     <span className={cn(
                       "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
                       answers[q.id] === i
-                        ? "bg-indigo-600 text-white"
-                        : "bg-neutral-900 text-neutral-400"
+                        ? "bg-indigo--white"
+                        : "bg-white text-slate-600"
                     )}>
                       {String.fromCharCode(65 + i)}
                     </span>
@@ -427,9 +427,9 @@ export default function TakeQuizPage() {
               </div>
 
               {/* Card Actions Footer */}
-              <div className="flex flex-col gap-2 pt-6 sm:flex-row sm:justify-between border-t border-neutral-900/50">
+              <div className="flex flex-col gap-2 pt-6 sm:flex-row sm:justify-between border-t border-slate-200/50">
                 <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                  <Button variant="outline" disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className="w-full sm:w-auto border-neutral-800 text-neutral-300 hover:bg-neutral-800">
+                  <Button variant="outline" disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className="w-full sm:w-auto border-slate-200 text-slate-700 hover:bg-slate-100">
                     <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                   </Button>
                   
@@ -441,7 +441,7 @@ export default function TakeQuizPage() {
                         delete newAnswers[q.id];
                         setAnswers(newAnswers);
                       }}
-                      className="w-full sm:w-auto text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50"
+                      className="w-full sm:w-auto text-slate-600 hover:text-slate-800 hover:bg-slate-50/50"
                     >
                       Clear Selection
                     </Button>
@@ -453,10 +453,10 @@ export default function TakeQuizPage() {
                     variant="outline"
                     onClick={() => setFlagged((prev) => ({ ...prev, [q.id]: !prev[q.id] }))}
                     className={cn(
-                      "w-full sm:w-auto gap-2 border-neutral-800",
+                      "w-full sm:w-auto gap-2 border-slate-200",
                       flagged[q?.id]
                         ? "border-amber-500/50 bg-amber-950/20 text-amber-300 hover:bg-amber-950/40"
-                        : "text-neutral-300 hover:bg-neutral-800"
+                        : "text-slate-700 hover:bg-slate-100"
                     )}
                   >
                     <Flag className={cn("h-4 w-4", flagged[q?.id] && "fill-amber-300")} />
@@ -469,8 +469,8 @@ export default function TakeQuizPage() {
                       className={cn(
                         "w-full sm:w-auto font-semibold gap-1",
                         answers[q?.id] === undefined
-                          ? "bg-neutral-800 text-neutral-300 border border-neutral-700 hover:bg-neutral-700"
-                          : "bg-indigo-600 hover:bg-indigo-750 text-white"
+                          ? "bg-slate-100 text-slate-700 border border-neutral-700 hover:bg-neutral-700"
+                          : "bg-indigo--white"
                       )}
                     >
                       {answers[q?.id] === undefined ? "Skip Question" : "Next"}
@@ -479,14 +479,14 @@ export default function TakeQuizPage() {
                   ) : (
                     <Dialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+                        <Button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-slate-900 font-semibold">
                           <Send className="h-4 w-4 mr-1" /> Submit Exam
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="border-neutral-800 bg-neutral-900 shadow-2xl max-w-sm sm:max-w-md">
+                      <DialogContent className="border-slate-200 bg-white shadow-2xl max-w-sm sm:max-w-md">
                         <DialogHeader>
                           <DialogTitle className="text-xl font-bold text-center">Submit Quiz</DialogTitle>
-                          <DialogDescription className="text-center text-neutral-400">
+                          <DialogDescription className="text-center text-slate-600">
                             Are you ready to submit your attempt? Here is your progress summary:
                           </DialogDescription>
                         </DialogHeader>
@@ -503,10 +503,10 @@ export default function TakeQuizPage() {
           <div className="order-1 h-fit lg:order-2 lg:sticky lg:top-20 space-y-4">
             
             {/* Palette Card */}
-            <Card className="border-neutral-800 bg-neutral-900/40 backdrop-blur-sm shadow-xl">
-              <CardHeader className="pb-2 sm:pb-3 border-b border-neutral-900/50">
-                <CardTitle className="text-base font-bold text-neutral-200">Question Palette</CardTitle>
-                <CardDescription className="text-xs text-neutral-400">Navigate between questions</CardDescription>
+            <Card className="border-slate-200 bg-white/40 backdrop-blur-sm shadow-xl">
+              <CardHeader className="pb-2 sm:pb-3 border-b border-slate-200/50">
+                <CardTitle className="text-base font-bold text-slate-800">Question Palette</CardTitle>
+                <CardDescription className="text-xs text-slate-600">Navigate between questions</CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="grid grid-cols-5 gap-2">
@@ -528,7 +528,7 @@ export default function TakeQuizPage() {
                             ? "bg-amber-950/20 text-amber-300 border-amber-500/30 hover:bg-amber-950/30"
                             : isAns
                             ? "bg-emerald-950/20 text-emerald-300 border-emerald-800/30 hover:bg-emerald-950/30"
-                            : "bg-neutral-900/50 text-neutral-400 border-neutral-800 hover:border-neutral-700"
+                            : "bg-white/50 text-slate-600 border-slate-200 hover:border-slate-300"
                         )}
                       >
                         {i + 1}
@@ -543,9 +543,9 @@ export default function TakeQuizPage() {
                 </div>
 
                 {/* Palette Legend */}
-                <div className="mt-4 border-t border-neutral-900/50 pt-3 flex flex-wrap gap-2 text-[10px] text-neutral-400">
+                <div className="mt-4 border-t border-slate-200/50 pt-3 flex flex-wrap gap-2 text-[10px] text-slate-600">
                   <div className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded bg-neutral-900 border border-neutral-800" />
+                    <span className="h-2 w-2 rounded bg-white border border-slate-200" />
                     <span>Unvisited</span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -561,43 +561,43 @@ export default function TakeQuizPage() {
             </Card>
 
             {/* Keyboard Shortcuts Card */}
-            <Card className="border-neutral-800 bg-neutral-900/40 backdrop-blur-sm shadow-xl">
-              <CardHeader className="pb-2 border-b border-neutral-900/50">
-                <CardTitle className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Keyboard Controls</CardTitle>
+            <Card className="border-slate-200 bg-white/40 backdrop-blur-sm shadow-xl">
+              <CardHeader className="pb-2 border-b border-slate-200/50">
+                <CardTitle className="text-xs font-bold text-slate-600 uppercase tracking-wider">Keyboard Controls</CardTitle>
               </CardHeader>
               <CardContent className="pt-3">
-                <div className="space-y-2 text-xs text-neutral-400">
-                  <div className="flex items-center justify-between border-b border-neutral-900/30 pb-1">
+                <div className="space-y-2 text-xs text-slate-600">
+                  <div className="flex items-center justify-between border-b border-slate-200/30 pb-1">
                     <span className="text-[11px]">Select Option</span>
                     <span className="flex gap-1">
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">A-D</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">1-4</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">A-D</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">1-4</kbd>
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-b border-neutral-900/30 pb-1">
+                  <div className="flex items-center justify-between border-b border-slate-200/30 pb-1">
                     <span className="text-[11px]">Next / Skip</span>
                     <span className="flex gap-1">
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">N</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">→</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">N</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">→</kbd>
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-b border-neutral-900/30 pb-1">
+                  <div className="flex items-center justify-between border-b border-slate-200/30 pb-1">
                     <span className="text-[11px]">Previous</span>
                     <span className="flex gap-1">
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">P</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">←</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">P</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">←</kbd>
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-b border-neutral-900/30 pb-1">
+                  <div className="flex items-center justify-between border-b border-slate-200/30 pb-1">
                     <span className="text-[11px]">Flag for Review</span>
                     <span className="flex gap-1">
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">F</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">R</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">F</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">R</kbd>
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[11px]">Clear Selection</span>
-                    <kbd className="px-1.5 py-0.5 bg-neutral-800 border border-neutral-750 rounded text-[9px] font-mono text-neutral-300">C</kbd>
+                    <kbd className="px-1.5 py-0.5 bg-slate-100 border border-neutral-750 rounded text-[9px] font-mono text-slate-700">C</kbd>
                   </div>
                 </div>
               </CardContent>

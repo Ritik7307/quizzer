@@ -59,8 +59,8 @@ export default function UsersPage() {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
         <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">Users Management</h1>
-            <p className="text-sm text-neutral-400 sm:text-base">View and export all registered users</p>
+            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Users Management</h1>
+            <p className="text-sm text-slate-600 sm:text-base">View and export all registered users</p>
           </div>
           <Button variant="outline" asChild className="w-full sm:w-auto bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 border-indigo-600/20">
             <a
@@ -98,7 +98,7 @@ export default function UsersPage() {
               <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="border-b text-left text-neutral-500">
+                    <tr className="border-b text-left text-slate-500">
                       <th className="py-2">User</th>
                       <th className="py-2">Role</th>
                       <th className="py-2 text-center">Status</th>
@@ -113,19 +113,19 @@ export default function UsersPage() {
                   </thead>
                   <tbody>
                     {users.map((u) => (
-                      <tr key={u.id} className="border-b border-neutral-800">
+                      <tr key={u.id} className="border-b border-slate-200">
                         <td className="py-3">
                           <div className="flex items-center gap-3">
                             {u.avatarUrl ? (
                               <img src={u.avatarUrl} alt={u.name} className="h-8 w-8 rounded-full object-cover" />
                             ) : (
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-800">
-                                <UsersIcon className="h-4 w-4 text-neutral-400" />
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
+                                <UsersIcon className="h-4 w-4 text-slate-600" />
                               </div>
                             )}
                             <div>
                               <p className="font-medium">{u.name}</p>
-                              <p className="text-xs text-neutral-500">{u.email}</p>
+                              <p className="text-xs text-slate-500">{u.email}</p>
                             </div>
                           </div>
                         </td>
@@ -142,7 +142,7 @@ export default function UsersPage() {
                               )}
                               <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isUserOnline(u.lastActiveAt) ? "bg-emerald-500" : "bg-neutral-600"}`}></span>
                             </span>
-                            <span className="text-xs text-neutral-400">{isUserOnline(u.lastActiveAt) ? "Online" : "Offline"}</span>
+                            <span className="text-xs text-slate-600">{isUserOnline(u.lastActiveAt) ? "Online" : "Offline"}</span>
                           </div>
                         </td>
                         <td className="py-3">
@@ -156,7 +156,7 @@ export default function UsersPage() {
                               @{u.leetcodeHandle}
                             </a>
                           ) : (
-                            <span className="text-neutral-500 italic text-xs">Not submitted</span>
+                            <span className="text-slate-500 italic text-xs">Not submitted</span>
                           )}
                         </td>
                         <td className="py-3">
@@ -170,13 +170,13 @@ export default function UsersPage() {
                               @{u.codeforcesHandle}
                             </a>
                           ) : (
-                            <span className="text-neutral-500 italic text-xs">Not submitted</span>
+                            <span className="text-slate-500 italic text-xs">Not submitted</span>
                           )}
                         </td>
                         <td className="py-3 text-center">
                           <div className="flex items-center justify-center gap-1">
                             <Flame className={`h-4 w-4 ${u.streak > 0 ? "text-orange-500 fill-orange-500/20" : "text-neutral-600"}`} />
-                            <span className={u.streak > 0 ? "font-semibold text-orange-400" : "text-neutral-500"}>
+                            <span className={u.streak > 0 ? "font-semibold text-orange-400" : "text-slate-500"}>
                               {u.streak || 0}
                             </span>
                           </div>
@@ -194,14 +194,14 @@ export default function UsersPage() {
                               {u.solvedCount}
                             </button>
                           ) : (
-                            <span className="text-neutral-500 text-xs italic">None</span>
+                            <span className="text-slate-500 text-xs italic">None</span>
                           )}
                         </td>
-                        <td className="py-3 text-neutral-400">
+                        <td className="py-3 text-slate-600">
                           {new Date(u.createdAt).toLocaleDateString()}
                         </td>
-                        <td className="py-3 text-right text-neutral-400">{u._count.quizzes}</td>
-                        <td className="py-3 text-right text-neutral-400">{u._count.attempts}</td>
+                        <td className="py-3 text-right text-slate-600">{u._count.quizzes}</td>
+                        <td className="py-3 text-right text-slate-600">{u._count.attempts}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -212,16 +212,16 @@ export default function UsersPage() {
         )}
 
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-md bg-neutral-900 border border-neutral-800 text-white rounded-xl">
+          <DialogContent className="max-w-md bg-white border border-slate-200 text-slate-900 rounded-xl">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold flex items-center gap-2">
                 <span>Solved Problems</span>
-                <span className="text-sm font-normal text-neutral-400">
+                <span className="text-sm font-normal text-slate-600">
                   by {selectedUser?.name}
                 </span>
               </DialogTitle>
-              <DialogDescription className="text-xs text-neutral-400">
-                Total Solved: <span className="font-semibold text-white">{selectedUser?.solvedCount ?? 0}</span> | Streak: <span className="font-semibold text-orange-400">{selectedUser?.streak ?? 0} days</span> | Points: <span className="font-semibold text-indigo-400">{selectedUser?.points ?? 0}</span>
+              <DialogDescription className="text-xs text-slate-600">
+                Total Solved: <span className="font-semibold text-slate-900">{selectedUser?.solvedCount ?? 0}</span> | Streak: <span className="font-semibold text-orange-400">{selectedUser?.streak ?? 0} days</span> | Points: <span className="font-semibold text-indigo-400">{selectedUser?.points ?? 0}</span>
               </DialogDescription>
             </DialogHeader>
 
@@ -230,13 +230,13 @@ export default function UsersPage() {
                 selectedUser.solvedQuestions.map((q) => (
                   <div
                     key={q.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-neutral-950 border border-neutral-850 hover:border-neutral-800 transition"
+                    className="flex items-center justify-between p-3 rounded-lg bg-white border border-slate-200 hover:border-slate-200 transition"
                   >
                     <div className="flex flex-col gap-1 min-w-0 pr-2">
-                      <span className="font-medium text-sm text-white truncate">
+                      <span className="font-medium text-sm text-slate-900 truncate">
                         {q.title}
                       </span>
-                      <span className="text-xs text-neutral-500">
+                      <span className="text-xs text-slate-500">
                         {q.isExternalOnly ? "External Sheet Question" : "Internal Quiz/Coding Sandbox"}
                       </span>
                     </div>
@@ -258,10 +258,10 @@ export default function UsersPage() {
                           href={q.referenceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1 hover:bg-neutral-800 rounded text-neutral-400 hover:text-white transition"
+                          className="p-1 hover:bg-slate-100 rounded text-slate-600 hover:text-slate-900 transition"
                           title="View Question"
                         >
-                          <svg className="h-4 w-4 text-neutral-400 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-4 w-4 text-slate-600 hover:text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                         </a>
@@ -270,7 +270,7 @@ export default function UsersPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-6 text-neutral-500 italic text-sm">
+                <div className="text-center py-6 text-slate-500 italic text-sm">
                   No solved coding problems yet.
                 </div>
               )}

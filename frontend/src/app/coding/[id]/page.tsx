@@ -169,7 +169,7 @@ export default function CodingWorkspacePage() {
       <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-          <p className="text-sm text-neutral-400">Loading IDE Workspace...</p>
+          <p className="text-sm text-slate-600">Loading IDE Workspace...</p>
         </div>
       </div>
     );
@@ -178,11 +178,11 @@ export default function CodingWorkspacePage() {
   if (!question) return null;
 
   return (
-    <div className="flex flex-col min-h-[calc(100dvh-4rem)] bg-black text-neutral-100">
+    <div className="flex flex-col min-h-[calc(100dvh-4rem)] bg-slate-50 text-slate-900">
       {/* Top Header Row */}
-      <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-2 bg-neutral-950">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2 bg-white">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild className="text-neutral-400 hover:text-white">
+          <Button variant="ghost" size="sm" asChild className="text-slate-600 hover:text-slate-900">
             <Link href="/dashboard" className="flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" /> Back
             </Link>
@@ -207,7 +207,7 @@ export default function CodingWorkspacePage() {
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-medium"
+            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-medium"
           >
             <option value="cpp">C++ (GCC)</option>
             <option value="c">C (GCC)</option>
@@ -219,7 +219,7 @@ export default function CodingWorkspacePage() {
             size="sm"
             onClick={handleRunCode}
             disabled={running || submitting}
-            className="flex items-center gap-1.5 text-xs border-neutral-750 text-neutral-300 hover:bg-neutral-850"
+            className="flex items-center gap-1.5 text-xs border-neutral-750 text-slate-700 hover:bg-slate-50"
           >
             {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
             Run Code
@@ -229,7 +229,7 @@ export default function CodingWorkspacePage() {
             size="sm"
             onClick={handleSubmitCode}
             disabled={running || submitting}
-            className="flex items-center gap-1.5 text-xs bg-indigo-600 text-white hover:bg-indigo-750 font-semibold"
+            className="flex items-center gap-1.5 text-xs bg-indigo--white hover:bg-indigo-750 font-semibold"
           >
             {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             Submit
@@ -241,17 +241,17 @@ export default function CodingWorkspacePage() {
       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 overflow-hidden h-[calc(100vh-6.5rem)]">
         
         {/* Left Panel: Problem description & Editorial */}
-        <div className="overflow-y-auto border-r border-neutral-800 flex flex-col h-full bg-neutral-950/20">
+        <div className="overflow-y-auto border-r border-slate-200 flex flex-col h-full bg-white/20">
           
           {/* Tabs header */}
-          <div className="flex border-b border-neutral-900 bg-neutral-950 px-4 py-2 gap-4">
+          <div className="flex border-b border-slate-200 bg-white px-4 py-2 gap-4">
             <button
               onClick={() => setActiveTab("problem")}
               className={cn(
                 "text-xs font-bold uppercase tracking-wider pb-1.5 outline-none select-none border-b-2 transition-all",
                 activeTab === "problem"
                   ? "text-indigo-400 border-indigo-500"
-                  : "text-neutral-500 border-transparent hover:text-neutral-300"
+                  : "text-slate-500 border-transparent hover:text-slate-700"
               )}
             >
               Problem Description
@@ -262,10 +262,10 @@ export default function CodingWorkspacePage() {
                 "text-xs font-bold uppercase tracking-wider pb-1.5 outline-none select-none border-b-2 transition-all flex items-center gap-1",
                 activeTab === "editorial"
                   ? "text-indigo-400 border-indigo-500"
-                  : "text-neutral-500 border-transparent hover:text-neutral-300"
+                  : "text-slate-500 border-transparent hover:text-slate-700"
               )}
             >
-              {question.isEditorialLocked && <Lock className="h-3.5 w-3.5 text-neutral-500" />}
+              {question.isEditorialLocked && <Lock className="h-3.5 w-3.5 text-slate-500" />}
               Editorial Solution
             </button>
           </div>
@@ -275,12 +275,12 @@ export default function CodingWorkspacePage() {
               <>
                 {/* Reference Link if present */}
                 {question.referenceUrl && (
-                  <div className="rounded-xl bg-neutral-900/60 border border-neutral-800 p-4 flex items-center justify-between shadow-md">
+                  <div className="rounded-xl bg-white/60 border border-slate-200 p-4 flex items-center justify-between shadow-md">
                     <div>
-                      <span className="text-[10px] uppercase font-extrabold text-neutral-400 tracking-wider">Practice Source</span>
-                      <p className="text-xs text-neutral-300 mt-0.5">Solve or review on the original platform.</p>
+                      <span className="text-[10px] uppercase font-extrabold text-slate-600 tracking-wider">Practice Source</span>
+                      <p className="text-xs text-slate-700 mt-0.5">Solve or review on the original platform.</p>
                     </div>
-                    <Button variant="outline" size="sm" asChild className="border-neutral-750 text-neutral-300 hover:bg-neutral-850 hover:text-white">
+                    <Button variant="outline" size="sm" asChild className="border-neutral-750 text-slate-700 hover:bg-slate-50 hover:text-slate-900">
                       <a href={question.referenceUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-semibold">
                         <ExternalLink className="h-3.5 w-3.5" /> View Original
                       </a>
@@ -289,30 +289,30 @@ export default function CodingWorkspacePage() {
                 )}
 
                 <div>
-                  <h2 className="text-xl font-bold text-neutral-100">{question.title}</h2>
-                  <div className="mt-3 text-sm leading-relaxed text-neutral-300 whitespace-pre-wrap">
+                  <h2 className="text-xl font-bold text-slate-900">{question.title}</h2>
+                  <div className="mt-3 text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
                     {question.description}
                   </div>
                 </div>
 
                 {(question.inputFormat || question.outputFormat || question.constraints) && (
-                  <div className="space-y-4 pt-4 border-t border-neutral-900">
+                  <div className="space-y-4 pt-4 border-t border-slate-200">
                     {question.inputFormat && (
                       <div>
-                        <h3 className="text-sm font-semibold text-neutral-200">Input Format</h3>
-                        <p className="mt-1 text-xs text-neutral-400 leading-relaxed">{question.inputFormat}</p>
+                        <h3 className="text-sm font-semibold text-slate-800">Input Format</h3>
+                        <p className="mt-1 text-xs text-slate-600 leading-relaxed">{question.inputFormat}</p>
                       </div>
                     )}
                     {question.outputFormat && (
                       <div>
-                        <h3 className="text-sm font-semibold text-neutral-200">Output Format</h3>
-                        <p className="mt-1 text-xs text-neutral-400 leading-relaxed">{question.outputFormat}</p>
+                        <h3 className="text-sm font-semibold text-slate-800">Output Format</h3>
+                        <p className="mt-1 text-xs text-slate-600 leading-relaxed">{question.outputFormat}</p>
                       </div>
                     )}
                     {question.constraints && (
                       <div>
-                        <h3 className="text-sm font-semibold text-neutral-200">Constraints</h3>
-                        <p className="mt-1 text-xs text-neutral-450 leading-relaxed font-mono whitespace-pre-wrap">{question.constraints}</p>
+                        <h3 className="text-sm font-semibold text-slate-800">Constraints</h3>
+                        <p className="mt-1 text-xs text-slate-500 leading-relaxed font-mono whitespace-pre-wrap">{question.constraints}</p>
                       </div>
                     )}
                   </div>
@@ -320,18 +320,18 @@ export default function CodingWorkspacePage() {
 
                 {/* Sample Cases */}
                 {question.sampleInput && (
-                  <div className="space-y-4 pt-4 border-t border-neutral-900">
-                    <h3 className="text-sm font-semibold text-neutral-200">Sample Test Case</h3>
+                  <div className="space-y-4 pt-4 border-t border-slate-200">
+                    <h3 className="text-sm font-semibold text-slate-800">Sample Test Case</h3>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div>
-                        <span className="text-[10px] uppercase font-semibold text-neutral-500">Sample Input</span>
-                        <pre className="mt-1 rounded-lg border border-neutral-850 bg-neutral-950/60 p-3 font-mono text-xs text-neutral-300 overflow-x-auto whitespace-pre">
+                        <span className="text-[10px] uppercase font-semibold text-slate-500">Sample Input</span>
+                        <pre className="mt-1 rounded-lg border border-slate-200 bg-white/60 p-3 font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre">
                           {question.sampleInput}
                         </pre>
                       </div>
                       <div>
-                        <span className="text-[10px] uppercase font-semibold text-neutral-500">Sample Output</span>
-                        <pre className="mt-1 rounded-lg border border-neutral-850 bg-neutral-950/60 p-3 font-mono text-xs text-neutral-300 overflow-x-auto whitespace-pre">
+                        <span className="text-[10px] uppercase font-semibold text-slate-500">Sample Output</span>
+                        <pre className="mt-1 rounded-lg border border-slate-200 bg-white/60 p-3 font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre">
                           {question.sampleOutput}
                         </pre>
                       </div>
@@ -343,29 +343,29 @@ export default function CodingWorkspacePage() {
               // Editorial View
               <div>
                 {question.isEditorialLocked ? (
-                  <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 bg-neutral-900/20 border border-neutral-900 rounded-xl px-4">
+                  <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 bg-white/20 border border-slate-200 rounded-xl px-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-950/30 text-amber-500 border border-amber-500/20">
                       <Lock className="h-5 w-5" />
                     </div>
                     <div className="space-y-1.5 max-w-sm">
-                      <h3 className="text-base font-bold text-neutral-100">Editorial is Locked</h3>
-                      <p className="text-xs text-neutral-450 leading-relaxed">
+                      <h3 className="text-base font-bold text-slate-900">Editorial is Locked</h3>
+                      <p className="text-xs text-slate-500 leading-relaxed">
                         To maintain competitive integrity, you must solve this problem and receive an <span className="text-emerald-400 font-semibold">Accepted</span> submission before reading the editorial explanation.
                       </p>
                     </div>
                   </div>
                 ) : question.editorial ? (
                   <div className="space-y-4">
-                    <h2 className="text-lg font-bold text-neutral-100">Editorial & Solution Explanation</h2>
-                    <div className="text-sm leading-relaxed text-neutral-305 whitespace-pre-wrap font-sans bg-neutral-900/30 border border-neutral-900 p-4 rounded-xl shadow-md">
+                    <h2 className="text-lg font-bold text-slate-900">Editorial & Solution Explanation</h2>
+                    <div className="text-sm leading-relaxed text-neutral-305 whitespace-pre-wrap font-sans bg-white/30 border border-slate-200 p-4 rounded-xl shadow-md">
                       {question.editorial}
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-16 text-center space-y-2 text-neutral-400">
+                  <div className="flex flex-col items-center justify-center py-16 text-center space-y-2 text-slate-600">
                     <HelpCircle className="h-8 w-8 text-neutral-600" />
                     <h3 className="text-sm font-semibold">No Editorial Available</h3>
-                    <p className="text-xs text-neutral-500">The admin hasn't provided an editorial explanation for this question yet.</p>
+                    <p className="text-xs text-slate-500">The admin hasn't provided an editorial explanation for this question yet.</p>
                   </div>
                 )}
               </div>
@@ -374,11 +374,11 @@ export default function CodingWorkspacePage() {
         </div>
 
         {/* Right Panel: Editor and Terminal */}
-        <div className="flex flex-col overflow-hidden bg-neutral-950">
+        <div className="flex flex-col overflow-hidden bg-white">
           {/* Editor Header */}
-          <div className="flex items-center gap-1.5 border-b border-neutral-900 px-4 py-2 bg-neutral-950/80">
+          <div className="flex items-center gap-1.5 border-b border-slate-200 px-4 py-2 bg-white/80">
             <Code className="h-4 w-4 text-indigo-400" />
-            <span className="text-xs font-semibold uppercase text-neutral-400 tracking-wider">Source Editor</span>
+            <span className="text-xs font-semibold uppercase text-slate-600 tracking-wider">Source Editor</span>
           </div>
 
           {/* Editor Container */}
@@ -405,7 +405,7 @@ export default function CodingWorkspacePage() {
                 cursorStyle: "line",
               }}
               loading={
-                <div className="flex h-full items-center justify-center bg-black text-sm text-neutral-400">
+                <div className="flex h-full items-center justify-center bg-slate-50 text-sm text-slate-600">
                   <Loader2 className="h-6 w-6 animate-spin text-indigo-500 mr-2" />
                   Loading Code Editor...
                 </div>
@@ -414,34 +414,34 @@ export default function CodingWorkspacePage() {
           </div>
 
           {/* Stdin / Output Terminal Panels */}
-          <div className="border-t border-neutral-900 h-64 flex flex-col bg-neutral-950">
+          <div className="border-t border-slate-200 h-64 flex flex-col bg-white">
             {/* Console Tabs */}
-            <div className="flex items-center justify-between border-b border-neutral-900 bg-neutral-950 px-2 py-1">
+            <div className="flex items-center justify-between border-b border-slate-200 bg-white px-2 py-1">
               <div className="flex items-center gap-2">
-                <Terminal className="h-3.5 w-3.5 text-neutral-500" />
-                <span className="text-[10px] uppercase font-semibold tracking-wider text-neutral-400">Execution Console</span>
+                <Terminal className="h-3.5 w-3.5 text-slate-500" />
+                <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-600">Execution Console</span>
               </div>
             </div>
 
             <div className="flex-1 grid grid-cols-2 overflow-hidden">
               {/* Custom Input */}
-              <div className="flex flex-col border-r border-neutral-900 p-3 overflow-hidden">
-                <Label htmlFor="customInput" className="text-[10px] uppercase font-semibold text-neutral-500 mb-1.5">
+              <div className="flex flex-col border-r border-slate-200 p-3 overflow-hidden">
+                <Label htmlFor="customInput" className="text-[10px] uppercase font-semibold text-slate-500 mb-1.5">
                   Standard Input (Stdin)
                 </Label>
                 <textarea
                   id="customInput"
                   value={customInput}
                   onChange={(e) => setCustomInput(e.target.value)}
-                  className="flex-1 resize-none w-full rounded-lg border border-neutral-800 bg-black p-2 font-mono text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="flex-1 resize-none w-full rounded-lg border border-slate-200 bg-slate-50 p-2 font-mono text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   placeholder="Input variables here..."
                 />
               </div>
 
               {/* Run Terminal Output */}
-              <div className="flex flex-col p-3 overflow-hidden bg-black">
+              <div className="flex flex-col p-3 overflow-hidden bg-slate-50">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] uppercase font-semibold text-neutral-500">
+                  <span className="text-[10px] uppercase font-semibold text-slate-500">
                     Execution Output
                   </span>
 
@@ -462,10 +462,10 @@ export default function CodingWorkspacePage() {
                   )}
                 </div>
 
-                <div className="flex-1 overflow-y-auto rounded-lg border border-neutral-850 bg-neutral-950 p-2 font-mono text-xs leading-relaxed text-neutral-300 whitespace-pre-wrap">
+                <div className="flex-1 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 font-mono text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">
                   {terminalOutput}
                   {errorDetails && (
-                    <div className="mt-2 text-red-400 border-t border-neutral-900 pt-2 text-[11px] leading-relaxed">
+                    <div className="mt-2 text-red-400 border-t border-slate-200 pt-2 text-[11px] leading-relaxed">
                       <p className="font-bold uppercase tracking-wider text-[9px] text-red-500">Error Details</p>
                       {errorDetails}
                     </div>

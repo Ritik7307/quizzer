@@ -136,7 +136,7 @@ export default function AdminNewCodingQuestionPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12 animate-fade-in">
-      <Card className="border-neutral-800 bg-neutral-950/40 backdrop-blur-sm">
+      <Card className="border-slate-200 bg-white/40 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400">
@@ -171,7 +171,7 @@ export default function AdminNewCodingQuestionPage() {
                   id="difficulty"
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
+                  className="flex h-11 w-full min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-base text-slate-900 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
                 >
                   <option value="Easy">🟢 Easy</option>
                   <option value="Medium">🟡 Medium</option>
@@ -186,7 +186,7 @@ export default function AdminNewCodingQuestionPage() {
                   id="topic"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  className="flex h-11 w-full min-h-11 rounded-lg border border-neutral-800 bg-black px-3 py-2 text-base text-neutral-100 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
+                  className="flex h-11 w-full min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-base text-slate-900 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:h-10 sm:text-sm"
                 >
                   <option value="Arrays">Arrays</option>
                   <option value="Strings">Strings</option>
@@ -205,7 +205,7 @@ export default function AdminNewCodingQuestionPage() {
             </div>
 
             {/* External-Only Toggle */}
-            <div className="flex items-center space-x-3 rounded-lg border border-neutral-800 bg-neutral-950/60 p-4">
+            <div className="flex items-center space-x-3 rounded-lg border border-slate-200 bg-white/60 p-4">
               <input
                 id="isExternalOnly"
                 type="checkbox"
@@ -219,13 +219,13 @@ export default function AdminNewCodingQuestionPage() {
                     }
                   }
                 }}
-                className="h-4 w-4 rounded border-neutral-800 bg-neutral-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-black"
+                className="h-4 w-4 rounded border-slate-200 bg-white text-indigo-600 focus:ring-indigo-500 focus:ring-offset-black"
               />
               <div className="space-y-0.5">
-                <Label htmlFor="isExternalOnly" className="text-sm font-semibold text-neutral-200 cursor-pointer">
+                <Label htmlFor="isExternalOnly" className="text-sm font-semibold text-slate-800 cursor-pointer">
                   External-Only Problem (Solved on LeetCode / Codeforces)
                 </Label>
-                <p className="text-[11px] text-neutral-500">
+                <p className="text-[11px] text-slate-500">
                   Checking this disables the inline compiler workspace. Candidates will solve the question on the external site, and click "Mark as Solved" on their sheet to claim points and advance their daily active days count.
                 </p>
               </div>
@@ -243,7 +243,7 @@ export default function AdminNewCodingQuestionPage() {
                 value={referenceUrl}
                 onChange={(e) => setReferenceUrl(e.target.value)}
                 required={isExternalOnly}
-                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
               />
             </div>
 
@@ -257,7 +257,7 @@ export default function AdminNewCodingQuestionPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
               />
             </div>
 
@@ -273,7 +273,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={inputFormat}
                       onChange={(e) => setInputFormat(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
 
@@ -286,7 +286,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={outputFormat}
                       onChange={(e) => setOutputFormat(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export default function AdminNewCodingQuestionPage() {
                     rows={3}
                     value={constraints}
                     onChange={(e) => setConstraints(e.target.value)}
-                    className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
+                    className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
                   />
                 </div>
 
@@ -314,7 +314,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={sampleInput}
                       onChange={(e) => setSampleInput(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className="bg-slate-50 border-slate-200 text-slate-900 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
 
@@ -327,7 +327,7 @@ export default function AdminNewCodingQuestionPage() {
                       rows={3}
                       value={sampleOutput}
                       onChange={(e) => setSampleOutput(e.target.value)}
-                      className="bg-black border-neutral-800 text-neutral-100 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className="bg-slate-50 border-slate-200 text-slate-900 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export default function AdminNewCodingQuestionPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="testCases">Test Cases (JSON Format)</Label>
-                    <span className="text-[10px] text-neutral-500 font-mono">[{`{input: string, output: string}`}...]</span>
+                    <span className="text-[10px] text-slate-500 font-mono">[{`{input: string, output: string}`}...]</span>
                   </div>
                   <Textarea
                     id="testCases"
@@ -344,7 +344,7 @@ export default function AdminNewCodingQuestionPage() {
                     value={testCasesJson}
                     onChange={(e) => setTestCasesJson(e.target.value)}
                     required
-                    className="bg-black border-neutral-800 text-neutral-100 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-indigo-500"
+                    className="bg-slate-50 border-slate-200 text-slate-900 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-indigo-500"
                   />
                 </div>
               </>
@@ -359,7 +359,7 @@ export default function AdminNewCodingQuestionPage() {
                 rows={6}
                 value={editorial}
                 onChange={(e) => setEditorial(e.target.value)}
-                className="bg-black border-neutral-800 text-neutral-100 focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
               />
             </div>
 
@@ -368,13 +368,13 @@ export default function AdminNewCodingQuestionPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-1/3 border-neutral-800 text-neutral-300 hover:bg-neutral-800"
+                className="w-1/3 border-slate-200 text-slate-700 hover:bg-slate-100"
                 onClick={() => router.back()}
                 disabled={submitting}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-750 text-white font-semibold">
+              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-indigo--white font-semibold">
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />

@@ -100,16 +100,16 @@ export default function QuizResultPage() {
           <div className="space-y-6">
             
             {/* Results card */}
-            <Card className="border-neutral-800 bg-neutral-950/40 backdrop-blur-sm shadow-xl">
-              <CardHeader className="text-center border-b border-neutral-900/50 pb-6">
+            <Card className="border-slate-200 bg-white/40 backdrop-blur-sm shadow-xl">
+              <CardHeader className="text-center border-b border-slate-200/50 pb-6">
                 <Trophy className="mx-auto mb-2 h-12 w-12 text-amber-500" />
-                <CardTitle className="text-2xl font-extrabold text-white tracking-tight">{data.attempt.quiz.title}</CardTitle>
-                <p className="text-neutral-400 text-sm">Performance Summary</p>
+                <CardTitle className="text-2xl font-extrabold text-slate-900 tracking-tight">{data.attempt.quiz.title}</CardTitle>
+                <p className="text-slate-600 text-sm">Performance Summary</p>
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
                 <div className="text-center">
                   <p className="text-5xl font-extrabold text-indigo-500">{data.attempt.percentage}%</p>
-                  <p className="mt-1.5 text-neutral-300 text-sm font-medium">
+                  <p className="mt-1.5 text-slate-700 text-sm font-medium">
                     Score: {data.attempt.score} / {data.attempt.totalQuestions}
                   </p>
                   {data.attempt.rank !== null && (
@@ -124,23 +124,23 @@ export default function QuizResultPage() {
                     <CheckCircle2 className="h-8 w-8 text-emerald-500" />
                     <div>
                       <p className="text-2xl font-bold text-emerald-400">{data.attempt.correctCount}</p>
-                      <p className="text-xs text-neutral-400 font-medium">Correct</p>
+                      <p className="text-xs text-slate-600 font-medium">Correct</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 rounded-xl bg-red-950/20 border border-red-900/20 p-4">
                     <XCircle className="h-8 w-8 text-red-500" />
                     <div>
                       <p className="text-2xl font-bold text-red-400">{data.attempt.wrongCount}</p>
-                      <p className="text-xs text-neutral-400 font-medium">Wrong</p>
+                      <p className="text-xs text-slate-600 font-medium">Wrong</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-3 justify-center pt-4 border-t border-neutral-900/50">
-                  <Button asChild className="bg-indigo-600 hover:bg-indigo-750 text-white font-semibold">
+                <div className="flex flex-wrap gap-3 justify-center pt-4 border-t border-slate-200/50">
+                  <Button asChild className="bg-indigo--white font-semibold">
                     <Link href="/leaderboard">View Leaderboard</Link>
                   </Button>
-                  <Button variant="outline" asChild className="border-neutral-750 text-neutral-300 hover:bg-neutral-850">
+                  <Button variant="outline" asChild className="border-neutral-750 text-slate-700 hover:bg-slate-50">
                     <Link href="/dashboard">Back to Dashboard</Link>
                   </Button>
                 </div>
@@ -149,10 +149,10 @@ export default function QuizResultPage() {
 
             {/* Feedback form */}
             {!feedbackSubmitted ? (
-              <Card className="border-indigo-900/30 bg-neutral-900/20 backdrop-blur-sm shadow-xl">
+              <Card className="border-indigo-900/30 bg-white/20 backdrop-blur-sm shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-lg font-bold text-neutral-100">Rate this Quiz</CardTitle>
-                  <CardDescription className="text-xs text-neutral-400">
+                  <CardTitle className="text-lg font-bold text-slate-900">Rate this Quiz</CardTitle>
+                  <CardDescription className="text-xs text-slate-600">
                     Your feedback helps Kode Club improve future quiz questions and difficulty scaling.
                   </CardDescription>
                 </CardHeader>
@@ -160,7 +160,7 @@ export default function QuizResultPage() {
                   
                   {/* Star Rating */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-neutral-400">Rating</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Rating</label>
                     <div className="flex items-center gap-1.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -174,7 +174,7 @@ export default function QuizResultPage() {
                               "h-7 w-7 transition-colors",
                               star <= rating
                                 ? "fill-amber-400 text-amber-400"
-                                : "text-neutral-700 fill-transparent hover:text-neutral-500"
+                                : "text-neutral-700 fill-transparent hover:text-slate-500"
                             )}
                           />
                         </button>
@@ -184,7 +184,7 @@ export default function QuizResultPage() {
 
                   {/* Perceived Difficulty */}
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-neutral-400">Perceived Difficulty</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Perceived Difficulty</label>
                     <div className="grid grid-cols-3 gap-2">
                       {(["Easy", "Medium", "Hard"] as const).map((diff) => (
                         <button
@@ -194,8 +194,8 @@ export default function QuizResultPage() {
                           className={cn(
                             "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
                             difficulty === diff
-                              ? "border-indigo-500 bg-indigo-950/40 text-white font-bold"
-                              : "border-neutral-800 bg-neutral-900/40 text-neutral-400 hover:border-neutral-750"
+                              ? "border-indigo-500 bg-indigo--white font-bold"
+                              : "border-slate-200 bg-white/40 text-slate-600 hover:border-neutral-750"
                           )}
                         >
                           {diff === "Easy" ? "🟢 Easy" : diff === "Medium" ? "🟡 Medium" : "🔴 Hard"}
@@ -206,21 +206,21 @@ export default function QuizResultPage() {
 
                   {/* Suggestions Comments */}
                   <div className="space-y-1.5">
-                    <label htmlFor="comments" className="text-xs font-bold uppercase tracking-wider text-neutral-400">Comments & Suggestions</label>
+                    <label htmlFor="comments" className="text-xs font-bold uppercase tracking-wider text-slate-600">Comments & Suggestions</label>
                     <textarea
                       id="comments"
                       rows={3}
                       placeholder="Tell us what you liked or what can be improved in this quiz..."
                       value={comments}
                       onChange={(e) => setComments(e.target.value)}
-                      className="w-full rounded-lg border border-neutral-800 bg-black/40 p-3 text-sm text-neutral-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full rounded-lg border border-slate-200 bg-slate-50/40 p-3 text-sm text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
 
                   <Button
                     onClick={handleSubmitFeedback}
                     disabled={submittingFeedback}
-                    className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-semibold py-2.5"
+                    className="w-full bg-indigo--white font-semibold py-2.5"
                   >
                     {submittingFeedback ? "Submitting Review..." : "Submit Review"}
                   </Button>
@@ -230,8 +230,8 @@ export default function QuizResultPage() {
               <Card className="border-emerald-900/30 bg-emerald-950/5 shadow-md">
                 <CardContent className="py-6 text-center space-y-2">
                   <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto" />
-                  <h3 className="font-bold text-neutral-100">Thank you for your feedback!</h3>
-                  <p className="text-xs text-neutral-400">Your review helps us curate better quality questions for Kode Club events.</p>
+                  <h3 className="font-bold text-slate-900">Thank you for your feedback!</h3>
+                  <p className="text-xs text-slate-600">Your review helps us curate better quality questions for Kode Club events.</p>
                 </CardContent>
               </Card>
             )}
@@ -251,10 +251,10 @@ export default function QuizResultPage() {
         {/* Detailed Breakdown Review */}
         {data?.breakdown && (
           <div className="mt-8 space-y-4">
-            <h2 className="text-xl font-bold text-white tracking-tight">Detailed Review</h2>
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Detailed Review</h2>
             {data.breakdown.map((q, idx) => (
               <Card key={q.questionId} className={q.isCorrect ? "border-emerald-950 bg-emerald-950/5" : "border-red-950 bg-red-950/5"}>
-                <CardHeader className="pb-3 border-b border-neutral-900/20">
+                <CardHeader className="pb-3 border-b border-slate-200/20">
                   <div className="flex items-start gap-3">
                     <div className="mt-1">
                       {q.isCorrect ? (
@@ -264,8 +264,8 @@ export default function QuizResultPage() {
                       )}
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-neutral-450 uppercase tracking-wider">Question {idx + 1}</p>
-                      <CardTitle className="text-base font-semibold text-neutral-100 mt-1 leading-snug">{q.text}</CardTitle>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Question {idx + 1}</p>
+                      <CardTitle className="text-base font-semibold text-slate-900 mt-1 leading-snug">{q.text}</CardTitle>
                     </div>
                   </div>
                 </CardHeader>
@@ -274,7 +274,7 @@ export default function QuizResultPage() {
                     {q.options.map((opt, i) => {
                       const isSelected = q.selected === i;
                       const isCorrect = q.correct === i;
-                      let optionClass = "border-neutral-850 bg-neutral-900/30 text-neutral-300";
+                      let optionClass = "border-slate-200 bg-white/30 text-slate-700";
                       
                       if (isCorrect) {
                         optionClass = "border-emerald-550/40 bg-emerald-950/20 text-emerald-400 font-medium";

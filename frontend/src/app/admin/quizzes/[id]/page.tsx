@@ -199,7 +199,7 @@ export default function AdminQuizManagePage() {
             ].map(([label, val]) => (
               <Card key={String(label)}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-neutral-500">{label}</CardTitle>
+                  <CardTitle className="text-sm text-slate-500">{label}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold">{val}</p>
@@ -259,7 +259,7 @@ export default function AdminQuizManagePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {quiz.questions.map((q, idx) => (
-              <div key={q.id} className="rounded-lg border border-neutral-800 p-4">
+              <div key={q.id} className="rounded-lg border border-slate-200 p-4">
                 <div className="flex justify-between gap-2">
                   <p className="font-medium">
                     {idx + 1}. {q.text}
@@ -268,7 +268,7 @@ export default function AdminQuizManagePage() {
                     Delete
                   </Button>
                 </div>
-                <ul className="mt-2 space-y-1 text-sm text-neutral-400">
+                <ul className="mt-2 space-y-1 text-sm text-slate-600">
                   {q.options.map((opt, i) => (
                     <li key={i} className={i === q.correctOptionIndex ? "font-semibold text-emerald-600" : ""}>
                       {String.fromCharCode(65 + i)}. {opt}
@@ -324,12 +324,12 @@ export default function AdminQuizManagePage() {
           </CardHeader>
           <CardContent>
             {analytics?.participants.length === 0 ? (
-              <p className="py-6 text-center text-sm text-neutral-500">No participant data yet.</p>
+              <p className="py-6 text-center text-sm text-slate-500">No participant data yet.</p>
             ) : (
               <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="border-b text-left text-neutral-500">
+                    <tr className="border-b text-left text-slate-500">
                       <th className="py-2">Name</th>
                       <th className="py-2">Email</th>
                       <th>Status</th>
@@ -340,9 +340,9 @@ export default function AdminQuizManagePage() {
                   </thead>
                   <tbody>
                     {analytics?.participants.map((p) => (
-                      <tr key={p.attemptId} className="border-b border-neutral-800">
+                      <tr key={p.attemptId} className="border-b border-slate-200">
                         <td className="py-2 font-medium">{p.name}</td>
-                        <td className="py-2 text-neutral-500">{p.email}</td>
+                        <td className="py-2 text-slate-500">{p.email}</td>
                         <td>{p.status}</td>
                         <td>{p.status === "completed" ? `${p.percentage}%` : "—"}</td>
                         <td>{p.rank ?? "—"}</td>
@@ -363,7 +363,7 @@ export default function AdminQuizManagePage() {
                 </table>
               </div>
             )}
-            <p className="mt-4 text-xs text-neutral-500">
+            <p className="mt-4 text-xs text-slate-500">
               Deleting a participant removes their attempt so they can retake the quiz. Clear all resets the
               entire leaderboard for this quiz.
             </p>

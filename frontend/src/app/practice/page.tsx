@@ -170,10 +170,10 @@ export default function PracticeSheetPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-black">
+      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-          <p className="text-sm text-neutral-400">Loading Coding Sheet...</p>
+          <p className="text-sm text-slate-600">Loading Coding Sheet...</p>
         </div>
       </div>
     );
@@ -185,14 +185,14 @@ export default function PracticeSheetPage() {
     return (
       <ProtectedRoute>
         <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-8">
-          <Card className="w-full max-w-md border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl p-6 relative overflow-hidden">
+          <Card className="w-full max-w-md border-slate-200 bg-white/60 backdrop-blur-md shadow-2xl p-6 relative overflow-hidden">
             <div className="absolute right-0 top-0 -mr-16 -mt-16 h-32 w-32 rounded-full bg-indigo-650/10 blur-2xl" />
             <CardHeader className="space-y-2 pb-4 px-0 pt-0">
-              <CardTitle className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+              <CardTitle className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <Code2 className="h-6 w-6 text-indigo-450" />
                 Submit Coding Profiles
               </CardTitle>
-              <CardDescription className="text-xs text-neutral-400 leading-relaxed">
+              <CardDescription className="text-xs text-slate-600 leading-relaxed">
                 Before accessing the SDE Practice Sheet, please submit your LeetCode and Codeforces profile usernames. 
                 This is a one-time process to sync your activity grid, streaks, and points.
               </CardDescription>
@@ -200,28 +200,28 @@ export default function PracticeSheetPage() {
             <CardContent className="p-0">
               <form onSubmit={handleSaveHandles} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="leetcode" className="text-xs font-bold text-neutral-300">LeetCode Username</Label>
+                  <Label htmlFor="leetcode" className="text-xs font-bold text-slate-700">LeetCode Username</Label>
                   <Input
                     id="leetcode"
                     required
                     placeholder="e.g. leetcode_user"
                     value={leetcodeInput}
                     onChange={(e) => setLeetcodeInput(e.target.value)}
-                    className="border-neutral-800 bg-black/60 focus:border-indigo-500"
+                    className="border-slate-200 bg-slate-50/60 focus:border-indigo-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="codeforces" className="text-xs font-bold text-neutral-300">Codeforces Username</Label>
+                  <Label htmlFor="codeforces" className="text-xs font-bold text-slate-700">Codeforces Username</Label>
                   <Input
                     id="codeforces"
                     required
                     placeholder="e.g. cf_user"
                     value={codeforcesInput}
                     onChange={(e) => setCodeforcesInput(e.target.value)}
-                    className="border-neutral-800 bg-black/60 focus:border-indigo-500"
+                    className="border-slate-200 bg-slate-50/60 focus:border-indigo-500"
                   />
                 </div>
-                <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-extrabold text-xs uppercase tracking-wider h-10 mt-2" disabled={submittingHandles}>
+                <Button type="submit" className="w-full bg-indigo--white font-extrabold text-xs uppercase tracking-wider h-10 mt-2" disabled={submittingHandles}>
                   {submittingHandles ? (
                     <Loader2 className="h-4 w-4 animate-spin mx-auto" />
                   ) : (
@@ -261,14 +261,14 @@ export default function PracticeSheetPage() {
       <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12 space-y-8">
         
         {/* Header Section */}
-        <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-gradient-to-r from-indigo-900/10 via-purple-900/5 to-transparent p-6 sm:p-8">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-indigo-900/10 via-purple-900/5 to-transparent p-6 sm:p-8">
           <div className="absolute right-0 top-0 -mr-16 -mt-16 h-40 w-40 rounded-full bg-indigo-650/10 blur-3xl" />
           <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold text-white tracking-tight sm:text-3xl flex items-center gap-2.5">
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight sm:text-3xl flex items-center gap-2.5">
                 <Code2 className="h-7 w-7 text-indigo-450" /> Coding Practice Sheet
               </h1>
-              <p className="text-neutral-400 text-sm max-w-2xl leading-relaxed">
+              <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
                 Curated programming lists to master data structures, algorithms, and technical interview patterns. Grouped by data structure tracks to optimize learning.
               </p>
             </div>
@@ -282,11 +282,11 @@ export default function PracticeSheetPage() {
         <div className="grid gap-6 lg:grid-cols-4">
           
           {/* Left Column: Progress & Profile Rank Details */}
-          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl lg:col-span-1 hover:border-neutral-750 transition-colors duration-300 flex flex-col justify-between p-5">
+          <Card className="border-slate-200 bg-white/60 backdrop-blur-md shadow-2xl lg:col-span-1 hover:border-neutral-750 transition-colors duration-300 flex flex-col justify-between p-5">
             <div className="space-y-5">
               {/* Header: Rank */}
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-500">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
                   Current Rank
                 </span>
                 <div className="flex items-center gap-2.5 mt-1.5">
@@ -294,10 +294,10 @@ export default function PracticeSheetPage() {
                     <Trophy className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-xs text-neutral-200 tracking-tight leading-tight">
+                    <h3 className="font-extrabold text-xs text-slate-800 tracking-tight leading-tight">
                       {rank.title}
                     </h3>
-                    <p className="text-[9px] text-neutral-500 font-medium leading-tight mt-0.5">
+                    <p className="text-[9px] text-slate-500 font-medium leading-tight mt-0.5">
                       {rank.desc}
                     </p>
                   </div>
@@ -305,16 +305,16 @@ export default function PracticeSheetPage() {
               </div>
 
               {/* Sheet Completion progress bar */}
-              <div className="space-y-2 pt-2 border-t border-neutral-900">
-                <div className="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-widest text-neutral-500">
+              <div className="space-y-2 pt-2 border-t border-slate-200">
+                <div className="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
                   <span>Sheet Progress</span>
                   <span className="text-indigo-400 font-extrabold">{percentageSolved}%</span>
                 </div>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-2xl font-black text-white tracking-tight">{solvedCount}</span>
-                  <span className="text-[10px] text-neutral-500 font-bold">/ {totalCount} Solved</span>
+                  <span className="text-2xl font-black text-slate-900 tracking-tight">{solvedCount}</span>
+                  <span className="text-[10px] text-slate-500 font-bold">/ {totalCount} Solved</span>
                 </div>
-                <div className="w-full h-2.5 bg-neutral-900 rounded-full border border-neutral-850 overflow-hidden p-0.5">
+                <div className="w-full h-2.5 bg-white rounded-full border border-slate-200 overflow-hidden p-0.5">
                   <div
                     className="h-full bg-gradient-to-r from-indigo-600 to-fuchsia-500 rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_rgba(139,92,246,0.3)]"
                     style={{ width: `${percentageSolved}%` }}
@@ -323,8 +323,8 @@ export default function PracticeSheetPage() {
               </div>
 
               {/* Difficulty Breakdown (LeetCode style) */}
-              <div className="space-y-2.5 pt-3 border-t border-neutral-900">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-500 block">
+              <div className="space-y-2.5 pt-3 border-t border-slate-200">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block">
                   Difficulty Breakdown
                 </span>
                 
@@ -332,9 +332,9 @@ export default function PracticeSheetPage() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-[10px] font-bold">
                     <span className="text-emerald-400">Easy</span>
-                    <span className="text-neutral-300">{easySolved}<span className="text-neutral-550">/{easyQuestions.length}</span></span>
+                    <span className="text-slate-700">{easySolved}<span className="text-neutral-550">/{easyQuestions.length}</span></span>
                   </div>
-                  <div className="w-full h-1.5 bg-neutral-900 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-white rounded-full overflow-hidden">
                     <div
                       className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                       style={{ width: `${easyQuestions.length > 0 ? (easySolved / easyQuestions.length) * 100 : 0}%` }}
@@ -346,9 +346,9 @@ export default function PracticeSheetPage() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-[10px] font-bold">
                     <span className="text-amber-550">Medium</span>
-                    <span className="text-neutral-300">{mediumSolved}<span className="text-neutral-550">/{mediumQuestions.length}</span></span>
+                    <span className="text-slate-700">{mediumSolved}<span className="text-neutral-550">/{mediumQuestions.length}</span></span>
                   </div>
-                  <div className="w-full h-1.5 bg-neutral-900 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-white rounded-full overflow-hidden">
                     <div
                       className="h-full bg-amber-500 rounded-full transition-all duration-500"
                       style={{ width: `${mediumQuestions.length > 0 ? (mediumSolved / mediumQuestions.length) * 100 : 0}%` }}
@@ -360,9 +360,9 @@ export default function PracticeSheetPage() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-[10px] font-bold">
                     <span className="text-red-400">Hard</span>
-                    <span className="text-neutral-300">{hardSolved}<span className="text-neutral-550">/{hardQuestions.length}</span></span>
+                    <span className="text-slate-700">{hardSolved}<span className="text-neutral-550">/{hardQuestions.length}</span></span>
                   </div>
-                  <div className="w-full h-1.5 bg-neutral-900 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-white rounded-full overflow-hidden">
                     <div
                       className="h-full bg-red-500 rounded-full transition-all duration-500"
                       style={{ width: `${hardQuestions.length > 0 ? (hardSolved / hardQuestions.length) * 100 : 0}%` }}
@@ -374,8 +374,8 @@ export default function PracticeSheetPage() {
 
             {/* Profile Handles */}
             {(user?.leetcodeHandle || user?.codeforcesHandle) && (
-              <div className="pt-4 mt-4 border-t border-neutral-900 space-y-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-500 block">
+              <div className="pt-4 mt-4 border-t border-slate-200 space-y-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block">
                   Connected Profiles
                 </span>
                 <div className="flex flex-wrap gap-2">
@@ -384,7 +384,7 @@ export default function PracticeSheetPage() {
                       href={`https://leetcode.com/${user.leetcodeHandle}/`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded bg-neutral-900 hover:bg-neutral-850 px-2 py-1 text-[10px] font-bold text-amber-500 border border-neutral-800 transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded bg-white hover:bg-slate-50 px-2 py-1 text-[10px] font-bold text-amber-500 border border-slate-200 transition-colors"
                     >
                       <svg className="h-3 w-3 fill-current" viewBox="0 0 24 24">
                         <path d="M16.102 17.93l-2.697 2.607c-.466.45-1.111.587-1.685.387-.574-.2-1.039-.677-1.25-1.252l-.317-.866c-.347-.947-.133-2.023.548-2.738l2.697-2.607c.466-.45 1.111-.587 1.685-.387.574.2 1.039.677 1.25 1.252l.317.866c.347.947.133 2.023-.548 2.738zm-3.66-8.99l-2.697 2.607c-.466.45-1.111.587-1.685.387-.574-.2-1.039-.677-1.25-1.252l-.317-.866c-.347-.947-.133-2.023.548-2.738l2.697-2.607c.466-.45 1.111-.587 1.685-.387.574.2 1.039.677 1.25 1.252l.317.866c.347.947.133 2.023-.548 2.738z"/>
@@ -398,7 +398,7 @@ export default function PracticeSheetPage() {
                       href={`https://codeforces.com/profile/${user.codeforcesHandle}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded bg-neutral-900 hover:bg-neutral-850 px-2 py-1 text-[10px] font-bold text-red-400 border border-neutral-800 transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded bg-white hover:bg-slate-50 px-2 py-1 text-[10px] font-bold text-red-400 border border-slate-200 transition-colors"
                     >
                       <svg className="h-3 w-3 fill-current" viewBox="0 0 24 24">
                         <path d="M4.5 12h3V24h-3zM10.5 0h3v24h-3zM16.5 6h3v18h-3z"/>
@@ -412,15 +412,15 @@ export default function PracticeSheetPage() {
           </Card>
 
           {/* Right Column: LeetCode/Codeforces style Streak Contribution Grid */}
-          <Card className="border-neutral-800 bg-neutral-950/60 backdrop-blur-md shadow-2xl lg:col-span-3 hover:border-neutral-750 transition-colors duration-300 p-5 flex flex-col justify-between overflow-hidden">
+          <Card className="border-slate-200 bg-white/60 backdrop-blur-md shadow-2xl lg:col-span-3 hover:border-neutral-750 transition-colors duration-300 p-5 flex flex-col justify-between overflow-hidden">
             <div>
               {/* Header row with streak & points stats */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-900 pb-4 mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-4">
                 <div>
-                  <h2 className="text-sm font-extrabold text-white tracking-tight uppercase">
+                  <h2 className="text-sm font-extrabold text-slate-900 tracking-tight uppercase">
                     Coding Activity & Streak Grid
                   </h2>
-                  <p className="text-[10px] text-neutral-500 font-semibold mt-0.5">
+                  <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
                     Track your daily solving consistency and points accumulation
                   </p>
                 </div>
@@ -524,7 +524,7 @@ export default function PracticeSheetPage() {
                 return (
                   <div className="space-y-2 overflow-visible">
                     {/* Month labels header row */}
-                    <div className="flex gap-[3.5px] select-none text-[8.5px] text-neutral-500 font-semibold h-4 pl-[26px]">
+                    <div className="flex gap-[3.5px] select-none text-[8.5px] text-slate-500 font-semibold h-4 pl-[26px]">
                       <div className="relative w-full h-full">
                         {months.map((m) => (
                           <span
@@ -540,7 +540,7 @@ export default function PracticeSheetPage() {
 
                     <div className="flex gap-[3.5px] overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-neutral-800 scrollbar-track-transparent">
                       {/* Weekday labels */}
-                      <div className="flex flex-col justify-between text-[8px] text-neutral-500 pr-1.5 select-none pt-[1.5px] h-[80px] shrink-0 font-medium leading-none">
+                      <div className="flex flex-col justify-between text-[8px] text-slate-500 pr-1.5 select-none pt-[1.5px] h-[80px] shrink-0 font-medium leading-none">
                         <span>Sun</span>
                         <span>Tue</span>
                         <span>Thu</span>
@@ -552,7 +552,7 @@ export default function PracticeSheetPage() {
                         {weeksList.map((week, wIdx) => (
                           <div key={wIdx} className="flex flex-col gap-[3.5px]">
                             {week.map((day) => {
-                              let colorClass = "bg-neutral-900/50 border-neutral-955";
+                              let colorClass = "bg-white/50 border-neutral-955";
                               if (day.count === 1) colorClass = "bg-emerald-500/20 border-emerald-500/10 shadow-[0_0_6px_rgba(16,185,129,0.05)]";
                               else if (day.count === 2) colorClass = "bg-emerald-500/40 border-emerald-500/25 shadow-[0_0_8px_rgba(16,185,129,0.15)]";
                               else if (day.count >= 3) colorClass = "bg-emerald-400 border-emerald-450 shadow-[0_0_10px_rgba(52,211,153,0.3)]";
@@ -578,15 +578,15 @@ export default function PracticeSheetPage() {
             </div>
 
             {/* Legend & Stats footer */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3 border-t border-neutral-900 text-[10px] text-neutral-500 select-none">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-200 text-[10px] text-slate-500 select-none">
               <div className="flex flex-wrap gap-x-3 gap-y-1">
-                <span>Total submissions: <strong className="text-neutral-350">{submissions.filter(s => s.status === "Accepted").length}</strong></span>
+                <span>Total submissions: <strong className="text-slate-600">{submissions.filter(s => s.status === "Accepted").length}</strong></span>
                 <span>•</span>
                 <span>Streak: <strong className="text-emerald-400">{user?.streak ?? 0} Days</strong></span>
               </div>
               <div className="flex items-center gap-1.5 self-end sm:self-auto">
                 <span>Less</span>
-                <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-neutral-900/50 border border-neutral-950" />
+                <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-white/50 border border-neutral-950" />
                 <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-emerald-500/20 border border-emerald-500/10" />
                 <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-emerald-500/40 border border-emerald-500/25" />
                 <div className="w-[8.5px] h-[8.5px] rounded-[1.5px] bg-emerald-400 border border-emerald-450" />
@@ -598,16 +598,16 @@ export default function PracticeSheetPage() {
 
         {/* Topics Accordion Feed */}
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-neutral-400" /> Dynamic Topics Tracker
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-slate-600" /> Dynamic Topics Tracker
           </h2>
           
           {topics.length === 0 ? (
-            <Card className="border-neutral-800 bg-neutral-950/40 text-center py-16">
+            <Card className="border-slate-200 bg-white/40 text-center py-16">
               <CardContent className="space-y-3">
                 <Award className="h-10 w-10 text-neutral-750 mx-auto" />
-                <p className="text-neutral-400 font-semibold">No sheet questions configured</p>
-                <p className="text-xs text-neutral-500 max-w-xs mx-auto leading-relaxed">
+                <p className="text-slate-600 font-semibold">No sheet questions configured</p>
+                <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
                   Coding sheet sections will render dynamically once admins upload questions tagged with topics in the admin console.
                 </p>
               </CardContent>
@@ -625,44 +625,44 @@ export default function PracticeSheetPage() {
                   <Card
                     key={topicName}
                     className={cn(
-                      "border-neutral-800/80 bg-neutral-950/40 backdrop-blur-sm transition-all duration-300 overflow-hidden shadow-md",
-                      isExpanded && "border-neutral-700 bg-neutral-950/50 shadow-lg"
+                      "border-slate-200/80 bg-white/40 backdrop-blur-sm transition-all duration-300 overflow-hidden shadow-md",
+                      isExpanded && "border-neutral-700 bg-white/50 shadow-lg"
                     )}
                   >
                     {/* Topic Accordion Header */}
                     <div
                       onClick={() => toggleTopic(topicName)}
                       className={cn(
-                        "p-4 flex items-center justify-between cursor-pointer hover:bg-neutral-900/30 select-none transition-colors border-b border-transparent",
-                        isExpanded && "border-neutral-900 bg-neutral-900/10"
+                        "p-4 flex items-center justify-between cursor-pointer hover:bg-white/30 select-none transition-colors border-b border-transparent",
+                        isExpanded && "border-slate-200 bg-white/10"
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-extrabold text-neutral-200 tracking-tight">{topicName}</span>
+                        <span className="text-sm font-extrabold text-slate-800 tracking-tight">{topicName}</span>
                         <Badge
                           variant={isAllSolved ? "success" : "outline"}
                           className={cn(
                             "text-[9px] py-0.5 px-2 font-bold uppercase",
                             isAllSolved
                               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
-                              : "border-neutral-850 text-neutral-450"
+                              : "border-slate-200 text-slate-500"
                           )}
                         >
                           {solvedInTopic} / {totalInTopic} Solved
                         </Badge>
                       </div>
-                      <div className="text-neutral-500 hover:text-neutral-300 transition-colors">
+                      <div className="text-slate-500 hover:text-slate-700 transition-colors">
                         <ChevronDown className={cn("h-4 w-4 transition-transform duration-250", isExpanded && "rotate-180")} />
                       </div>
                     </div>
 
                     {/* Topic Questions List */}
                     {isExpanded && (
-                      <div className="border-t border-neutral-900/50 bg-neutral-950/10 divide-y divide-neutral-900/50">
+                      <div className="border-t border-slate-200/50 bg-white/10 divide-y divide-neutral-900/50">
                         {topicQuestions.map((q) => (
                           <div
                             key={q.id}
-                            className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neutral-900/20 transition-colors duration-200"
+                            className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/20 transition-colors duration-200"
                           >
                             <div className="flex items-center gap-3.5 min-w-0">
                               {/* Solved Status Checkbox Icon */}
@@ -671,7 +671,7 @@ export default function PracticeSheetPage() {
                                   <CheckCircle2 className="h-3.5 w-3.5" />
                                 </div>
                               ) : (
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-neutral-700 hover:text-neutral-500 border border-neutral-850 hover:border-neutral-700 transition-colors duration-150">
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-neutral-700 hover:text-slate-500 border border-slate-200 hover:border-slate-300 transition-colors duration-150">
                                   <Circle className="h-3 w-3" />
                                 </div>
                               )}
@@ -683,14 +683,14 @@ export default function PracticeSheetPage() {
                                   href={q.referenceUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-xs font-semibold text-neutral-300 hover:text-indigo-400 transition-colors truncate leading-none flex items-center gap-1"
+                                  className="text-xs font-semibold text-slate-700 hover:text-indigo-400 transition-colors truncate leading-none flex items-center gap-1"
                                 >
-                                  {q.title} <span className="text-[9px] text-neutral-500 font-normal uppercase tracking-wider bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-850">External</span>
+                                  {q.title} <span className="text-[9px] text-slate-500 font-normal uppercase tracking-wider bg-white px-1.5 py-0.5 rounded border border-slate-200">External</span>
                                 </a>
                               ) : (
                                 <Link
                                   href={`/coding/${q.id}`}
-                                  className="text-xs font-semibold text-neutral-300 hover:text-indigo-400 transition-colors truncate leading-none"
+                                  className="text-xs font-semibold text-slate-700 hover:text-indigo-400 transition-colors truncate leading-none"
                                 >
                                   {q.title}
                                 </Link>
@@ -703,7 +703,7 @@ export default function PracticeSheetPage() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   title="View on original LeetCode / Codeforces page"
-                                  className="text-neutral-550 hover:text-neutral-350 transition-colors p-0.5 shrink-0"
+                                  className="text-neutral-550 hover:text-slate-600 transition-colors p-0.5 shrink-0"
                                 >
                                   <ExternalLink className="h-3 w-3" />
                                 </a>
@@ -736,7 +736,7 @@ export default function PracticeSheetPage() {
                                       size="sm"
                                       variant="outline"
                                       asChild
-                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider border-neutral-800 text-neutral-350 bg-black/40 hover:bg-neutral-800 hover:text-white"
+                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider border-slate-200 text-slate-600 bg-slate-50/40 hover:bg-slate-100 hover:text-slate-900"
                                     >
                                       <a href={q.referenceUrl} target="_blank" rel="noopener noreferrer">
                                         Solve Link
@@ -758,7 +758,7 @@ export default function PracticeSheetPage() {
                                       size="sm"
                                       onClick={() => handleMarkSolved(q.id)}
                                       disabled={markingIds[q.id]}
-                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider bg-indigo-600 hover:bg-indigo-750 text-white"
+                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider bg-indigo--white"
                                     >
                                       {markingIds[q.id] ? (
                                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -776,8 +776,7 @@ export default function PracticeSheetPage() {
                                   className={cn(
                                     "h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider",
                                     q.solved
-                                      ? "text-neutral-500 hover:text-indigo-400 hover:bg-indigo-955/15"
-                                      : "border-neutral-800 text-neutral-350 bg-black/40 hover:bg-neutral-800 hover:text-white"
+                                      ? "text-slate-500 hover:text-indigo-400 hover:bg-indigo--white"
                                   )}
                                 >
                                   <Link href={`/coding/${q.id}`}>

@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-8 sm:py-12">
-      <Card className="w-full max-w-md animate-fade-in border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md shadow-2xl">
+      <Card className="w-full max-w-md animate-fade-in border-slate-200/60 bg-white/40 backdrop-blur-md shadow-2xl">
         <CardHeader>
           <CardTitle>Sign in to Quizzer</CardTitle>
           <CardDescription>Enter your credentials to continue</CardDescription>
@@ -60,7 +60,7 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
-          <p className="mt-4 text-center text-sm text-neutral-500">
+          <p className="mt-4 text-center text-sm text-slate-500">
             No account?{" "}
             <Link href="/signup" className="font-medium text-indigo-400 hover:underline">
               Sign up

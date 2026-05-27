@@ -74,32 +74,32 @@ export default function CodeforcesGymPage() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 space-y-8 animate-fade-in">
         
         {/* Header */}
-        <div className="flex flex-col gap-4 border-b border-neutral-900 pb-6">
+        <div className="flex flex-col gap-4 border-b border-slate-200 pb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl flex items-center gap-2">
               <Trophy className="h-7 w-7 text-yellow-500" />
               Codeforces Gym Leaderboard
             </h1>
-            <p className="mt-2 text-sm text-neutral-450">
+            <p className="mt-2 text-sm text-slate-500">
               Enter a Codeforces Contest or Gym ID to view real-time standings for your juniors.
             </p>
           </div>
           
           <div className="flex items-center gap-3 max-w-lg mt-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <Input
                 placeholder="e.g. 123456"
                 value={gymId}
                 onChange={(e) => setGymId(e.target.value)}
-                className="pl-10 border-neutral-800 bg-neutral-900/50 text-white"
+                className="pl-10 border-slate-200 bg-white/50 text-slate-900"
                 onKeyDown={(e) => e.key === "Enter" && fetchStandings()}
               />
             </div>
             <Button 
               onClick={fetchStandings} 
               disabled={loading}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="bg-indigo--white"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load"}
             </Button>
@@ -109,14 +109,14 @@ export default function CodeforcesGymPage() {
         {/* Results */}
         {standings && (
           <div className="space-y-6">
-            <Card className="transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 backdrop-blur-md">
+            <Card className="transition-all duration-300 border-slate-200/60 bg-white/40 backdrop-blur-md hover:border-indigo-500/30 backdrop-blur-md">
               <CardHeader className="pb-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <CardTitle className="text-xl font-bold text-white">
+                    <CardTitle className="text-xl font-bold text-slate-900">
                       {standings.contest.name}
                     </CardTitle>
-                    <CardDescription className="text-neutral-400 mt-1">
+                    <CardDescription className="text-slate-600 mt-1">
                       Phase: {standings.contest.phase} • Duration: {Math.floor(standings.contest.durationSeconds / 60)} mins
                     </CardDescription>
                   </div>
@@ -127,8 +127,8 @@ export default function CodeforcesGymPage() {
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-neutral-300">
-                    <thead className="bg-neutral-900/50 text-xs uppercase text-neutral-400">
+                  <table className="w-full text-left text-sm text-slate-700">
+                    <thead className="bg-white/50 text-xs uppercase text-slate-600">
                       <tr>
                         <th className="px-4 py-3 font-semibold rounded-tl-lg">Rank</th>
                         <th className="px-4 py-3 font-semibold">Participant</th>
@@ -142,16 +142,16 @@ export default function CodeforcesGymPage() {
                     </thead>
                     <tbody className="divide-y divide-neutral-800/50">
                       {standings.rows.map((row, i) => (
-                        <tr key={i} className="hover:bg-neutral-800/20 transition-colors">
+                        <tr key={i} className="hover:bg-slate-100/20 transition-colors">
                           <td className="px-4 py-3">
-                            <span className={`font-bold ${row.rank <= 3 ? "text-yellow-500" : "text-neutral-300"}`}>
+                            <span className={`font-bold ${row.rank <= 3 ? "text-yellow-500" : "text-slate-700"}`}>
                               #{row.rank}
                             </span>
                           </td>
-                          <td className="px-4 py-3 font-medium text-white">
+                          <td className="px-4 py-3 font-medium text-slate-900">
                             {row.party.teamName ? (
                               <span title={row.party.members.map(m => m.handle).join(", ")}>
-                                {row.party.teamName} <span className="text-xs text-neutral-500">({row.party.members.length})</span>
+                                {row.party.teamName} <span className="text-xs text-slate-500">({row.party.members.length})</span>
                               </span>
                             ) : (
                               row.party.members[0].handle
@@ -166,7 +166,7 @@ export default function CodeforcesGymPage() {
                                 <div className="flex flex-col items-center">
                                   <span className="text-green-500 font-bold">+{pr.rejectedAttemptCount || ""}</span>
                                   {pr.penalty && pr.penalty > 0 && (
-                                    <span className="text-[10px] text-neutral-500">{pr.penalty}</span>
+                                    <span className="text-[10px] text-slate-500">{pr.penalty}</span>
                                   )}
                                 </div>
                               ) : pr.rejectedAttemptCount > 0 ? (
@@ -180,7 +180,7 @@ export default function CodeforcesGymPage() {
                       ))}
                       {standings.rows.length === 0 && (
                         <tr>
-                          <td colSpan={standings.problems.length + 3} className="px-4 py-8 text-center text-neutral-500 italic">
+                          <td colSpan={standings.problems.length + 3} className="px-4 py-8 text-center text-slate-500 italic">
                             No participants found in this contest yet.
                           </td>
                         </tr>

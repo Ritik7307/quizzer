@@ -15,16 +15,16 @@ export function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content>) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-slate-50/80 backdrop-blur-sm" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-neutral-800 bg-neutral-950 p-4 shadow-xl sm:p-6",
+          "fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6",
           className
         )}
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute right-3 top-3 rounded-sm p-1 text-neutral-400 hover:text-white sm:right-4 sm:top-4">
+        <DialogPrimitive.Close className="absolute right-3 top-3 rounded-sm p-1 text-slate-600 hover:text-slate-900 sm:right-4 sm:top-4">
           <X className="h-4 w-4" />
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
@@ -37,9 +37,9 @@ export function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLD
 }
 
 export function DialogTitle({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title className={cn("text-lg font-semibold text-white", className)} {...props} />;
+  return <DialogPrimitive.Title className={cn("text-lg font-semibold text-slate-900", className)} {...props} />;
 }
 
 export function DialogDescription({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) {
-  return <DialogPrimitive.Description className={cn("text-sm text-neutral-400", className)} {...props} />;
+  return <DialogPrimitive.Description className={cn("text-sm text-slate-600", className)} {...props} />;
 }

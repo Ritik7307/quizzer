@@ -145,28 +145,31 @@ export default function AdminDashboard() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 space-y-8 animate-fade-in">
         
         {/* Title and Controls Header */}
-        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-900 pb-5">
-          <div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">Admin Control Center</h1>
-            <p className="text-sm text-neutral-400 sm:text-base">Manage quizzes, coding problems, notifications, and candidate reviews.</p>
+        <div className="mb-6 flex flex-col gap-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+              <span className="bg-indigo-600 w-2 h-8 rounded-full inline-block"></span>
+              Admin Control Center
+            </h1>
+            <p className="text-sm font-medium text-slate-500 pl-4 sm:text-base">Manage quizzes, coding problems, notifications, and candidate reviews.</p>
           </div>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200">
+          <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+            <Button asChild variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
               <Link href="/admin/notifications">
-                <Bell className="mr-2 h-4 w-4" /> Send Notification
+                <Bell className="mr-2 h-4 w-4" /> Notifications
               </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200">
+            <Button asChild variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
               <Link href="/admin/resources">
-                <Brain className="mr-2 h-4 w-4" /> Manage Resources
+                <Brain className="mr-2 h-4 w-4" /> Resources
               </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full sm:w-auto border-neutral-800 text-neutral-350 bg-neutral-950/40 hover:bg-neutral-850 hover:text-white transition-all duration-200">
+            <Button asChild variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
               <Link href="/admin/coding/new">
-                <Plus className="mr-2 h-4 w-4" /> New Coding Problem
+                <Code className="mr-2 h-4 w-4" /> New Problem
               </Link>
             </Button>
-            <Button asChild className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-750 text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all">
+            <Button asChild className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20 transition-all">
               <Link href="/admin/quizzes/new">
                 <Plus className="mr-2 h-4 w-4" /> New Quiz
               </Link>
@@ -175,7 +178,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex gap-2 border-b border-neutral-900 pb-px">
+        <div className="flex gap-4 border-b border-slate-200 pb-px">
           {[
             { id: "overview", label: "System Overview", icon: BarChart3 },
             { id: "feedback", label: "Candidate Reviews", icon: MessageSquare },
@@ -184,13 +187,13 @@ export default function AdminDashboard() {
               key={t.id}
               onClick={() => setActiveTab(t.id as any)}
               className={cn(
-                "flex items-center gap-2.5 border-b-2 px-5 py-3.5 text-xs sm:text-sm font-extrabold uppercase tracking-wider transition-all select-none focus:outline-none",
+                "group flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition-all select-none focus:outline-none",
                 activeTab === t.id
-                  ? "border-indigo-500 text-indigo-400 bg-indigo-950/5"
-                  : "border-transparent text-neutral-500 hover:text-neutral-300 hover:bg-neutral-950/10"
+                  ? "border-indigo-600 text-indigo-700 bg-indigo-50/50"
+                  : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
               )}
             >
-              <t.icon className={cn("h-4 w-4 transition-colors", activeTab === t.id ? "text-indigo-400" : "text-neutral-500")} />
+              <t.icon className={cn("h-4.5 w-4.5 transition-colors", activeTab === t.id ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600")} />
               {t.label}
             </button>
           ))}
@@ -199,7 +202,7 @@ export default function AdminDashboard() {
         {loading ? (
           <div className="grid gap-6 sm:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-28 rounded-xl border border-neutral-900" />
+              <Skeleton key={i} className="h-28 rounded-xl border border-slate-200" />
             ))}
           </div>
         ) : (
@@ -235,19 +238,19 @@ export default function AdminDashboard() {
                     <Card
                       key={s.label}
                       className={cn(
-                        "border border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30",
+                        "border border-slate-200/60 bg-white/40 backdrop-blur-md shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30",
                         s.color.split(" ").slice(1).join(" ")
                       )}
                     >
                       <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">
+                        <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
                           {s.label}
                         </CardTitle>
                         <s.icon className={cn("h-4.5 w-4.5", s.color.split(" ")[0])} />
                       </CardHeader>
                       <CardContent className="space-y-1">
-                        <p className="text-3xl font-extrabold text-white tracking-tight">{s.value}</p>
-                        <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{s.desc}</p>
+                        <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{s.value}</p>
+                        <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{s.desc}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -257,24 +260,24 @@ export default function AdminDashboard() {
                 <div className="grid gap-8 lg:grid-cols-2">
                   
                   {/* Quizzes list */}
-                  <Card className="border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md shadow-xl">
-                    <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
-                      <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                  <Card className="border-slate-200/60 bg-white/40 backdrop-blur-md shadow-xl">
+                    <CardHeader className="border-b border-slate-200 pb-4 mb-4">
+                      <CardTitle className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
                         <ClipboardList className="h-5 w-5 text-indigo-400" /> Managed Quizzes
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {quizzes.length === 0 ? (
-                        <p className="text-xs text-neutral-500 italic py-6 text-center">No quizzes configured yet.</p>
+                        <p className="text-xs text-slate-500 italic py-6 text-center">No quizzes configured yet.</p>
                       ) : (
                         quizzes.map((q) => (
                           <div
                             key={q.id}
-                            className="flex flex-col gap-4 rounded-xl border border-neutral-900 p-4 sm:flex-row sm:items-center sm:justify-between bg-neutral-950/20 hover:bg-neutral-900/30 hover:border-neutral-800 transition-all duration-200 shadow-sm"
+                            className="flex flex-col gap-4 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between bg-white/20 hover:bg-white/30 hover:border-slate-200 transition-all duration-200 shadow-sm"
                           >
                             <div className="space-y-1">
-                              <p className="font-extrabold text-sm text-neutral-200 tracking-tight">{q.title}</p>
-                              <p className="text-xs text-neutral-500">
+                              <p className="font-extrabold text-sm text-slate-800 tracking-tight">{q.title}</p>
+                              <p className="text-xs text-slate-500">
                                 {q._count?.questions ?? 0} questions · {q.duration} min
                               </p>
                             </div>
@@ -289,14 +292,14 @@ export default function AdminDashboard() {
                                 variant="outline"
                                 size="sm"
                                 asChild
-                                className="h-8 border-neutral-800 text-[10px] font-extrabold uppercase text-neutral-350 bg-black/40 hover:bg-neutral-800 hover:text-white"
+                                className="h-8 border-slate-200 text-[10px] font-extrabold uppercase text-slate-600 bg-slate-50/40 hover:bg-slate-100 hover:text-slate-900"
                               >
                                 <Link href={`/admin/quizzes/${q.id}`}>Manage</Link>
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-neutral-500 hover:text-white transition-colors"
+                                className="h-8 w-8 text-slate-500 hover:text-slate-900 transition-colors"
                                 title="Export results to CSV"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -324,27 +327,27 @@ export default function AdminDashboard() {
                   </Card>
 
                   {/* Recent attempts feed */}
-                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl">
-                    <CardHeader className="border-b border-neutral-900 pb-4 mb-4">
-                      <CardTitle className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                  <Card className="border-slate-200 bg-white/50 backdrop-blur-md shadow-2xl">
+                    <CardHeader className="border-b border-slate-200 pb-4 mb-4">
+                      <CardTitle className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
                         <TrendingUp className="h-5 w-5 text-indigo-400" /> Recent Quiz Activity
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {data?.recentAttempts.length === 0 ? (
-                        <p className="text-xs text-neutral-500 italic py-6 text-center">No quiz submissions recorded yet.</p>
+                        <p className="text-xs text-slate-500 italic py-6 text-center">No quiz submissions recorded yet.</p>
                       ) : (
                         <div className="divide-y divide-neutral-900/60">
                           {data?.recentAttempts.map((a) => (
                             <div
                               key={a.id}
-                              className="flex items-center justify-between text-sm py-3 px-2 rounded-lg hover:bg-neutral-900/10 transition-colors"
+                              className="flex items-center justify-between text-sm py-3 px-2 rounded-lg hover:bg-white/10 transition-colors"
                             >
                               <div className="space-y-0.5">
-                                <p className="font-extrabold text-neutral-200 text-sm leading-tight flex items-center gap-1.5">
+                                <p className="font-extrabold text-slate-800 text-sm leading-tight flex items-center gap-1.5">
                                   {a.user.name} <ChevronRight className="h-3 w-3 text-neutral-600" />
                                 </p>
-                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
                                   Quiz: {a.quiz.title}
                                 </p>
                               </div>
@@ -354,7 +357,7 @@ export default function AdminDashboard() {
                                   <p className="font-extrabold text-indigo-400 text-sm">{a.percentage}%</p>
                                   <p className="text-[9px] font-bold text-neutral-550 uppercase tracking-widest">{a.score} pts</p>
                                 </div>
-                                <div className="text-[10px] text-neutral-500 font-semibold bg-neutral-900 border border-neutral-850 px-2 py-0.5 rounded shrink-0">
+                                <div className="text-[10px] text-slate-500 font-semibold bg-white border border-slate-200 px-2 py-0.5 rounded shrink-0">
                                   {new Date(a.submittedAt).toLocaleDateString([], { month: "short", day: "numeric" })}
                                 </div>
                               </div>
@@ -373,36 +376,36 @@ export default function AdminDashboard() {
                 {/* Feedback statistics summary row */}
                 <div className="grid gap-6 sm:grid-cols-4">
                   {/* Rating Card */}
-                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300">
+                  <Card className="border-slate-200 bg-white/50 backdrop-blur-md shadow-2xl hover:border-slate-200 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">Average Rating</CardTitle>
+                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Average Rating</CardTitle>
                     </CardHeader>
                     <CardContent className="flex items-baseline gap-2 py-1">
                       <p className="text-4xl font-extrabold text-amber-500 tracking-tight">{avgRating}</p>
                       <div className="flex items-center text-amber-500">
                         <Star className="h-4.5 w-4.5 fill-amber-500" />
-                        <span className="text-[10px] text-neutral-500 ml-1 font-bold">/ 5.0</span>
+                        <span className="text-[10px] text-slate-500 ml-1 font-bold">/ 5.0</span>
                       </div>
                     </CardContent>
                   </Card>
                   
                   {/* Reviews Card */}
-                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300">
+                  <Card className="border-slate-200 bg-white/50 backdrop-blur-md shadow-2xl hover:border-slate-200 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">Total Reviews</CardTitle>
+                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Total Reviews</CardTitle>
                     </CardHeader>
                     <CardContent className="py-1">
-                      <p className="text-4xl font-extrabold text-white tracking-tight">{totalReviews}</p>
+                      <p className="text-4xl font-extrabold text-slate-900 tracking-tight">{totalReviews}</p>
                     </CardContent>
                   </Card>
 
                   {/* Difficulty Distribution Card */}
-                  <Card className="border-neutral-850 bg-neutral-950/50 backdrop-blur-md shadow-2xl sm:col-span-2 hover:border-neutral-800 transition-colors duration-300">
+                  <Card className="border-slate-200 bg-white/50 backdrop-blur-md shadow-2xl sm:col-span-2 hover:border-slate-200 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-450">Difficulty Rating Distribution</CardTitle>
+                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Difficulty Rating Distribution</CardTitle>
                     </CardHeader>
                     <CardContent className="flex items-center gap-4 py-2 mt-auto">
-                      <div className="flex-1 flex gap-1 h-3 rounded-full overflow-hidden bg-neutral-900 border border-neutral-850 p-0.5">
+                      <div className="flex-1 flex gap-1 h-3 rounded-full overflow-hidden bg-white border border-slate-200 p-0.5">
                         <div
                           className="bg-emerald-500 h-full rounded-l transition-all shadow-[0_0_8px_rgba(16,185,129,0.3)]"
                           style={{
@@ -431,7 +434,7 @@ export default function AdminDashboard() {
                           title={`Hard: ${diffCounts.Hard}`}
                         />
                       </div>
-                      <div className="flex gap-3 text-[10px] font-extrabold tracking-wider text-neutral-450 shrink-0">
+                      <div className="flex gap-3 text-[10px] font-extrabold tracking-wider text-slate-500 shrink-0">
                         <span className="flex items-center gap-1">🟢 {diffCounts.Easy}</span>
                         <span className="flex items-center gap-1">🟡 {diffCounts.Medium}</span>
                         <span className="flex items-center gap-1">🔴 {diffCounts.Hard}</span>
@@ -442,22 +445,22 @@ export default function AdminDashboard() {
 
                 {/* Feedbacks Comments Feed */}
                 <div className="space-y-4">
-                  <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-neutral-400" /> Candidate Comments & Reviews
+                  <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-slate-600" /> Candidate Comments & Reviews
                   </h2>
                   
                   {loadingFeedback ? (
                     <div className="grid gap-4 sm:grid-cols-2">
                       {[1, 2].map((i) => (
-                        <Skeleton key={i} className="h-32 w-full rounded-xl border border-neutral-900" />
+                        <Skeleton key={i} className="h-32 w-full rounded-xl border border-slate-200" />
                       ))}
                     </div>
                   ) : feedbacks.length === 0 ? (
-                    <Card className="transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 text-center py-16">
+                    <Card className="transition-all duration-300 border-slate-200/60 bg-white/40 backdrop-blur-md hover:border-indigo-500/30 text-center py-16">
                       <CardContent className="space-y-3">
                         <MessageSquare className="h-10 w-10 text-neutral-750 mx-auto" />
-                        <p className="text-neutral-400 font-semibold">No feedback reviews submitted yet</p>
-                        <p className="text-xs text-neutral-500 max-w-xs mx-auto leading-relaxed">
+                        <p className="text-slate-600 font-semibold">No feedback reviews submitted yet</p>
+                        <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
                           Reviews will populate here once candidates submit quiz ratings or log suggestions via the navigation feedback forms.
                         </p>
                       </CardContent>
@@ -468,12 +471,12 @@ export default function AdminDashboard() {
                         const isQuizFeedback = f.attempt !== null;
 
                         return (
-                          <Card key={f.id} className="transition-all duration-300 border-neutral-800/60 bg-neutral-900/40 backdrop-blur-md hover:border-indigo-500/30 backdrop-blur-md shadow-2xl hover:border-neutral-800 transition-colors duration-300 flex flex-col justify-between overflow-hidden">
-                            <CardHeader className="pb-3.5 border-b border-neutral-900 bg-neutral-900/10">
+                          <Card key={f.id} className="transition-all duration-300 border-slate-200/60 bg-white/40 backdrop-blur-md hover:border-indigo-500/30 backdrop-blur-md shadow-2xl hover:border-slate-200 transition-colors duration-300 flex flex-col justify-between overflow-hidden">
+                            <CardHeader className="pb-3.5 border-b border-slate-200 bg-white/10">
                               <div className="flex items-start justify-between gap-3">
                                 <div className="space-y-0.5">
-                                  <p className="font-extrabold text-neutral-200 text-sm tracking-tight">{f.user.name}</p>
-                                  <p className="text-[10px] text-neutral-500 font-medium">{f.user.email}</p>
+                                  <p className="font-extrabold text-slate-800 text-sm tracking-tight">{f.user.name}</p>
+                                  <p className="text-[10px] text-slate-500 font-medium">{f.user.email}</p>
                                 </div>
                                 {isQuizFeedback ? (
                                   <Badge
@@ -513,8 +516,8 @@ export default function AdminDashboard() {
                             <CardContent className="pt-4 space-y-4 flex-1 flex flex-col justify-between">
                               <div className="space-y-3.5">
                                 {isQuizFeedback ? (
-                                  <div className="flex items-center justify-between text-xs text-neutral-500 border-b border-neutral-900/40 pb-2">
-                                    <span className="font-bold text-neutral-350 truncate max-w-[200px]">
+                                  <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200/40 pb-2">
+                                    <span className="font-bold text-slate-600 truncate max-w-[200px]">
                                       Quiz: {f.attempt!.quiz.title}
                                     </span>
                                     <span className="flex items-center gap-1 text-[10px] font-extrabold text-indigo-400 uppercase tracking-wider">
@@ -522,7 +525,7 @@ export default function AdminDashboard() {
                                     </span>
                                   </div>
                                 ) : (
-                                  <div className="flex items-center justify-between text-xs border-b border-neutral-900/40 pb-2">
+                                  <div className="flex items-center justify-between text-xs border-b border-slate-200/40 pb-2">
                                     <span className="font-extrabold text-indigo-450 uppercase tracking-widest text-[9px]">Platform Feedback Review</span>
                                   </div>
                                 )}
@@ -543,7 +546,7 @@ export default function AdminDashboard() {
                                 </div>
 
                                 {f.comments ? (
-                                  <div className="rounded-lg bg-neutral-900/60 border border-neutral-850 p-3.5 font-sans text-xs text-neutral-350 leading-relaxed italic whitespace-pre-wrap">
+                                  <div className="rounded-lg bg-white/60 border border-slate-200 p-3.5 font-sans text-xs text-slate-600 leading-relaxed italic whitespace-pre-wrap">
                                     "{f.comments}"
                                   </div>
                                 ) : (
@@ -555,7 +558,7 @@ export default function AdminDashboard() {
                                   </div>
                                 )}
                                 <div className="flex gap-2 mt-2">
-                                  <Button size="sm" variant="outline" className="text-[10px] h-6 py-0 bg-neutral-900 text-neutral-300 border-neutral-700" onClick={() => handleRespondFeedback(f.id)}>
+                                  <Button size="sm" variant="outline" className="text-[10px] h-6 py-0 bg-white text-slate-700 border-neutral-700" onClick={() => handleRespondFeedback(f.id)}>
                                     {f.adminResponse ? "Edit Response" : "Respond"}
                                   </Button>
                                   <Button size="sm" variant="destructive" className="text-[10px] h-6 py-0 bg-red-900/50 hover:bg-red-900 text-red-200" onClick={() => handleDeleteFeedback(f.id)}>
