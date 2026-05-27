@@ -15,9 +15,7 @@ export default function HomePage() {
         <div className="absolute top-0 left-0 -z-10 w-[600px] h-[600px] bg-emerald-400/10 rounded-full blur-3xl opacity-50 mix-blend-multiply dark:mix-blend-screen transform -translate-x-1/3 -translate-y-1/4"></div>
 
         <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center animate-fade-in">
-          <Badge variant="outline" className="mb-6 rounded-full border-indigo-200 dark:border-indigo-900 bg-indigo-500/5 text-indigo-600 dark:text-indigo-400 px-4 py-1 text-sm font-semibold tracking-wide">
-            <Sparkles className="mr-1.5 h-3.5 w-3.5 inline animate-pulse" /> Introducing Premium Upskilling
-          </Badge>
+
 
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl leading-[1.15]">
             Master your skills <br className="hidden sm:block" />
