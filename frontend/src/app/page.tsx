@@ -16,9 +16,9 @@ export default function HomePage() {
 
         <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center animate-fade-in">
 
-          <h1 className="text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl md:text-8xl">
+          <h1 className="text-4xl font-bold tracking-tight text-slate-800 sm:text-5xl md:text-6xl">
             Master your skills <br className="hidden sm:block" />
-            with <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">Quizzer</span>
+            with <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Quizzer</span>
           </h1>
           
           <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 sm:text-xl leading-relaxed">
