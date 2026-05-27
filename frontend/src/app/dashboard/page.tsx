@@ -440,13 +440,23 @@ export default function CandidateDashboard() {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
                       {(resource.fileSize / 1024 / 1024).toFixed(2)} MB
                     </span>
-                    <a
-                      href={`/api/resources/${resource.id}/download?token=${token}`}
-                      download={resource.fileName}
-                      className="inline-flex h-8 items-center justify-center rounded-md border border-neutral-800 bg-black/30 px-3 text-xs font-bold text-neutral-350 transition-colors hover:bg-neutral-800 hover:text-white"
-                    >
-                      <Download className="mr-1.5 h-3.5 w-3.5" /> Download
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`/api/resources/${resource.id}/download?token=${token}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-8 items-center justify-center rounded-md bg-neutral-900/50 px-3 text-[10px] font-extrabold uppercase tracking-wider text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white"
+                      >
+                        <BookOpen className="mr-1.5 h-3.5 w-3.5" /> View
+                      </a>
+                      <a
+                        href={`/api/resources/${resource.id}/download?token=${token}`}
+                        download={resource.fileName}
+                        className="inline-flex h-8 items-center justify-center rounded-md border border-neutral-800 bg-black/30 px-3 text-[10px] font-extrabold uppercase tracking-wider text-neutral-350 transition-colors hover:bg-neutral-800 hover:text-white"
+                      >
+                        <Download className="mr-1.5 h-3.5 w-3.5" /> Download
+                      </a>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

@@ -269,6 +269,15 @@ export default function AdminResourcesPage() {
                         <div className="flex items-center gap-2 justify-end sm:shrink-0">
                           <a
                             href={`/api/resources/${resource.id}/download?token=${token}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors"
+                            title="View Resource"
+                          >
+                            <BookOpen className="h-4 w-4" />
+                          </a>
+                          <a
+                            href={`/api/resources/${resource.id}/download?token=${token}`}
                             download={resource.fileName}
                             className="inline-flex h-8 items-center justify-center rounded-md border border-neutral-800 bg-black/40 px-3 text-[10px] font-extrabold uppercase text-neutral-350 transition-colors hover:bg-neutral-850 hover:text-white"
                           >
