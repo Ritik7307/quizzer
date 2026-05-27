@@ -184,7 +184,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex justify-end pt-3">
-                    <Button type="submit" disabled={loading} className="bg-indigo--white font-semibold px-6">
+                    <Button type="submit" disabled={loading} className="bg-indigo-600 text-white font-semibold px-6">
                       {loading ? "Saving Changes..." : "Save Profile Details"}
                     </Button>
                   </div>

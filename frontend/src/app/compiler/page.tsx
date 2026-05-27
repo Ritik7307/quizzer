@@ -278,7 +278,7 @@ export default function StandaloneCompilerPage() {
             size="sm"
             onClick={handleRunCode}
             disabled={running}
-            className="flex items-center gap-1.5 text-xs bg-indigo--white font-medium px-4"
+            className="flex items-center gap-1.5 text-xs bg-indigo-600 text-white font-medium px-4"
           >
             {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
             Run Code
@@ -447,7 +447,7 @@ export default function StandaloneCompilerPage() {
                       type="submit"
                       disabled={savingNote}
                       size="sm"
-                      className="bg-indigo--white text-xs px-3 font-semibold flex items-center gap-1 py-1 h-8"
+                      className="bg-indigo-600 text-white text-xs px-3 font-semibold flex items-center gap-1 py-1 h-8"
                     >
                       {savingNote ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                       Save Note
@@ -507,7 +507,7 @@ export default function StandaloneCompilerPage() {
                                 <Button
                                   size="sm"
                                   onClick={() => handleUpdateNote(n.id)}
-                                  className="h-7 text-[10px] bg-indigo--white hover:bg-indigo-750 font-semibold"
+                                  className="h-7 text-[10px] bg-indigo-600 text-white hover:bg-indigo-750 font-semibold"
                                 >
                                   Save Changes
                                 </Button>

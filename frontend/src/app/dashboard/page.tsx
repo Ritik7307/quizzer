@@ -255,7 +255,7 @@ export default function CandidateDashboard() {
                       <Clock className="h-4 w-4" /> {quiz.duration} min · {quiz._count?.questions ?? 0} Qs
                     </span>
                     {quiz.attempt?.submittedAt ? (
-                      <Button variant="secondary" size="sm" asChild>
+                      <Button variant="outline" size="sm" asChild>
                         <Link href={`/quiz/${quiz.id}/result`}>View Result</Link>
                       </Button>
                     ) : (

@@ -42,18 +42,14 @@ export function Navbar() {
       { href: "/compiler", label: "Compiler", icon: Code },
       { href: "/codeforces-gym", label: "CF Gym", icon: Trophy }
     ] : []),
-    ...(user?.role === "ADMIN" ? [
-      { href: "/admin/users", label: "Users", icon: Users },
-      { href: "/admin/notifications", label: "Notifications", icon: Bell },
-      { href: "/admin/coding/new", label: "Add Code Q", icon: Code }
-    ] : []),
   ];
 
   const linkClass = (href: string) =>
     cn(
       "flex items-center gap-1.5 rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium transition-colors whitespace-nowrap",
       pathname === href || pathname.startsWith(href + "/")
-        ? "bg-indigo--white"
+        ? "bg-indigo-100 text-indigo-700"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
     );
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
@@ -146,7 +142,7 @@ export function Navbar() {
                             className={cn(
                               "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
                               category === cat
-                                ? "border-indigo-500 bg-indigo--white font-bold"
+                                ? "border-indigo-500 bg-indigo-600 text-white font-bold"
                                 : "border-slate-200 bg-white/40 text-slate-600 hover:border-neutral-750"
                             )}
                           >
@@ -197,7 +193,7 @@ export function Navbar() {
                     <Button
                       type="submit"
                       disabled={submittingFeedback}
-                      className="w-full bg-indigo--white font-semibold py-2.5"
+                      className="w-full bg-indigo-600 text-white font-semibold py-2.5"
                     >
                       {submittingFeedback ? "Submitting..." : "Submit Feedback"}
                     </Button>
@@ -240,7 +236,7 @@ export function Navbar() {
                   Login
                 </Link>
               </Button>
-              <Button size="sm" asChild className="bg-indigo--white">
+              <Button size="sm" asChild className="bg-indigo-600 text-white">
                 <Link href="/signup" className="text-slate-900 no-underline">
                   Sign up
                 </Link>

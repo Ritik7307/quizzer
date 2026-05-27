@@ -15,6 +15,7 @@ import {
   ClipboardList,
   ChevronRight,
   TrendingUp,
+  Code,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";

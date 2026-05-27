@@ -241,7 +241,7 @@ export default function TakeQuizPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 sm:text-base">{instructions}</p>
-              <Button className="w-full bg-indigo--white hover:bg-indigo-750" onClick={() => setShowInstructions(false)}>
+              <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-750" onClick={() => setShowInstructions(false)}>
                 I understand, start quiz
               </Button>
             </CardContent>
@@ -297,7 +297,7 @@ export default function TakeQuizPage() {
         <p className="text-[10px] text-center text-slate-500 mt-2">Click a question number to jump to it directly.</p>
       </div>
 
-      <Button onClick={submitQuiz} className="w-full bg-indigo--white font-semibold py-2.5 mt-2">
+      <Button onClick={submitQuiz} className="w-full bg-indigo-600 text-white font-semibold py-2.5 mt-2">
         Finish & Submit Exam
       </Button>
     </div>
@@ -409,14 +409,14 @@ export default function TakeQuizPage() {
                     className={cn(
                       "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none",
                       answers[q.id] === i
-                        ? "border-indigo-500 bg-indigo--white font-medium ring-1 ring-indigo-500"
+                        ? "border-indigo-500 bg-indigo-600 text-white font-medium ring-1 ring-indigo-500"
                         : "border-slate-200 text-slate-700 hover:border-indigo-500/50 hover:bg-slate-100/20"
                     )}
                   >
                     <span className={cn(
                       "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
                       answers[q.id] === i
-                        ? "bg-indigo--white"
+                        ? "bg-indigo-600 text-white"
                         : "bg-white text-slate-600"
                     )}>
                       {String.fromCharCode(65 + i)}
@@ -470,7 +470,7 @@ export default function TakeQuizPage() {
                         "w-full sm:w-auto font-semibold gap-1",
                         answers[q?.id] === undefined
                           ? "bg-slate-100 text-slate-700 border border-neutral-700 hover:bg-neutral-700"
-                          : "bg-indigo--white"
+                          : "bg-indigo-600 text-white"
                       )}
                     >
                       {answers[q?.id] === undefined ? "Skip Question" : "Next"}

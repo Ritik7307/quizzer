@@ -208,7 +208,7 @@ export default function AdminResourcesPage() {
                   <Button
                     type="submit"
                     disabled={uploading}
-                    className="w-full bg-indigo--white font-semibold transition-all mt-2"
+                    className="w-full bg-indigo-600 text-white font-semibold transition-all mt-2"
                   >
                     {uploading ? (
                       <>

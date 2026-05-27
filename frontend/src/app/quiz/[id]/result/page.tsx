@@ -137,7 +137,7 @@ export default function QuizResultPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-3 justify-center pt-4 border-t border-slate-200/50">
-                  <Button asChild className="bg-indigo--white font-semibold">
+                  <Button asChild className="bg-indigo-600 text-white font-semibold">
                     <Link href="/leaderboard">View Leaderboard</Link>
                   </Button>
                   <Button variant="outline" asChild className="border-neutral-750 text-slate-700 hover:bg-slate-50">
@@ -194,7 +194,7 @@ export default function QuizResultPage() {
                           className={cn(
                             "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
                             difficulty === diff
-                              ? "border-indigo-500 bg-indigo--white font-bold"
+                              ? "border-indigo-500 bg-indigo-600 text-white font-bold"
                               : "border-slate-200 bg-white/40 text-slate-600 hover:border-neutral-750"
                           )}
                         >
@@ -220,7 +220,7 @@ export default function QuizResultPage() {
                   <Button
                     onClick={handleSubmitFeedback}
                     disabled={submittingFeedback}
-                    className="w-full bg-indigo--white font-semibold py-2.5"
+                    className="w-full bg-indigo-600 text-white font-semibold py-2.5"
                   >
                     {submittingFeedback ? "Submitting Review..." : "Submit Review"}
                   </Button>

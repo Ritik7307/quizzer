@@ -229,7 +229,7 @@ export default function CodingWorkspacePage() {
             size="sm"
             onClick={handleSubmitCode}
             disabled={running || submitting}
-            className="flex items-center gap-1.5 text-xs bg-indigo--white hover:bg-indigo-750 font-semibold"
+            className="flex items-center gap-1.5 text-xs bg-indigo-600 text-white hover:bg-indigo-750 font-semibold"
           >
             {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             Submit

@@ -221,7 +221,7 @@ export default function PracticeSheetPage() {
                     className="border-slate-200 bg-slate-50/60 focus:border-indigo-500"
                   />
                 </div>
-                <Button type="submit" className="w-full bg-indigo--white font-extrabold text-xs uppercase tracking-wider h-10 mt-2" disabled={submittingHandles}>
+                <Button type="submit" className="w-full bg-indigo-600 text-white font-extrabold text-xs uppercase tracking-wider h-10 mt-2" disabled={submittingHandles}>
                   {submittingHandles ? (
                     <Loader2 className="h-4 w-4 animate-spin mx-auto" />
                   ) : (
@@ -758,7 +758,7 @@ export default function PracticeSheetPage() {
                                       size="sm"
                                       onClick={() => handleMarkSolved(q.id)}
                                       disabled={markingIds[q.id]}
-                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider bg-indigo--white"
+                                      className="h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider bg-indigo-600 text-white"
                                     >
                                       {markingIds[q.id] ? (
                                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -776,7 +776,8 @@ export default function PracticeSheetPage() {
                                   className={cn(
                                     "h-8 text-[10px] shrink-0 font-extrabold transition-all duration-150 uppercase tracking-wider",
                                     q.solved
-                                      ? "text-slate-500 hover:text-indigo-400 hover:bg-indigo--white"
+                                      ? "text-slate-500 hover:text-indigo-400 hover:bg-indigo-50"
+                                      : "border-slate-200 text-slate-500 bg-white hover:text-indigo-600"
                                   )}
                                 >
                                   <Link href={`/coding/${q.id}`}>

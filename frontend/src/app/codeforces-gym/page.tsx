@@ -99,7 +99,7 @@ export default function CodeforcesGymPage() {
             <Button 
               onClick={fetchStandings} 
               disabled={loading}
-              className="bg-indigo--white"
+              className="bg-indigo-600 text-white"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load"}
             </Button>

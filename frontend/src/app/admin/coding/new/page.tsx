@@ -374,7 +374,7 @@ export default function AdminNewCodingQuestionPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-indigo--white font-semibold">
+              <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-indigo-600 text-white font-semibold">
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
