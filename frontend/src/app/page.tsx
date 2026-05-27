@@ -37,15 +37,6 @@ export default function HomePage() {
             </Button>
           </div>
 
-          <div className="mt-16 sm:mt-24 relative max-w-5xl mx-auto">
-            <div className="rounded-xl border border-white/40 bg-white/40 p-2 sm:p-4 shadow-2xl shadow-indigo-900/5 backdrop-blur-3xl overflow-hidden ring-1 ring-slate-900/5">
-              <img
-                src="/dashboard-preview.png"
-                alt="App Dashboard Preview"
-                className="w-full rounded-lg border border-slate-200/50 shadow-sm object-cover"
-              />
-            </div>
-          </div>
         </div>
       </section>
 
