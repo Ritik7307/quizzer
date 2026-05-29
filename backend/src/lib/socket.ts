@@ -58,7 +58,9 @@ export function registerSocketHandlers(io: Server, socket: Socket) {
       socket.join(`match:${activeDbMatch.id}`);
       activeMatches.set(userId, activeDbMatch.id);
 
-      const opponent = activeDbMatch.participants.find(p => p.userId !== userId);
+      const opponent = activeDbMatch.participants.find(
+        (p: { userId: string; user: { name: string } }) => p.userId !== userId
+      );
 
       socket.emit("match:restore", {
         matchId: activeDbMatch.id,

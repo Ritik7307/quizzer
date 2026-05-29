@@ -142,19 +142,14 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
     answers: z.record(z.string(), z.any()).optional(),
   });
 
-  let inlineAnswers: Record<string, number> | undefined;
+  let inlineAnswers: Record<string, unknown> | undefined;
   try {
     inlineAnswers = bodySchema.parse(req.body ?? {}).answers;
   } catch {
     return res.status(400).json({ error: "Invalid submit payload" });
   }
 
-  // Clear any pending progress save since we're submitting the final version now
-  const pendingJob = require("../lib/progress-queue.js").pending?.get(attemptId);
-  if (pendingJob) {
-    clearTimeout(pendingJob.timeout);
-    require("../lib/progress-queue.js").pending?.delete(attemptId);
-  }
+  await flushProgressSave(attemptId);
 
   const attempt = await prisma.attempt.findUnique({
     where: { id: attemptId },

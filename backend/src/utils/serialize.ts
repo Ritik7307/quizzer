@@ -11,16 +11,16 @@ export function stringifyOptions(options: string[]): string {
   return JSON.stringify(options);
 }
 
-export function parseAnswers(answers: string): Record<string, number> {
+export function parseAnswers(answers: string): Record<string, unknown> {
   try {
     const parsed = JSON.parse(answers);
-    return typeof parsed === "object" && parsed !== null ? (parsed as Record<string, number>) : {};
+    return typeof parsed === "object" && parsed !== null ? (parsed as Record<string, unknown>) : {};
   } catch {
     return {};
   }
 }
 
-export function stringifyAnswers(answers: Record<string, number>): string {
+export function stringifyAnswers(answers: Record<string, unknown>): string {
   return JSON.stringify(answers);
 }
 

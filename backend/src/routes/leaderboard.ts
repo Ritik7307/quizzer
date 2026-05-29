@@ -34,7 +34,7 @@ router.get("/:quizId", async (req, res) => {
       where: { followerId: currentUserId },
       select: { followingId: true }
     });
-    followedUserIds = following.map(f => f.followingId);
+    followedUserIds = following.map((f: { followingId: string }) => f.followingId);
     followedUserIds.push(currentUserId);
   }
 

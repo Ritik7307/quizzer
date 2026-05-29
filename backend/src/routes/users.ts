@@ -26,7 +26,7 @@ router.get("/me/friends", authenticate, async (req: AuthRequest, res) => {
       }
     });
     
-    res.json({ friends: friends.map(f => f.following) });
+    res.json({ friends: friends.map((f: { following: unknown }) => f.following) });
   } catch (error) {
     console.error("Get friends error:", error);
     res.status(500).json({ error: "Failed to fetch friends list" });

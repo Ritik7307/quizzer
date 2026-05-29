@@ -323,7 +323,7 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
           }
 
           // Clean up in-memory mappings
-          activeMatch.participants.forEach(p => {
+          activeMatch.participants.forEach((p: { userId: string }) => {
             activeMatches.delete(p.userId);
           });
         }

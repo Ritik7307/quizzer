@@ -25,12 +25,17 @@ model User {
   points             Int                @default(0)
   streak             Int                @default(0)
   lastActiveAt       DateTime           @default(now())
-  attempts           Attempt[]
-  codingSubmissions  CodingSubmission[]
-  compilerNotes      CompilerNote[]
-  feedbacks          Feedback[]
-  notifications      Notification[]
-  quizzes            Quiz[]             @relation("QuizCreator")
+  attempts            Attempt[]
+  codingSubmissions   CodingSubmission[]
+  compilerNotes       CompilerNote[]
+  feedbacks           Feedback[]
+  notifications       Notification[]
+  quizzes             Quiz[]              @relation("QuizCreator")
+  followers           Follows[]           @relation("UserFollowers")
+  following           Follows[]           @relation("UserFollowing")
+  userBadges          UserBadge[]
+  matchParticipations MatchParticipant[]
+  questionComments    QuestionComment[]
 
   @@index([role])
 }
@@ -60,7 +65,9 @@ model Question {
   quizId             String
   text               String
   options            String
-  correctOptionIndex Int
+  type               String   @default("SINGLE_CHOICE")
+  correctOptionIndex Int      @default(0)
+  correctAnswers     String?
   order              Int      @default(0)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -126,6 +133,8 @@ model CodingQuestion {
   isExternalOnly  Boolean            @default(false)
   submissions     CodingSubmission[]
   dailyChallenges DailyChallenge[]
+  matches         Match[]
+  comments        QuestionComment[]
 }
 
 model CodingSubmission {
@@ -193,6 +202,79 @@ model DailyChallenge {
   codingQuestionId String
   createdAt        DateTime       @default(now())
   codingQuestion   CodingQuestion @relation(fields: [codingQuestionId], references: [id])
+}
+
+model Follows {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Match {
+  id               String             @id @default(cuid())
+  codingQuestionId String
+  status           String             @default("IN_PROGRESS")
+  startTime        DateTime           @default(now())
+  endTime          DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  codingQuestion   CodingQuestion     @relation(fields: [codingQuestionId], references: [id], onDelete: Cascade)
+  participants     MatchParticipant[]
+
+  @@index([status])
+  @@index([codingQuestionId])
+}
+
+model MatchParticipant {
+  matchId  String
+  userId   String
+  status   String   @default("JOINED")
+  score    Int      @default(0)
+  winner   Boolean  @default(false)
+  match    Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([matchId, userId])
+  @@index([userId])
+}
+
+model QuestionComment {
+  id               String         @id @default(cuid())
+  userId           String
+  codingQuestionId String
+  content          String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codingQuestion   CodingQuestion @relation(fields: [codingQuestionId], references: [id], onDelete: Cascade)
+
+  @@index([codingQuestionId])
+  @@index([userId])
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  name        String
+  description String      @default("")
+  icon        String      @default("🏅")
+  createdAt   DateTime    @default(now())
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, badgeId])
 }
 
 enum Role {
