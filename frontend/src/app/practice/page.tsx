@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Badge } from "@/components/ui/badge";
@@ -37,11 +38,14 @@ interface CodingQuestion {
 
 export default function PracticeSheetPage() {
   const { token, user, refresh: refreshUser } = useAuth();
+  const router = useRouter();
   const [questions, setQuestions] = useState<CodingQuestion[]>([]);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedTopics, setExpandedTopics] = useState<Record<string, boolean>>({});
   const [markingIds, setMarkingIds] = useState<Record<string, boolean>>({});
+
+  const [randomDifficulty, setRandomDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All");
 
   const [leetcodeInput, setLeetcodeInput] = useState("");
   const [codeforcesInput, setCodeforcesInput] = useState("");
@@ -166,6 +170,32 @@ export default function PracticeSheetPage() {
       ...prev,
       [topic]: !prev[topic],
     }));
+  };
+
+  const handleRandomPractice = () => {
+    let pool = questions.filter(q => q.isExternalOnly);
+    if (randomDifficulty !== "All") {
+      pool = pool.filter(q => q.difficulty === randomDifficulty);
+    }
+    
+    // Fallback to all questions if no external questions of that difficulty exist
+    if (pool.length === 0) {
+      pool = questions;
+      if (randomDifficulty !== "All") {
+        pool = pool.filter(q => q.difficulty === randomDifficulty);
+      }
+    }
+
+    if (pool.length === 0) {
+      toast.error("No questions found for the selected difficulty.");
+      return;
+    }
+
+    const randomQuestion = pool[Math.floor(Math.random() * pool.length)];
+    
+    // External questions might not have an in-house editor if referenceUrl is all they have, 
+    // but we can just redirect them to our coding page which handles external links or built-in compiler
+    router.push(`/coding/${randomQuestion.id}`);
   };
 
   if (loading) {
@@ -595,6 +625,39 @@ export default function PracticeSheetPage() {
             </div>
           </Card>
         </div>
+
+        {/* Random Practice Generator */}
+        <Card className="border border-border bg-card/45 backdrop-blur-sm shadow-sm transition-all duration-300 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <h2 className="text-lg font-bold text-foreground tracking-tight flex items-center gap-2">
+              <Zap className="h-5 w-5 text-amber-500" /> Random Practice Generator
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Want to practice but don't know what to pick? Select a difficulty and we'll instantly serve you a random LeetCode or Codeforces problem from the database.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex bg-muted/50 p-1 rounded-lg border border-border">
+              {["All", "Easy", "Medium", "Hard"].map((diff) => (
+                <button
+                  key={diff}
+                  onClick={() => setRandomDifficulty(diff as any)}
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-bold rounded-md transition-colors",
+                    randomDifficulty === diff
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  {diff}
+                </button>
+              ))}
+            </div>
+            <Button onClick={handleRandomPractice} className="bg-amber-500 hover:bg-amber-600 text-white font-bold tracking-wide">
+              Generate Problem
+            </Button>
+          </div>
+        </Card>
 
         {/* Topics Accordion Feed */}
         <div className="space-y-4">

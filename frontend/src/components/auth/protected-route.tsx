@@ -21,12 +21,16 @@ export function ProtectedRoute({
       router.replace("/login");
       return;
     }
-    if (role && user.role !== role) {
-      router.replace(user.role === "ADMIN" ? "/admin" : "/dashboard");
+    const userRole = (user.role as string || "").toUpperCase();
+    if (role && userRole !== role && userRole !== "ADMIN") {
+      router.replace(userRole === "ADMIN" ? "/admin" : "/dashboard");
     }
   }, [user, loading, role, router]);
 
-  if (loading || !user || (role && user.role !== role)) {
+  const userRole = (user?.role as string || "").toUpperCase();
+  const isRoleMismatched = role && userRole !== role && userRole !== "ADMIN";
+
+  if (loading || !user || isRoleMismatched) {
     return (
       <div className="mx-auto max-w-7xl space-y-4 p-6">
         <Skeleton className="h-10 w-64" />

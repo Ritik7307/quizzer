@@ -8,9 +8,12 @@ import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Play, Send, Loader2, Code, ArrowLeft, Terminal, CheckCircle2, AlertCircle, Lock, ExternalLink, HelpCircle } from "lucide-react";
+import { Play, Send, Loader2, Code, ArrowLeft, Terminal, CheckCircle2, AlertCircle, Lock, ExternalLink, HelpCircle, MessageSquare, XCircle, Clock, AlertTriangle, Code2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import Link from "next/link";
 import Editor from "@monaco-editor/react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
@@ -47,12 +50,22 @@ export default function CodingWorkspacePage() {
   const [submitting, setSubmitting] = useState(false);
 
   // Left Panel tabs
-  const [activeTab, setActiveTab] = useState<"problem" | "editorial">("problem");
+  const [activeTab, setActiveTab] = useState<"problem" | "editorial" | "discussion">("problem");
+
+  // Comments states
+  const [comments, setComments] = useState<any[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [postingComment, setPostingComment] = useState(false);
 
   // Code editor states
   const [language, setLanguage] = useState("cpp");
   const [code, setCode] = useState("");
   const [customInput, setCustomInput] = useState("");
+
+  // AI Hint states
+  const [isAiHintOpen, setIsAiHintOpen] = useState(false);
+  const [aiHint, setAiHint] = useState("");
+  const [gettingHint, setGettingHint] = useState(false);
 
   // Output terminal states
   const [terminalOutput, setTerminalOutput] = useState("");
@@ -78,6 +91,42 @@ export default function CodingWorkspacePage() {
       })
       .finally(() => setLoading(false));
   }, [id, token, router]);
+
+  const fetchComments = useCallback(async () => {
+    if (!token) return;
+    try {
+      const data = await api<{ comments: any[] }>(`/api/coding/questions/${id}/comments`, { token });
+      setComments(data.comments);
+    } catch (err) {
+      toast.error("Failed to load comments");
+    }
+  }, [id, token]);
+
+  useEffect(() => {
+    if (activeTab === "discussion") {
+      fetchComments();
+    }
+  }, [activeTab, fetchComments]);
+
+  const handlePostComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() || !token) return;
+    setPostingComment(true);
+    try {
+      await api(`/api/coding/questions/${id}/comments`, {
+        method: "POST",
+        body: JSON.stringify({ content: newComment.trim() }),
+        token
+      });
+      setNewComment("");
+      toast.success("Comment posted!");
+      fetchComments();
+    } catch (err) {
+      toast.error("Failed to post comment");
+    } finally {
+      setPostingComment(false);
+    }
+  };
 
   useEffect(() => {
     loadQuestion(true);
@@ -165,6 +214,24 @@ export default function CodingWorkspacePage() {
       setSubmitting(false);
     }
   }
+
+  const handleGetHint = async () => {
+    if (!code.trim() || !question) return;
+    setGettingHint(true);
+    try {
+      const res = await api<{ hint: string }>("/api/ai/hint", {
+        method: "POST",
+        token,
+        body: JSON.stringify({ questionId: question.id, code, language }),
+      });
+      setAiHint(res.hint);
+      setIsAiHintOpen(true);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to get AI hint");
+    } finally {
+      setGettingHint(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -270,6 +337,17 @@ export default function CodingWorkspacePage() {
               {question.isEditorialLocked && <Lock className="h-3.5 w-3.5 text-muted-foreground/60" />}
               Editorial Solution
             </button>
+            <button
+              onClick={() => setActiveTab("discussion")}
+              className={cn(
+                "text-xs font-extrabold uppercase tracking-wider pb-1.5 outline-none select-none border-b-2 transition-all",
+                activeTab === "discussion"
+                  ? "text-indigo-650 dark:text-indigo-400 border-indigo-505"
+                  : "text-muted-foreground border-transparent hover:text-foreground"
+              )}
+            >
+              Discussion
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -292,8 +370,16 @@ export default function CodingWorkspacePage() {
 
                 <div>
                   <h2 className="text-xl font-bold text-foreground leading-snug">{question.title}</h2>
-                  <div className="mt-3 text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">
-                    {question.description}
+                  <div className="mt-4 text-sm leading-relaxed text-foreground/90 prose prose-sm dark:prose-invert max-w-none prose-pre:bg-muted/50 prose-pre:border prose-pre:border-border/50">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {question.description
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&nbsp;/g, " ")
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#39;/g, "'")
+                      }
+                    </ReactMarkdown>
                   </div>
                 </div>
 
@@ -341,7 +427,7 @@ export default function CodingWorkspacePage() {
                   </div>
                 )}
               </>
-            ) : (
+            ) : activeTab === "editorial" ? (
               // Editorial View
               <div>
                 {question.isEditorialLocked ? (
@@ -371,6 +457,63 @@ export default function CodingWorkspacePage() {
                   </div>
                 )}
               </div>
+            ) : (
+              /* Discussion Board View */
+              <div className="space-y-6">
+                <h2 className="text-lg font-bold text-foreground">Community Discussion</h2>
+                
+                <form onSubmit={handlePostComment} className="space-y-3">
+                  <textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Ask a question, explain your logic, or share a test case..."
+                    rows={3}
+                    required
+                    className="w-full rounded-xl border border-border bg-card p-3.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-muted-foreground/60 shadow-inner"
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      disabled={postingComment || !newComment.trim()}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-9 px-4 rounded-lg shadow-sm"
+                    >
+                      {postingComment ? "Posting..." : "Post Comment"}
+                    </Button>
+                  </div>
+                </form>
+
+                <div className="space-y-4 pt-4 border-t border-border">
+                  {comments.length === 0 ? (
+                    <p className="text-center text-sm text-muted-foreground py-8 font-semibold">No comments yet. Start the discussion!</p>
+                  ) : (
+                    comments.map((c) => (
+                      <div key={c.id} className="flex gap-3 border-b border-border/40 pb-4 last:border-b-0">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
+                          {c.user.avatarUrl ? (
+                            <img src={c.user.avatarUrl} alt={c.user.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-xs font-bold text-muted-foreground">{c.user.name.charAt(0).toUpperCase()}</span>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <Link href={`/u/${c.user.id}`} className="text-xs font-extrabold text-foreground hover:underline">
+                              {c.user.name}
+                            </Link>
+                            <span className="text-[10px] font-extrabold bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 px-1.5 py-0.2 rounded-full border border-indigo-500/10">
+                              {c.user.points} pts
+                            </span>
+                            <span className="text-[10px] text-muted-foreground/80 font-semibold">
+                              {new Date(c.createdAt).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed mt-1 font-semibold">{c.content}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -378,9 +521,20 @@ export default function CodingWorkspacePage() {
         {/* Right Panel: Editor and Terminal */}
         <div className="flex flex-col overflow-hidden bg-card">
           {/* Editor Header */}
-          <div className="flex items-center gap-1.5 border-b border-border px-4 py-2 bg-card">
-            <Code className="h-4 w-4 text-indigo-550 dark:text-indigo-400" />
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground tracking-wider">Source Editor</span>
+          <div className="flex items-center justify-between border-b border-border px-4 py-2 bg-card">
+            <div className="flex items-center gap-1.5">
+              <Code className="h-4 w-4 text-indigo-550 dark:text-indigo-400" />
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground tracking-wider">Source Editor</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleGetHint}
+              disabled={gettingHint || !code.trim()}
+              className="h-7 text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
+            >
+              {gettingHint ? <Loader2 className="h-3 w-3 mr-1.5 animate-spin" /> : "🤖"} Get AI Hint
+            </Button>
           </div>
 
           {/* Editor Container */}
@@ -477,6 +631,22 @@ export default function CodingWorkspacePage() {
             </div>
           </div>
         </div>
+        <Dialog open={isAiHintOpen} onOpenChange={setIsAiHintOpen}>
+          <DialogContent className="max-w-md bg-card border border-border text-foreground rounded-xl shadow-lg">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                <span className="text-2xl">🤖</span> AI Code Mentor
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground">
+                A hint to help you solve this problem based on your current code.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-2 p-4 rounded-lg bg-muted border border-border text-sm whitespace-pre-wrap font-medium">
+              {aiHint}
+            </div>
+          </DialogContent>
+        </Dialog>
+
       </div>
     </div>
   );

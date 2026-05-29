@@ -59,10 +59,10 @@ export default function UsersPage() {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
         <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Users Management</h1>
-            <p className="text-sm text-slate-600 sm:text-base">View and export all registered users</p>
+            <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Users Management</h1>
+            <p className="text-sm text-muted-foreground sm:text-base">View and export all registered users</p>
           </div>
-          <Button variant="outline" asChild className="w-full sm:w-auto bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 border-indigo-600/20">
+          <Button variant="outline" asChild className="w-full sm:w-auto bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600/20 border-indigo-600/20">
             <a
               href={exportUsersCsvUrl()}
               onClick={(e) => {
@@ -89,7 +89,7 @@ export default function UsersPage() {
         {loading ? (
           <Skeleton className="h-96" />
         ) : (
-          <Card>
+          <Card className="border-border bg-card/60 backdrop-blur-md shadow-sm">
             <CardHeader>
               <CardTitle>Registered Users</CardTitle>
               <CardDescription>All participants and administrators on the platform</CardDescription>
@@ -98,110 +98,110 @@ export default function UsersPage() {
               <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="border-b text-left text-slate-500">
-                      <th className="py-2">User</th>
-                      <th className="py-2">Role</th>
-                      <th className="py-2 text-center">Status</th>
-                      <th className="py-2">LeetCode</th>
-                      <th className="py-2">Codeforces</th>
-                      <th className="py-2 text-center">Streak</th>
-                      <th className="py-2 text-center">Solved</th>
-                      <th className="py-2">Joined</th>
-                      <th className="py-2 text-right">Quizzes</th>
-                      <th className="py-2 text-right">Attempts</th>
+                    <tr className="border-b border-border text-left text-muted-foreground font-semibold">
+                      <th className="py-3">User</th>
+                      <th className="py-3">Role</th>
+                      <th className="py-3 text-center">Status</th>
+                      <th className="py-3">LeetCode</th>
+                      <th className="py-3">Codeforces</th>
+                      <th className="py-3 text-center">Streak</th>
+                      <th className="py-3 text-center">Solved</th>
+                      <th className="py-3">Joined</th>
+                      <th className="py-3 text-right">Quizzes</th>
+                      <th className="py-3 text-right">Attempts</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border">
                     {users.map((u) => (
-                      <tr key={u.id} className="border-b border-slate-200">
-                        <td className="py-3">
+                      <tr key={u.id} className="transition-colors hover:bg-muted/30">
+                        <td className="py-4">
                           <div className="flex items-center gap-3">
                             {u.avatarUrl ? (
-                              <img src={u.avatarUrl} alt={u.name} className="h-8 w-8 rounded-full object-cover" />
+                              <img src={u.avatarUrl} alt={u.name} className="h-9 w-9 rounded-full object-cover border border-border" />
                             ) : (
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
-                                <UsersIcon className="h-4 w-4 text-slate-600" />
+                              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted border border-border">
+                                <UsersIcon className="h-4 w-4 text-muted-foreground" />
                               </div>
                             )}
                             <div>
-                              <p className="font-medium">{u.name}</p>
-                              <p className="text-xs text-slate-500">{u.email}</p>
+                              <p className="font-bold text-foreground">{u.name}</p>
+                              <p className="text-xs text-muted-foreground">{u.email}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="py-3">
-                          <Badge variant={u.role === "ADMIN" ? "success" : "warning"}>
+                        <td className="py-4">
+                          <Badge variant={u.role === "ADMIN" ? "success" : "warning"} className="font-bold">
                             {u.role.toLowerCase()}
                           </Badge>
                         </td>
-                        <td className="py-3 text-center">
-                          <div className="flex items-center justify-center gap-1.5">
+                        <td className="py-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
                             <span className="relative flex h-2.5 w-2.5">
                               {isUserOnline(u.lastActiveAt) && (
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                               )}
-                              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isUserOnline(u.lastActiveAt) ? "bg-emerald-500" : "bg-neutral-600"}`}></span>
+                              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isUserOnline(u.lastActiveAt) ? "bg-emerald-500" : "bg-neutral-500 dark:bg-neutral-600"}`}></span>
                             </span>
-                            <span className="text-xs text-slate-600">{isUserOnline(u.lastActiveAt) ? "Online" : "Offline"}</span>
+                            <span className="text-xs font-semibold text-muted-foreground">{isUserOnline(u.lastActiveAt) ? "Online" : "Offline"}</span>
                           </div>
                         </td>
-                        <td className="py-3">
+                        <td className="py-4">
                           {u.leetcodeHandle ? (
                             <a
                               href={`https://leetcode.com/${u.leetcodeHandle}/`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-amber-500 hover:text-amber-400 font-bold hover:underline"
+                              className="text-amber-600 dark:text-amber-500 hover:text-amber-500 font-bold hover:underline"
                             >
                               @{u.leetcodeHandle}
                             </a>
                           ) : (
-                            <span className="text-slate-500 italic text-xs">Not submitted</span>
+                            <span className="text-muted-foreground italic text-xs">Not submitted</span>
                           )}
                         </td>
-                        <td className="py-3">
+                        <td className="py-4">
                           {u.codeforcesHandle ? (
                             <a
                               href={`https://codeforces.com/profile/${u.codeforcesHandle}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-red-400 hover:text-red-300 font-bold hover:underline"
+                              className="text-red-600 dark:text-red-400 hover:text-red-500 font-bold hover:underline"
                             >
                               @{u.codeforcesHandle}
                             </a>
                           ) : (
-                            <span className="text-slate-500 italic text-xs">Not submitted</span>
+                            <span className="text-muted-foreground italic text-xs">Not submitted</span>
                           )}
                         </td>
-                        <td className="py-3 text-center">
-                          <div className="flex items-center justify-center gap-1">
-                            <Flame className={`h-4 w-4 ${u.streak > 0 ? "text-orange-500 fill-orange-500/20" : "text-neutral-600"}`} />
-                            <span className={u.streak > 0 ? "font-semibold text-orange-400" : "text-slate-500"}>
+                        <td className="py-4 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <Flame className={`h-4 w-4 ${u.streak > 0 ? "text-orange-500 fill-orange-500/20" : "text-muted-foreground"}`} />
+                            <span className={u.streak > 0 ? "font-bold text-orange-600 dark:text-orange-400" : "font-semibold text-muted-foreground"}>
                               {u.streak || 0}
                             </span>
                           </div>
                         </td>
-                        <td className="py-3 text-center">
+                        <td className="py-4 text-center">
                           {u.solvedCount > 0 ? (
                             <button
                               onClick={() => {
                                 setSelectedUser(u);
                                 setIsModalOpen(true);
                               }}
-                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-600/10 text-indigo-400 border border-indigo-600/25 hover:bg-indigo-600/20 hover:text-indigo-300 transition cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 border border-indigo-600/25 hover:bg-indigo-600/20 transition cursor-pointer"
                             >
-                              <CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" />
+                              <CheckCircle2 className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                               {u.solvedCount}
                             </button>
                           ) : (
-                            <span className="text-slate-500 text-xs italic">None</span>
+                            <span className="text-muted-foreground text-xs italic font-medium">None</span>
                           )}
                         </td>
-                        <td className="py-3 text-slate-600">
+                        <td className="py-4 text-muted-foreground font-medium">
                           {new Date(u.createdAt).toLocaleDateString()}
                         </td>
-                        <td className="py-3 text-right text-slate-600">{u._count.quizzes}</td>
-                        <td className="py-3 text-right text-slate-600">{u._count.attempts}</td>
+                        <td className="py-4 text-right font-bold text-muted-foreground">{u._count.quizzes}</td>
+                        <td className="py-4 text-right font-bold text-muted-foreground">{u._count.attempts}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -212,16 +212,16 @@ export default function UsersPage() {
         )}
 
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-md bg-white border border-slate-200 text-slate-900 rounded-xl">
+          <DialogContent className="max-w-md bg-card border border-border text-foreground rounded-xl shadow-lg">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold flex items-center gap-2">
                 <span>Solved Problems</span>
-                <span className="text-sm font-normal text-slate-600">
+                <span className="text-sm font-normal text-muted-foreground">
                   by {selectedUser?.name}
                 </span>
               </DialogTitle>
-              <DialogDescription className="text-xs text-slate-600">
-                Total Solved: <span className="font-semibold text-slate-900">{selectedUser?.solvedCount ?? 0}</span> | Streak: <span className="font-semibold text-orange-400">{selectedUser?.streak ?? 0} days</span> | Points: <span className="font-semibold text-indigo-400">{selectedUser?.points ?? 0}</span>
+              <DialogDescription className="text-xs text-muted-foreground">
+                Total Solved: <span className="font-semibold text-foreground">{selectedUser?.solvedCount ?? 0}</span> | Streak: <span className="font-semibold text-orange-500">{selectedUser?.streak ?? 0} days</span> | Points: <span className="font-semibold text-indigo-500">{selectedUser?.points ?? 0}</span>
               </DialogDescription>
             </DialogHeader>
 
@@ -230,13 +230,13 @@ export default function UsersPage() {
                 selectedUser.solvedQuestions.map((q) => (
                   <div
                     key={q.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-white border border-slate-200 hover:border-slate-200 transition"
+                    className="flex items-center justify-between p-3 rounded-lg bg-background border border-border hover:border-indigo-500/50 transition-colors"
                   >
                     <div className="flex flex-col gap-1 min-w-0 pr-2">
-                      <span className="font-medium text-sm text-slate-900 truncate">
+                      <span className="font-bold text-sm text-foreground truncate">
                         {q.title}
                       </span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs font-medium text-muted-foreground">
                         {q.isExternalOnly ? "External Sheet Question" : "Internal Quiz/Coding Sandbox"}
                       </span>
                     </div>
@@ -249,7 +249,7 @@ export default function UsersPage() {
                             ? "warning"
                             : "destructive"
                         }
-                        className="text-[10px] font-bold px-1.5 py-0.5"
+                        className="text-[10px] font-bold px-2 py-0.5"
                       >
                         {q.difficulty}
                       </Badge>
@@ -258,10 +258,10 @@ export default function UsersPage() {
                           href={q.referenceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1 hover:bg-slate-100 rounded text-slate-600 hover:text-slate-900 transition"
+                          className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
                           title="View Question"
                         >
-                          <svg className="h-4 w-4 text-slate-600 hover:text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                         </a>
@@ -270,7 +270,7 @@ export default function UsersPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-6 text-slate-500 italic text-sm">
+                <div className="text-center py-6 text-muted-foreground italic text-sm font-medium">
                   No solved coding problems yet.
                 </div>
               )}

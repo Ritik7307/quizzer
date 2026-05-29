@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, MessageSquare, Star, CheckCircle2, BookOpen } from "lucide-react";
+import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, Code2, MessageSquare, Star, CheckCircle2, BookOpen, BookOpenCheck, Swords, Calendar } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -35,14 +35,16 @@ export function Navbar() {
 
   const dashHref = user?.role === "ADMIN" ? "/admin" : user ? "/dashboard" : "/";
 
-  const navLinks = [
+  const navLinks = user ? [
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
-    ...(user ? [
-      { href: dashHref, label: "Dashboard", icon: LayoutDashboard },
-      { href: "/practice", label: "Practice Sheet", icon: BookOpen },
-      { href: "/compiler", label: "Compiler", icon: Code },
-      { href: "/codeforces-gym", label: "CF Gym", icon: Trophy }
-    ] : []),
+    { href: "/daily", label: "Daily Challenge", icon: Calendar },
+    { href: dashHref, label: "Dashboard", icon: LayoutDashboard },
+    { href: "/arena", label: "1v1 Arena", icon: Swords },
+    { href: "/practice", label: "Practice Sheet", icon: BookOpenCheck },
+    { href: "/compiler", label: "Compiler", icon: Code2 }
+  ] : [
+    { href: "/practice", label: "Practice Sheet", icon: BookOpenCheck },
+    { href: "/compiler", label: "Compiler", icon: Code2 }
   ];
 
   const linkClass = (href: string) =>

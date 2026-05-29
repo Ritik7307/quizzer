@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
 import { cacheGet, cacheSet, cacheDeletePrefix } from "../lib/cache.js";
+import { verifyToken } from "../utils/jwt.js";
 
 const router = Router();
 const LEADERBOARD_TTL_MS = Number(process.env.LEADERBOARD_CACHE_MS) || 5000;
@@ -9,7 +10,35 @@ router.get("/:quizId", async (req, res) => {
   const quizId = req.params.quizId;
   const search = String(req.query.search ?? "").trim().toLowerCase();
   const minScore = req.query.minScore ? Number(req.query.minScore) : undefined;
-  const cacheKey = `leaderboard:${quizId}:${search}:${minScore ?? ""}`;
+  
+  const friendsOnly = req.query.friendsOnly === "true";
+  let currentUserId: string | null = null;
+
+  const header = req.headers.authorization;
+  const token = header?.startsWith("Bearer ") 
+    ? header.slice(7) 
+    : (req.cookies?.token || (req.query.token as string));
+  
+  if (token) {
+    try {
+      const decoded = verifyToken(token);
+      if (decoded) {
+        currentUserId = decoded.userId;
+      }
+    } catch (e) {}
+  }
+
+  let followedUserIds: string[] = [];
+  if (friendsOnly && currentUserId) {
+    const following = await prisma.follows.findMany({
+      where: { followerId: currentUserId },
+      select: { followingId: true }
+    });
+    followedUserIds = following.map(f => f.followingId);
+    followedUserIds.push(currentUserId);
+  }
+
+  const cacheKey = `leaderboard:${quizId}:${search}:${minScore ?? ""}:${friendsOnly ? currentUserId : ""}`;
 
   const cached = cacheGet<{ quiz: unknown; leaderboard: unknown[] }>(cacheKey);
   if (cached) {
@@ -21,6 +50,7 @@ router.get("/:quizId", async (req, res) => {
       quizId,
       submittedAt: { not: null },
       ...(minScore !== undefined && !Number.isNaN(minScore) ? { score: { gte: minScore } } : {}),
+      ...(friendsOnly && currentUserId ? { userId: { in: followedUserIds } } : {}),
     },
     include: { user: { select: { name: true, email: true } } },
     orderBy: [{ score: "desc" }, { submittedAt: "asc" }],
@@ -47,6 +77,7 @@ router.get("/:quizId", async (req, res) => {
 
   const leaderboard = filtered.map((e) => ({
     id: e.id,
+    userId: e.userId,
     name: e.user.name,
     score: e.score,
     rank: e.computedRank,

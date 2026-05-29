@@ -13,9 +13,13 @@ import notificationRoutes from "./routes/notifications.js";
 import codingRoutes from "./routes/coding.js";
 import feedbackRoutes from "./routes/feedback.js";
 import compilerNotesRoutes from "./routes/compilerNotes.js";
+import userRoutes from "./routes/users.js";
 import resourcesRoutes from "./routes/resources.js";
+import dailyRoutes from "./routes/daily.js";
+import aiRoutes from "./routes/ai.js";
 import { prisma } from "./lib/prisma.js";
 import path from "path";
+import { registerSocketHandlers } from "./lib/socket.js";
 
 const defaultOrigins = [
   "http://localhost:3000",
@@ -99,7 +103,10 @@ export function createApp() {
   app.use("/api/coding", codingRoutes);
   app.use("/api/feedback", feedbackRoutes);
   app.use("/api/compiler-notes", compilerNotesRoutes);
+  app.use("/api/users", userRoutes);
   app.use("/api/resources", resourcesRoutes);
+  app.use("/api/daily", dailyRoutes);
+  app.use("/api/ai", aiRoutes);
 
   return app;
 }
@@ -121,6 +128,9 @@ export function attachSocket(httpServer: Server, app: ReturnType<typeof createAp
     socket.on("leaderboard:leave", (quizId: string) => {
       if (typeof quizId === "string") socket.leave(`leaderboard:${quizId}`);
     });
+    
+    // Register 1v1 Arena Socket Handlers
+    registerSocketHandlers(io, socket);
   });
 
   return io;

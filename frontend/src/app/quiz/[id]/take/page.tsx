@@ -21,6 +21,8 @@ import { useAuth } from "@/contexts/auth-context";
 import { api, ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { Question } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function TakeQuizPage() {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +34,7 @@ export default function TakeQuizPage() {
   const [title, setTitle] = useState("");
   const [instructions, setInstructions] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, any>>({});
   const [flagged, setFlagged] = useState<Record<string, boolean>>({});
   const [current, setCurrent] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -178,8 +180,29 @@ export default function TakeQuizPage() {
         }
 
         const activeQ = questions[current];
-        if (activeQ && idx >= 0 && idx < 4) {
-          setAnswers((prev) => ({ ...prev, [activeQ.id]: idx }));
+        if (activeQ && idx >= 0 && idx < activeQ.options.length) {
+          if (activeQ.type === "MULTI_SELECT") {
+            setAnswers((prev) => {
+              const currentSel = (prev[activeQ.id] as number[]) || [];
+              let nextSel: number[];
+              if (currentSel.includes(idx)) {
+                nextSel = currentSel.filter((i) => i !== idx);
+              } else {
+                nextSel = [...currentSel, idx];
+              }
+              const copy = { ...prev };
+              if (nextSel.length === 0) {
+                delete copy[activeQ.id];
+              } else {
+                copy[activeQ.id] = nextSel;
+              }
+              return copy;
+            });
+          } else if (activeQ.type === "FILL_IN_BLANK") {
+            // No action for keyboard selection shortcuts on free-text questions
+          } else {
+            setAnswers((prev) => ({ ...prev, [activeQ.id]: idx }));
+          }
         }
       }
 
@@ -399,32 +422,98 @@ export default function TakeQuizPage() {
             <CardContent className="space-y-6 pt-6">
               <p className="text-base leading-relaxed text-foreground sm:text-lg font-extrabold">{q?.text}</p>
               
-              {/* Options list */}
-              <div className="space-y-3">
-                {q?.options.map((opt, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setAnswers({ ...answers, [q.id]: i })}
-                    className={cn(
-                      "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none cursor-pointer",
-                      answers[q.id] === i
-                        ? "border-indigo-500 bg-indigo-600 text-white font-bold ring-1 ring-indigo-550 shadow-md"
-                        : "border-border text-foreground/90 hover:border-indigo-500/40 hover:bg-muted/40 dark:hover:bg-zinc-800/40 bg-card"
-                    )}
-                  >
-                    <span className={cn(
-                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold transition-colors shadow-sm",
-                      answers[q.id] === i
-                        ? "bg-white text-indigo-600"
-                        : "bg-muted text-muted-foreground border border-border"
-                    )}>
-                      {String.fromCharCode(65 + i)}
-                    </span>
-                    <span className="font-semibold">{opt}</span>
-                  </button>
-                ))}
-              </div>
+              {/* Options list based on type */}
+              {q?.type === "MULTI_SELECT" ? (
+                <div className="space-y-3">
+                  {q.options.map((opt, i) => {
+                    const isSelected = Array.isArray(answers[q.id]) && (answers[q.id] as number[]).includes(i);
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => {
+                          const currentSelection = (answers[q.id] as number[]) || [];
+                          let nextSelection: number[];
+                          if (currentSelection.includes(i)) {
+                            nextSelection = currentSelection.filter((idx) => idx !== i);
+                          } else {
+                            nextSelection = [...currentSelection, i];
+                          }
+                          if (nextSelection.length === 0) {
+                            const copy = { ...answers };
+                            delete copy[q.id];
+                            setAnswers(copy);
+                          } else {
+                            setAnswers({ ...answers, [q.id]: nextSelection });
+                          }
+                        }}
+                        className={cn(
+                          "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none cursor-pointer",
+                          isSelected
+                            ? "border-indigo-500 bg-indigo-600 text-white font-bold ring-1 ring-indigo-550 shadow-md"
+                            : "border-border text-foreground/90 hover:border-indigo-500/40 hover:bg-muted/40 dark:hover:bg-zinc-800/40 bg-card"
+                        )}
+                      >
+                        <span className={cn(
+                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold transition-colors shadow-sm",
+                          isSelected
+                            ? "bg-white text-indigo-600"
+                            : "bg-muted text-muted-foreground border border-border"
+                        )}>
+                          {String.fromCharCode(65 + i)}
+                        </span>
+                        <span className="font-semibold">{opt}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : q?.type === "FILL_IN_BLANK" ? (
+                <div className="space-y-3">
+                  <Label htmlFor={`fill-${q.id}`} className="text-xs font-bold text-muted-foreground">Type your answer below:</Label>
+                  <Input
+                    id={`fill-${q.id}`}
+                    value={answers[q.id] || ""}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val.trim() === "") {
+                        const copy = { ...answers };
+                        delete copy[q.id];
+                        setAnswers(copy);
+                      } else {
+                        setAnswers({ ...answers, [q.id]: val });
+                      }
+                    }}
+                    placeholder="Your answer..."
+                    className="bg-card border-border text-foreground h-12 text-base px-4 focus-visible:ring-indigo-500 rounded-xl"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {q?.options.map((opt, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setAnswers({ ...answers, [q.id]: i })}
+                      className={cn(
+                        "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none cursor-pointer",
+                        answers[q.id] === i
+                          ? "border-indigo-500 bg-indigo-600 text-white font-bold ring-1 ring-indigo-550 shadow-md"
+                          : "border-border text-foreground/90 hover:border-indigo-500/40 hover:bg-muted/40 dark:hover:bg-zinc-800/40 bg-card"
+                      )}
+                    >
+                      <span className={cn(
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold transition-colors shadow-sm",
+                        answers[q.id] === i
+                          ? "bg-white text-indigo-600"
+                          : "bg-muted text-muted-foreground border border-border"
+                      )}>
+                        {String.fromCharCode(65 + i)}
+                      </span>
+                      <span className="font-semibold">{opt}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Card Actions Footer */}
               <div className="flex flex-col gap-2 pt-6 sm:flex-row sm:justify-between border-t border-border mt-4">

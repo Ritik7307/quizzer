@@ -5,6 +5,7 @@ import { authenticate, requireRole, type AuthRequest } from "../middleware/auth.
 import { Role } from "@prisma/client";
 import { compileAndRun } from "../utils/compiler.js";
 import { syncUserStats } from "../utils/stats.js";
+import { activeMatches } from "../lib/socket.js";
 
 const router = Router();
 
@@ -263,6 +264,74 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
       },
     });
 
+    // Real-time 1v1 Battle Integration
+    try {
+      const activeMatch = await prisma.match.findFirst({
+        where: {
+          status: "IN_PROGRESS",
+          codingQuestionId: question.id,
+          participants: {
+            some: { userId: req.user!.userId }
+          }
+        },
+        include: {
+          participants: true
+        }
+      });
+
+      if (activeMatch) {
+        // Update participant score/status
+        await prisma.matchParticipant.update({
+          where: {
+            matchId_userId: {
+              matchId: activeMatch.id,
+              userId: req.user!.userId
+            }
+          },
+          data: {
+            score: passedCount,
+            status: finalStatus === "Accepted" ? "SUBMITTED" : "JOINED",
+            winner: finalStatus === "Accepted"
+          }
+        });
+
+        const io = req.app.get("io");
+        if (io) {
+          io.to(`match:${activeMatch.id}`).emit("match:progress", {
+            userId: req.user!.userId,
+            passedCount,
+            totalCount: testCases.length,
+            status: finalStatus
+          });
+        }
+
+        if (finalStatus === "Accepted") {
+          // Update match status to completed
+          await prisma.match.update({
+            where: { id: activeMatch.id },
+            data: {
+              status: "COMPLETED",
+              endTime: new Date()
+            }
+          });
+
+          if (io) {
+            io.to(`match:${activeMatch.id}`).emit("match:end", {
+              winnerId: req.user!.userId,
+              matchId: activeMatch.id
+            });
+          }
+
+          // Clean up in-memory mappings
+          activeMatch.participants.forEach(p => {
+            activeMatches.delete(p.userId);
+          });
+        }
+      }
+    } catch (matchErr) {
+      console.error("[Match submit error]:", matchErr);
+    }
+
     let pointsAwarded = 0;
     let currentStreak = userBefore?.streak ?? 0;
 
@@ -406,6 +475,83 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
     }
     console.error(e);
     return res.status(500).json({ error: "Failed to create coding question" });
+  }
+});
+
+// 7. Get comments for a coding question
+router.get("/questions/:id/comments", authenticate, async (req: AuthRequest, res) => {
+  try {
+    const comments = await prisma.questionComment.findMany({
+      where: { codingQuestionId: String(req.params.id) },
+      include: {
+        user: { select: { id: true, name: true, avatarUrl: true, points: true } }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+    return res.json({ comments });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to fetch comments" });
+  }
+});
+
+// 8. Post a comment on a coding question
+router.post("/questions/:id/comments", authenticate, async (req: AuthRequest, res) => {
+  try {
+    const content = req.body.content;
+    if (!content || typeof content !== "string" || content.trim().length === 0) {
+      return res.status(400).json({ error: "Comment content is required" });
+    }
+
+    const codingQuestionId = String(req.params.id);
+    
+    // Check if question exists
+    const question = await prisma.codingQuestion.findUnique({ where: { id: codingQuestionId } });
+    if (!question) {
+      return res.status(404).json({ error: "Coding question not found" });
+    }
+
+    const comment = await prisma.questionComment.create({
+      data: {
+        userId: req.user!.userId,
+        codingQuestionId,
+        content: content.trim()
+      },
+      include: {
+        user: { select: { id: true, name: true, avatarUrl: true, points: true } }
+      }
+    });
+
+    return res.status(201).json({ message: "Comment posted", comment });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to post comment" });
+  }
+});
+
+// 9. Get details of a match (for arena page recovery)
+router.get("/matches/:id", authenticate, async (req: AuthRequest, res) => {
+  try {
+    const match = await prisma.match.findUnique({
+      where: { id: String(req.params.id) },
+      include: {
+        codingQuestion: true,
+        participants: {
+          include: {
+            user: { select: { id: true, name: true } }
+          }
+        }
+      }
+    });
+
+    if (!match) {
+      return res.status(404).json({ error: "Match not found" });
+    }
+
+    return res.json({ match });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to retrieve match details" });
   }
 });
 

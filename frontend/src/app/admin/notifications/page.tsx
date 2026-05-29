@@ -30,6 +30,7 @@ export default function AdminNotificationsPage() {
   const [targetUserId, setTargetUserId] = useState("all");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+  const [sendEmail, setSendEmail] = useState(false);
 
   // Redirect if not admin
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function AdminNotificationsPage() {
           targetUserId,
           title: title.trim(),
           message: message.trim(),
+          sendEmail,
         }),
         token,
       });
@@ -78,6 +80,7 @@ export default function AdminNotificationsPage() {
       toast.success(response.message || "Notification sent successfully!");
       setTitle("");
       setMessage("");
+      setSendEmail(false);
     } catch (err) {
       toast.error(getApiErrorMessage(err));
     } finally {
@@ -158,6 +161,20 @@ export default function AdminNotificationsPage() {
                 required
                 className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-500 focus-visible:ring-indigo-500 focus-visible:ring-2"
               />
+            </div>
+
+            {/* Email Checkbox Toggle */}
+            <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50/40 p-3 shadow-sm">
+              <input
+                id="sendEmail"
+                type="checkbox"
+                checked={sendEmail}
+                onChange={(e) => setSendEmail(e.target.checked)}
+                className="h-4.5 w-4.5 rounded border-slate-300 text-indigo-650 bg-slate-50 cursor-pointer focus:ring-indigo-550 focus:ring-2"
+              />
+              <Label htmlFor="sendEmail" className="text-xs font-bold text-slate-700 dark:text-slate-800 cursor-pointer select-none leading-none">
+                📢 Also dispatch an email announcement to candidates
+              </Label>
             </div>
 
             {/* Action Button */}

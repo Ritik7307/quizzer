@@ -3,38 +3,34 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-enum Role {
-  ADMIN
-  CANDIDATE
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id                 String    @id @default(cuid())
-  email              String    @unique
+  id                 String             @id @default(cuid())
+  email              String             @unique
   passwordHash       String
   name               String
+  role               Role               @default(CANDIDATE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
   avatarUrl          String?
-  role               Role      @default(CANDIDATE)
-  recoveryQuestion   String?
   recoveryAnswerHash String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  quizzes            Quiz[]    @relation("QuizCreator")
-  attempts           Attempt[]
-  notifications      Notification[]
-  codingSubmissions  CodingSubmission[]
-  feedbacks          Feedback[]
-  compilerNotes      CompilerNote[]
-  leetcodeHandle     String?
+  recoveryQuestion   String?
   codeforcesHandle   String?
-  points             Int       @default(0)
-  streak             Int       @default(0)
+  leetcodeHandle     String?
   lastSolvedDate     DateTime?
-  lastActiveAt       DateTime  @default(now())
+  points             Int                @default(0)
+  streak             Int                @default(0)
+  lastActiveAt       DateTime           @default(now())
+  attempts           Attempt[]
+  codingSubmissions  CodingSubmission[]
+  compilerNotes      CompilerNote[]
+  feedbacks          Feedback[]
+  notifications      Notification[]
+  quizzes            Quiz[]             @relation("QuizCreator")
 
   @@index([role])
 }
@@ -51,45 +47,45 @@ model Quiz {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   createdById  String
-  createdBy    User       @relation("QuizCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  questions    Question[]
   attempts     Attempt[]
+  questions    Question[]
+  createdBy    User       @relation("QuizCreator", fields: [createdById], references: [id], onDelete: Cascade)
 
   @@index([published])
   @@index([startTime, endTime])
 }
 
 model Question {
-  id                 String @id @default(cuid())
+  id                 String   @id @default(cuid())
   quizId             String
-  quiz               Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
   text               String
   options            String
   correctOptionIndex Int
-  order              Int    @default(0)
+  order              Int      @default(0)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+  quiz               Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
   @@index([quizId])
 }
 
 model Attempt {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quizId        String
-  quiz          Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  answers       String    @default("{}")
-  score         Int       @default(0)
-  percentage    Float     @default(0)
-  correctCount  Int       @default(0)
-  wrongCount    Int       @default(0)
-  totalQuestions Int      @default(0)
-  rank          Int?
-  startedAt     DateTime  @default(now())
-  submittedAt   DateTime?
-  expiresAt     DateTime?
-  feedback      Feedback?
+  id             String    @id @default(cuid())
+  userId         String
+  quizId         String
+  answers        String    @default("{}")
+  score          Int       @default(0)
+  percentage     Float     @default(0)
+  correctCount   Int       @default(0)
+  wrongCount     Int       @default(0)
+  totalQuestions Int       @default(0)
+  rank           Int?
+  startedAt      DateTime  @default(now())
+  submittedAt    DateTime?
+  expiresAt      DateTime?
+  quiz           Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feedback       Feedback?
 
   @@unique([userId, quizId])
   @@index([quizId])
@@ -102,77 +98,78 @@ model Attempt {
 model Notification {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model CodingQuestion {
-  id           String             @id @default(cuid())
-  title        String
-  description  String
-  inputFormat  String             @default("")
-  outputFormat String             @default("")
-  constraints  String             @default("")
-  sampleInput  String             @default("")
-  sampleOutput String             @default("")
-  testCases    String             @default("[]") // JSON array of { input: string, output: string }
-  difficulty   String             @default("Easy") // Easy, Medium, Hard
-  topic        String             @default("General") // Arrays, Strings, DP, etc.
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  submissions  CodingSubmission[]
-  referenceUrl String?
-  editorial    String?
-  isExternalOnly Boolean @default(false)
+  id              String             @id @default(cuid())
+  title           String
+  description     String
+  inputFormat     String             @default("")
+  outputFormat    String             @default("")
+  sampleInput     String             @default("")
+  sampleOutput    String             @default("")
+  testCases       String             @default("[]")
+  difficulty      String             @default("Easy")
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  editorial       String?
+  referenceUrl    String?
+  constraints     String             @default("")
+  topic           String             @default("General")
+  isExternalOnly  Boolean            @default(false)
+  submissions     CodingSubmission[]
+  dailyChallenges DailyChallenge[]
 }
 
 model CodingSubmission {
   id               String         @id @default(cuid())
   userId           String
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   codingQuestionId String
-  codingQuestion   CodingQuestion @relation(fields: [codingQuestionId], references: [id], onDelete: Cascade)
   code             String
-  language         String         // cpp, c, java
-  status           String         // Accepted, Wrong Answer, Compile Error, Runtime Error, Time Limit Exceeded
+  language         String
+  status           String
   passedCount      Int
   totalCount       Int
   errorDetails     String?
   createdAt        DateTime       @default(now())
+  codingQuestion   CodingQuestion @relation(fields: [codingQuestionId], references: [id], onDelete: Cascade)
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([codingQuestionId])
 }
 
 model Feedback {
-  id          String   @id @default(cuid())
-  attemptId   String?  @unique
-  attempt     Attempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  rating      Int
-  difficulty  String   @default("Medium")
-  category    String   @default("General")
+  id            String   @id @default(cuid())
+  attemptId     String?  @unique
+  rating        Int
+  difficulty    String   @default("Medium")
   comments      String?
-  adminResponse String?
   createdAt     DateTime @default(now())
+  category      String   @default("General")
+  userId        String?
+  adminResponse String?
+  attempt       Attempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CompilerNote {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
-  code      String?  @db.Text
+  code      String?
   language  String?
-  note      String   @db.Text
+  note      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -183,9 +180,22 @@ model Resource {
   description String   @default("")
   fileName    String
   fileUrl     String
-  fileType    String   // e.g. pdf, image, doc, zip
-  fileSize    Int      // in bytes
-  fileData    String?  @db.Text
+  fileType    String
+  fileSize    Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  fileData    String?
+}
+
+model DailyChallenge {
+  id               String         @id @default(cuid())
+  date             DateTime       @unique
+  codingQuestionId String
+  createdAt        DateTime       @default(now())
+  codingQuestion   CodingQuestion @relation(fields: [codingQuestionId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  CANDIDATE
 }

@@ -41,9 +41,10 @@ export default function QuizResultPage() {
       questionId: string;
       text: string;
       options: string[];
-      selected: number | null;
-      correct: number;
+      selected: any;
+      correct: any;
       isCorrect: boolean;
+      type?: string;
     }>;
   } | null>(null);
 
@@ -273,31 +274,71 @@ export default function QuizResultPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="pl-11 pt-4.5 pb-4.5 bg-card/20">
-                  <div className="space-y-2.5">
-                    {q.options.map((opt, i) => {
-                      const isSelected = q.selected === i;
-                      const isCorrect = q.correct === i;
-                      let optionClass = "border-border bg-card text-foreground/90";
-                      
-                      if (isCorrect) {
-                        optionClass = "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 font-bold";
-                      } else if (isSelected && !isCorrect) {
-                        optionClass = "border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400 font-bold";
-                      }
+                  {q.type === "MULTI_SELECT" ? (
+                    <div className="space-y-2.5">
+                      {q.options.map((opt, i) => {
+                        const isSelected = Array.isArray(q.selected) && q.selected.includes(i);
+                        const isCorrect = Array.isArray(q.correct) && q.correct.includes(i);
+                        let optionClass = "border-border bg-card text-foreground/90";
+                        
+                        if (isCorrect) {
+                          optionClass = "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 font-bold";
+                        } else if (isSelected && !isCorrect) {
+                          optionClass = "border-red-500/20 bg-red-500/10 text-red-650 dark:text-red-400 font-bold";
+                        }
 
-                      return (
-                        <div
-                          key={i}
-                          className={`rounded-xl border p-3.5 text-xs font-semibold leading-relaxed transition-colors shadow-sm ${optionClass}`}
-                        >
-                          <span className="font-extrabold mr-1.5">{String.fromCharCode(65 + i)}.</span>
-                          {opt}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {q.selected === null && (
-                    <p className="mt-3 text-xs text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1.5">
+                        return (
+                          <div
+                            key={i}
+                            className={`rounded-xl border p-3.5 text-xs font-semibold leading-relaxed transition-colors shadow-sm ${optionClass}`}
+                          >
+                            <span className="font-extrabold mr-1.5">{String.fromCharCode(65 + i)}.</span>
+                            {opt}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : q.type === "FILL_IN_BLANK" ? (
+                    <div className="space-y-3 max-w-md">
+                      <div className="rounded-xl border border-border p-3 bg-card/45 font-semibold">
+                        <span className="text-[10px] uppercase font-extrabold tracking-wider text-muted-foreground block">Your Answer:</span>
+                        <span className={cn("mt-1 block font-mono text-sm", q.isCorrect ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")}>
+                          {q.selected ? String(q.selected) : <span className="italic text-muted-foreground/60 font-sans">No answer provided</span>}
+                        </span>
+                      </div>
+                      <div className="rounded-xl border border-emerald-500/15 p-3 bg-emerald-500/5 font-semibold">
+                        <span className="text-[10px] uppercase font-extrabold tracking-wider text-emerald-600 dark:text-emerald-450 block">Correct Answer:</span>
+                        <span className="mt-1 block font-mono text-sm text-emerald-600 dark:text-emerald-400">{String(q.correct)}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {q.options.map((opt, i) => {
+                        const isSelected = q.selected === i;
+                        const isCorrect = q.correct === i;
+                        let optionClass = "border-border bg-card text-foreground/90";
+                        
+                        if (isCorrect) {
+                          optionClass = "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 font-bold";
+                        } else if (isSelected && !isCorrect) {
+                          optionClass = "border-red-500/20 bg-red-500/10 text-red-650 dark:text-red-400 font-bold";
+                        }
+
+                        return (
+                          <div
+                            key={i}
+                            className={`rounded-xl border p-3.5 text-xs font-semibold leading-relaxed transition-colors shadow-sm ${optionClass}`}
+                          >
+                            <span className="font-extrabold mr-1.5">{String.fromCharCode(65 + i)}.</span>
+                            {opt}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {q.selected === null && q.type !== "FILL_IN_BLANK" && (
+                    <p className="mt-3 text-xs text-amber-600 dark:text-amber-440 font-bold flex items-center gap-1.5">
                       <HelpCircle className="h-4 w-4" /> You did not answer this question.
                     </p>
                   )}

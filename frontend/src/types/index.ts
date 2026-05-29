@@ -32,6 +32,7 @@ export interface Question {
   text: string;
   options: string[];
   correctOptionIndex?: number;
+  type?: "SINGLE_CHOICE" | "MULTI_SELECT" | "FILL_IN_BLANK";
   order: number;
 }
 
@@ -44,6 +45,7 @@ export interface AttemptSummary {
 
 export interface LeaderboardEntry {
   id: string;
+  userId: string;
   name: string;
   score: number;
   rank: number | null;

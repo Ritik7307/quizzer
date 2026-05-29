@@ -1,14 +1,24 @@
 import "dotenv/config";
 import { createServer } from "http";
+import cron from "node-cron";
 import { createApp, attachSocket } from "./app.js";
 import { initializeDatabase } from "./lib/db-init.js";
 import { prisma } from "./lib/prisma.js";
 import { flushAllProgress } from "./lib/progress-queue.js";
+import { fetchAndSeedExternalProblems } from "./scripts/fetch-leetcode.js";
 
 const PORT = Number(process.env.PORT) || 4000;
 
 export async function startServer() {
   await initializeDatabase();
+
+  // Set up Cron Job to fetch daily external problems automatically at midnight
+  cron.schedule("0 0 * * *", () => {
+    console.log("Running daily problem fetcher cron job...");
+    fetchAndSeedExternalProblems(10).catch(err => {
+      console.error("Cron job fetch failed:", err);
+    });
+  });
 
   const app = createApp();
   const httpServer = createServer(app);

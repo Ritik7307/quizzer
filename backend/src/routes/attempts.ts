@@ -13,6 +13,28 @@ import {
 import { queueProgressSave, flushProgressSave } from "../lib/progress-queue.js";
 import { cacheDeletePrefix } from "../lib/cache.js";
 
+function isAnswerCorrect(type: string, selected: any, correctOptionIndex: number | null, correctAnswers: string | null): boolean {
+  if (selected === undefined || selected === null) return false;
+  if (type === "MULTI_SELECT") {
+    try {
+      const correctArray = JSON.parse(correctAnswers || "[]");
+      if (Array.isArray(selected) && Array.isArray(correctArray)) {
+        const sortedAns = [...selected].sort();
+        const sortedCorrect = [...correctArray].sort();
+        return JSON.stringify(sortedAns) === JSON.stringify(sortedCorrect);
+      }
+    } catch (e) {}
+    return false;
+  } else if (type === "FILL_IN_BLANK") {
+    if (typeof selected === "string" && typeof correctAnswers === "string") {
+      return selected.trim().toLowerCase() === correctAnswers.trim().toLowerCase();
+    }
+    return false;
+  } else {
+    return selected === correctOptionIndex;
+  }
+}
+
 const router = Router();
 
 router.post("/start/:quizId", authenticate, requireRole(Role.CANDIDATE), async (req: AuthRequest, res) => {
@@ -41,7 +63,7 @@ router.post("/start/:quizId", authenticate, requireRole(Role.CANDIDATE), async (
       return res.status(410).json({ error: "Quiz time expired. Contact admin to reset." });
     }
     const questions = quiz.questions.map((q) => {
-      const { correctOptionIndex, ...rest } = formatQuestion(q);
+      const { correctOptionIndex, correctAnswers, ...rest } = formatQuestion(q);
       return rest;
     });
     return res.json({
@@ -64,7 +86,7 @@ router.post("/start/:quizId", authenticate, requireRole(Role.CANDIDATE), async (
   });
 
   const questions = quiz.questions.map((q) => {
-    const { correctOptionIndex, ...rest } = formatQuestion(q);
+    const { correctOptionIndex, correctAnswers, ...rest } = formatQuestion(q);
     return rest;
   });
 
@@ -78,7 +100,7 @@ router.post("/start/:quizId", authenticate, requireRole(Role.CANDIDATE), async (
 });
 
 router.patch("/:attemptId/progress", authenticate, async (req: AuthRequest, res) => {
-  const schema = z.object({ answers: z.record(z.string(), z.number().int().min(0).max(3)) });
+  const schema = z.object({ answers: z.record(z.string(), z.any()) });
   try {
     const { answers } = schema.parse(req.body);
     const attemptId = String(req.params.attemptId);
@@ -117,7 +139,7 @@ router.patch("/:attemptId/progress", authenticate, async (req: AuthRequest, res)
 router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) => {
   const attemptId = String(req.params.attemptId);
   const bodySchema = z.object({
-    answers: z.record(z.string(), z.number().int().min(0).max(3)).optional(),
+    answers: z.record(z.string(), z.any()).optional(),
   });
 
   let inlineAnswers: Record<string, number> | undefined;
@@ -152,7 +174,7 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
   const baseAnswers = parseAnswers(attempt.answers);
   const answers = inlineAnswers ? { ...baseAnswers, ...inlineAnswers } : baseAnswers;
   
-  const keys = attempt.quiz.questions.map((q) => ({ id: q.id, correctOptionIndex: q.correctOptionIndex }));
+  const keys = attempt.quiz.questions.map((q) => ({ id: q.id, type: q.type, correctOptionIndex: q.correctOptionIndex, correctAnswers: q.correctAnswers }));
   const result = evaluateAnswers(keys, answers);
 
   const submitted = await prisma.attempt.update({
@@ -190,13 +212,27 @@ router.post("/:attemptId/submit", authenticate, async (req: AuthRequest, res) =>
       rank: currentRank,
       submittedAt: submitted.submittedAt,
     },
-    breakdown: attempt.quiz.questions.map((q) => ({
-      questionId: q.id,
-      text: q.text,
-      selected: answers[q.id] ?? null,
-      correct: q.correctOptionIndex,
-      isCorrect: answers[q.id] === q.correctOptionIndex,
-    })),
+    breakdown: attempt.quiz.questions.map((q) => {
+      const selected = answers[q.id] ?? null;
+      let correct: any = q.correctOptionIndex;
+      if (q.type === "MULTI_SELECT") {
+        try {
+          correct = JSON.parse(q.correctAnswers || "[]");
+        } catch {
+          correct = [];
+        }
+      } else if (q.type === "FILL_IN_BLANK") {
+        correct = q.correctAnswers;
+      }
+      return {
+        questionId: q.id,
+        text: q.text,
+        type: q.type,
+        selected,
+        correct,
+        isCorrect: isAnswerCorrect(q.type, selected, q.correctOptionIndex, q.correctAnswers),
+      };
+    }),
   });
 });
 
@@ -236,13 +272,25 @@ router.get("/my/:quizId", authenticate, async (req: AuthRequest, res) => {
   const answers = parseAnswers(attempt.answers);
   const breakdown = attempt.quiz.questions.map((q) => {
     const parsedOptions = JSON.parse(q.options) as string[];
+    const selected = answers[q.id] ?? null;
+    let correct: any = q.correctOptionIndex;
+    if (q.type === "MULTI_SELECT") {
+      try {
+        correct = JSON.parse(q.correctAnswers || "[]");
+      } catch {
+        correct = [];
+      }
+    } else if (q.type === "FILL_IN_BLANK") {
+      correct = q.correctAnswers;
+    }
     return {
       questionId: q.id,
       text: q.text,
+      type: q.type,
       options: parsedOptions,
-      selected: answers[q.id] ?? null,
-      correct: q.correctOptionIndex,
-      isCorrect: answers[q.id] === q.correctOptionIndex,
+      selected,
+      correct,
+      isCorrect: isAnswerCorrect(q.type, selected, q.correctOptionIndex, q.correctAnswers),
     };
   });
 

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { authenticate, requireRole, type AuthRequest } from "../middleware/auth.js";
 import { Role } from "@prisma/client";
-import { sendEmail } from "../utils/email.js";
+import { sendEmail as sendEmailUtil } from "../utils/email.js";
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.get("/", authenticate, async (req: AuthRequest, res) => {
     return res.json({ notifications });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "Failed to fetch notifications" });
+    return res.status(500).json({ error: e instanceof Error ? e.message : "Failed to fetch notifications" });
   }
 });
 
@@ -67,12 +67,13 @@ const pushNotificationSchema = z.object({
   targetUserId: z.string(), // "all" for broadcast, or a specific userId
   title: z.string().min(1, "Title is required"),
   message: z.string().min(1, "Message is required"),
+  sendEmail: z.boolean().optional().default(false),
 });
 
 // Admin-only: Push notification to a user or all users
 router.post("/admin/push", authenticate, requireRole(Role.ADMIN), async (req: AuthRequest, res) => {
   try {
-    const { targetUserId, title, message } = pushNotificationSchema.parse(req.body);
+    const { targetUserId, title, message, sendEmail } = pushNotificationSchema.parse(req.body);
 
     if (targetUserId === "all") {
       // Broadcast to all users
@@ -93,26 +94,28 @@ router.post("/admin/push", authenticate, requireRole(Role.ADMIN), async (req: Au
         })),
       });
 
-      // Send emails asynchronously (don't wait/block the API response)
-      users.forEach((u) => {
-        sendEmail({
-          to: u.email,
-          subject: title,
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
-              <h2 style="color: #6366f1;">New Announcement</h2>
-              <p>Hi <strong>${u.name}</strong>,</p>
-              <div style="background-color: #f9fafb; padding: 15px; border-left: 4px solid #6366f1; margin: 20px 0; font-size: 16px; line-height: 1.5;">
-                <h3 style="margin-top: 0; color: #111827;">${title}</h3>
-                <p style="margin-bottom: 0; color: #4b5563;">${message}</p>
+      // Send emails asynchronously if toggled
+      if (sendEmail) {
+        users.forEach((u) => {
+          sendEmailUtil({
+            to: u.email,
+            subject: title,
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+                <h2 style="color: #6366f1;">New Announcement</h2>
+                <p>Hi <strong>${u.name}</strong>,</p>
+                <div style="background-color: #f9fafb; padding: 15px; border-left: 4px solid #6366f1; margin: 20px 0; font-size: 16px; line-height: 1.5;">
+                  <h3 style="margin-top: 0; color: #111827;">${title}</h3>
+                  <p style="margin-bottom: 0; color: #4b5563;">${message}</p>
+                </div>
+                <p style="color: #9ca3af; font-size: 12px; margin-top: 30px;">
+                  This is an automated notification from Quizzer. Please log in to your dashboard to view all announcements.
+                </p>
               </div>
-              <p style="color: #9ca3af; font-size: 12px; margin-top: 30px;">
-                This is an automated notification from Quizzer. Please log in to your dashboard to view all announcements.
-              </p>
-            </div>
-          `,
-        }).catch((err) => console.error(`Failed to send broadcast email to ${u.email}:`, err));
-      });
+            `,
+          }).catch((err) => console.error(`Failed to send broadcast email to ${u.email}:`, err));
+        });
+      }
 
       return res.json({ success: true, message: `Notification broadcasted to ${users.length} users` });
     } else {
@@ -135,24 +138,26 @@ router.post("/admin/push", authenticate, requireRole(Role.ADMIN), async (req: Au
         },
       });
 
-      // Send email asynchronously
-      sendEmail({
-        to: user.email,
-        subject: title,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
-            <h2 style="color: #6366f1;">New Notification</h2>
-            <p>Hi <strong>${user.name}</strong>,</p>
-            <div style="background-color: #f9fafb; padding: 15px; border-left: 4px solid #6366f1; margin: 20px 0; font-size: 16px; line-height: 1.5;">
-              <h3 style="margin-top: 0; color: #111827;">${title}</h3>
-              <p style="margin-bottom: 0; color: #4b5563;">${message}</p>
+      // Send email asynchronously if toggled
+      if (sendEmail) {
+        sendEmailUtil({
+          to: user.email,
+          subject: title,
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+              <h2 style="color: #6366f1;">New Notification</h2>
+              <p>Hi <strong>${user.name}</strong>,</p>
+              <div style="background-color: #f9fafb; padding: 15px; border-left: 4px solid #6366f1; margin: 20px 0; font-size: 16px; line-height: 1.5;">
+                <h3 style="margin-top: 0; color: #111827;">${title}</h3>
+                <p style="margin-bottom: 0; color: #4b5563;">${message}</p>
+              </div>
+              <p style="color: #9ca3af; font-size: 12px; margin-top: 30px;">
+                This is an automated notification from Quizzer. Please log in to your dashboard to view all announcements.
+              </p>
             </div>
-            <p style="color: #9ca3af; font-size: 12px; margin-top: 30px;">
-              This is an automated notification from Quizzer. Please log in to your dashboard to view all announcements.
-            </p>
-          </div>
-        `,
-      }).catch((err) => console.error(`Failed to send notification email to ${user.email}:`, err));
+          `,
+        }).catch((err) => console.error(`Failed to send notification email to ${user.email}:`, err));
+      }
 
       return res.json({ success: true, message: `Notification sent to ${user.name}` });
     }
