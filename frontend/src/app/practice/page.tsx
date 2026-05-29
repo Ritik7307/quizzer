@@ -21,7 +21,6 @@ import {
   ChevronDown,
   BookOpen,
   Award,
-  Zap,
   Code2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -46,6 +45,8 @@ export default function PracticeSheetPage() {
   const [markingIds, setMarkingIds] = useState<Record<string, boolean>>({});
 
   const [randomDifficulty, setRandomDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All");
+  const [randomCount, setRandomCount] = useState(1);
+  const [generatedProblems, setGeneratedProblems] = useState<CodingQuestion[]>([]);
 
   const [leetcodeInput, setLeetcodeInput] = useState("");
   const [codeforcesInput, setCodeforcesInput] = useState("");
@@ -173,17 +174,15 @@ export default function PracticeSheetPage() {
   };
 
   const handleRandomPractice = () => {
-    let pool = questions.filter(q => q.isExternalOnly);
+    let pool = questions.filter((q) => q.isExternalOnly);
     if (randomDifficulty !== "All") {
-      pool = pool.filter(q => q.difficulty === randomDifficulty);
+      pool = pool.filter((q) => q.difficulty === randomDifficulty);
     }
-    
-    // Fallback to all questions if no external questions of that difficulty exist
+
     if (pool.length === 0) {
-      pool = questions;
-      if (randomDifficulty !== "All") {
-        pool = pool.filter(q => q.difficulty === randomDifficulty);
-      }
+      pool = questions.filter((q) =>
+        randomDifficulty === "All" ? true : q.difficulty === randomDifficulty
+      );
     }
 
     if (pool.length === 0) {
@@ -191,11 +190,16 @@ export default function PracticeSheetPage() {
       return;
     }
 
-    const randomQuestion = pool[Math.floor(Math.random() * pool.length)];
-    
-    // External questions might not have an in-house editor if referenceUrl is all they have, 
-    // but we can just redirect them to our coding page which handles external links or built-in compiler
-    router.push(`/coding/${randomQuestion.id}`);
+    const count = Math.min(Math.max(1, randomCount), pool.length);
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    const picked = shuffled.slice(0, count);
+
+    setGeneratedProblems(picked);
+    toast.success(
+      count === 1
+        ? "Generated 1 practice problem."
+        : `Generated ${count} practice problems.`
+    );
   };
 
   if (loading) {
@@ -627,36 +631,96 @@ export default function PracticeSheetPage() {
         </div>
 
         {/* Random Practice Generator */}
-        <Card className="border border-border bg-card/45 backdrop-blur-sm shadow-sm transition-all duration-300 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <h2 className="text-lg font-bold text-foreground tracking-tight flex items-center gap-2">
-              <Zap className="h-5 w-5 text-amber-500" /> Random Practice Generator
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Want to practice but don't know what to pick? Select a difficulty and we'll instantly serve you a random LeetCode or Codeforces problem from the database.
-            </p>
-          </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="flex bg-muted/50 p-1 rounded-lg border border-border">
-              {["All", "Easy", "Medium", "Hard"].map((diff) => (
-                <button
-                  key={diff}
-                  onClick={() => setRandomDifficulty(diff as any)}
-                  className={cn(
-                    "px-3 py-1.5 text-xs font-bold rounded-md transition-colors",
-                    randomDifficulty === diff
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  )}
-                >
-                  {diff}
-                </button>
-              ))}
+        <Card className="border border-border bg-card/45 backdrop-blur-sm shadow-sm transition-all duration-300 p-6 rounded-2xl space-y-5">
+          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+            <div className="space-y-2 max-w-xl">
+              <h2 className="text-lg font-bold text-foreground tracking-tight">
+                Random Practice Generator
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Select difficulty and how many problems you want. We&apos;ll pick random LeetCode or
+                Codeforces questions from the database.
+              </p>
             </div>
-            <Button onClick={handleRandomPractice} className="bg-amber-500 hover:bg-amber-600 text-white font-bold tracking-wide">
-              Generate Problem
-            </Button>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-end gap-3 shrink-0">
+              <div className="space-y-1.5">
+                <Label htmlFor="random-count" className="text-xs text-muted-foreground">
+                  No. of questions
+                </Label>
+                <Input
+                  id="random-count"
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={randomCount}
+                  onChange={(e) => {
+                    const n = parseInt(e.target.value, 10);
+                    setRandomCount(Number.isNaN(n) ? 1 : Math.min(20, Math.max(1, n)));
+                  }}
+                  className="w-full sm:w-24 h-10"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <span className="text-xs text-muted-foreground block">Difficulty</span>
+                <div className="flex bg-muted/50 p-1 rounded-lg border border-border">
+                  {["All", "Easy", "Medium", "Hard"].map((diff) => (
+                    <button
+                      key={diff}
+                      type="button"
+                      onClick={() => setRandomDifficulty(diff as typeof randomDifficulty)}
+                      className={cn(
+                        "px-3 py-1.5 text-xs font-bold rounded-md transition-colors",
+                        randomDifficulty === diff
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      {diff}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Button
+                onClick={handleRandomPractice}
+                className="bg-amber-500 hover:bg-amber-600 text-white font-bold tracking-wide h-10"
+              >
+                Generate {randomCount > 1 ? "Problems" : "Problem"}
+              </Button>
+            </div>
           </div>
+
+          {generatedProblems.length > 0 && (
+            <div className="pt-4 border-t border-border space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Your random set ({generatedProblems.length})
+              </p>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {generatedProblems.map((q, index) => (
+                  <li
+                    key={q.id}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 px-3 py-2.5"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {index + 1}. {q.title}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                          {q.difficulty}
+                        </Badge>
+                        {q.solved && (
+                          <span className="text-[10px] text-emerald-500 font-medium">Solved</span>
+                        )}
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" asChild className="shrink-0">
+                      <Link href={`/coding/${q.id}`}>Open</Link>
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Card>
 
         {/* Topics Accordion Feed */}
