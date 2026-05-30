@@ -1,5 +1,5 @@
 /** Use same-origin /api (proxied by Next.js) to avoid CORS issues. Socket.IO still uses API_ORIGIN. */
-export const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+export const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL ?? (typeof window !== "undefined" ? `${window.location.protocol}//${window.location.hostname}:4000` : "http://localhost:4000");
 const API_BASE = "";
 
 export class ApiError extends Error {
