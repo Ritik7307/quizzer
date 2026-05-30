@@ -535,15 +535,36 @@ export default function CodingWorkspacePage() {
               <Code className="h-4 w-4 text-indigo-550 dark:text-indigo-400" />
               <span className="text-[10px] font-extrabold uppercase text-muted-foreground tracking-wider">Source Editor</span>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleGetHint}
-              disabled={gettingHint || !code.trim()}
-              className="h-7 text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
-            >
-              {gettingHint ? <Loader2 className="h-3 w-3 mr-1.5 animate-spin" /> : "🤖"} Get AI Hint
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (confirm("Are you sure you want to reset your code to the default template? This cannot be undone.")) {
+                    setCode(
+                      language === "cpp"
+                        ? question?.defaultCodeCpp || ""
+                        : language === "java"
+                        ? question?.defaultCodeJava || ""
+                        : question?.defaultCodeC || ""
+                    );
+                    toast.success("Code reset to default template");
+                  }
+                }}
+                className="h-7 text-xs bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20"
+              >
+                🔄 Reset
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleGetHint}
+                disabled={gettingHint || !code.trim()}
+                className="h-7 text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
+              >
+                {gettingHint ? <Loader2 className="h-3 w-3 mr-1.5 animate-spin" /> : "🤖"} Get AI Hint
+              </Button>
+            </div>
           </div>
 
           {/* Editor Container */}
