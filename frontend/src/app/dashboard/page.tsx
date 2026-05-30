@@ -15,15 +15,6 @@ import { useAuth } from "@/contexts/auth-context";
 import { api } from "@/lib/api";
 import type { Quiz, Resource } from "@/types";
 
-interface CodingQuestion {
-  id: string;
-  title: string;
-  difficulty: string;
-  sampleInput: string;
-  sampleOutput: string;
-  createdAt: string;
-}
-
 interface CodingSubmission {
   id: string;
   code: string;
@@ -41,12 +32,10 @@ interface CodingSubmission {
 export default function CandidateDashboard() {
   const { token, user } = useAuth();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [codingQuestions, setCodingQuestions] = useState<CodingQuestion[]>([]);
   const [submissions, setSubmissions] = useState<CodingSubmission[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
 
   const [loading, setLoading] = useState(true);
-  const [loadingCoding, setLoadingCoding] = useState(false);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
   const [loadingResources, setLoadingResources] = useState(false);
 
@@ -64,12 +53,6 @@ export default function CandidateDashboard() {
         .then((d) => setQuizzes(d.quizzes))
         .catch(() => toast.error("Failed to load quizzes"))
         .finally(() => setLoading(false));
-    } else if (activeTab === "coding") {
-      setLoadingCoding(true);
-      api<{ questions: CodingQuestion[] }>("/api/coding/questions", { token })
-        .then((d) => setCodingQuestions(d.questions))
-        .catch(() => toast.error("Failed to load coding questions"))
-        .finally(() => setLoadingCoding(false));
     } else if (activeTab === "history") {
       setLoadingSubmissions(true);
       api<{ submissions: CodingSubmission[] }>("/api/coding/submissions", { token })
@@ -90,11 +73,6 @@ export default function CandidateDashboard() {
     (q) =>
       q.title.toLowerCase().includes(search.toLowerCase()) ||
       q.description.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const filteredCoding = codingQuestions.filter(
-    (q) =>
-      q.title.toLowerCase().includes(search.toLowerCase())
   );
 
   const filteredResources = resources.filter(
@@ -130,7 +108,6 @@ export default function CandidateDashboard() {
             <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">Welcome, {user?.name}</h1>
             <p className="mt-1.5 text-sm text-muted-foreground sm:text-base">
               {activeTab === "quizzes" && "Available quizzes for the upskilling series"}
-              {activeTab === "coding" && "Practice your programming logic in C++, Java, and C"}
               {activeTab === "history" && "Analyze your past code compile and run submissions"}
               {activeTab === "resources" && "Download references, guides, and learning resources"}
             </p>
