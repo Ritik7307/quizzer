@@ -41,6 +41,7 @@ const templates: Record<string, string> = {
   cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Read input, process logic, and print output\n    int a, b;\n    if (cin >> a >> b) {\n        cout << (a + b) << endl;\n    }\n    return 0;\n}`,
   c: `#include <stdio.h>\n\nint main() {\n    // Read input, process logic, and print output\n    int a, b;\n    if (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}`,
   java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Read input, process logic, and print output\n        Scanner sc = new Scanner(System.in);\n        if (sc.hasNextInt()) {\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(a + b);\n        }\n    }\n}`,
+  python: `# Read input from stdin, process logic, and print output\nimport sys\n\ndef main():\n    # Example: reading two integers and printing their sum\n    # input_data = sys.stdin.read().split()\n    # if len(input_data) >= 2:\n    #     print(int(input_data[0]) + int(input_data[1]))\n    pass\n\nif __name__ == "__main__":\n    main()`,
 };
 
 export default function CodingBattlePage() {
@@ -136,9 +137,14 @@ export default function CodingBattlePage() {
         const stored = sessionStorage.getItem(`quizer:match:${matchId}`);
         if (stored) {
           const data = JSON.parse(stored);
-          setQuestion(data.question);
-          setCode(templates.cpp);
-          setCustomInput(data.question.sampleInput);
+          const qData = data.question;
+          setQuestion(qData);
+          if (language === "cpp" && qData.defaultCodeCpp) setCode(qData.defaultCodeCpp);
+          else if (language === "java" && qData.defaultCodeJava) setCode(qData.defaultCodeJava);
+          else if (language === "c" && qData.defaultCodeC) setCode(qData.defaultCodeC);
+          else if (language === "python" && qData.defaultCodePython) setCode(qData.defaultCodePython);
+          else setCode(templates[language] || templates.cpp);
+          setCustomInput(qData.sampleInput);
           if (data.opponent) {
             setOpponent({
               userId: data.opponent.userId,
@@ -443,6 +449,7 @@ export default function CodingBattlePage() {
                 <option value="cpp">C++ (GCC)</option>
                 <option value="c">C (GCC)</option>
                 <option value="java">Java (JDK)</option>
+                <option value="python">Python 3</option>
               </select>
 
               <Button
@@ -472,7 +479,7 @@ export default function CodingBattlePage() {
           <div className="flex-1 min-h-[220px] relative">
             <Editor
               height="100%"
-              language={language === "cpp" ? "cpp" : language === "c" ? "c" : "java"}
+              language={language === "cpp" ? "cpp" : language === "c" ? "c" : language === "python" ? "python" : "java"}
               theme={resolvedTheme === "dark" ? "vs-dark" : "vs"}
               value={code}
               onChange={(value) => setCode(value || "")}

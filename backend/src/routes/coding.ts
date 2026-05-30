@@ -37,17 +37,19 @@ const createQuestionSchema = z.object({
   driverCodeCpp: z.string().optional(),
   driverCodeJava: z.string().optional(),
   driverCodeC: z.string().optional(),
+  defaultCodePython: z.string().optional(),
+  driverCodePython: z.string().optional(),
 });
 
 const runCodeSchema = z.object({
   code: z.string().min(1, "Code is required"),
-  language: z.enum(["cpp", "c", "java"]),
+  language: z.enum(["cpp", "c", "java", "python"]),
   stdin: z.string().default(""),
 });
 
 const submitCodeSchema = z.object({
   code: z.string().min(1, "Code is required"),
-  language: z.enum(["cpp", "c", "java"]),
+  language: z.enum(["cpp", "c", "java", "python"]),
 });
 
 // Normalize string whitespace and line breaks for comparing outputs
@@ -150,6 +152,7 @@ router.get("/questions/:id", authenticate, async (req: AuthRequest, res) => {
         defaultCodeCpp: question.defaultCodeCpp,
         defaultCodeJava: question.defaultCodeJava,
         defaultCodeC: question.defaultCodeC,
+        defaultCodePython: question.defaultCodePython,
       },
     });
   } catch (e) {
@@ -173,6 +176,7 @@ router.post("/questions/:id/run", authenticate, async (req, res) => {
       if (language === "cpp") driverCode = question.driverCodeCpp || undefined;
       else if (language === "java") driverCode = question.driverCodeJava || undefined;
       else if (language === "c") driverCode = question.driverCodeC || undefined;
+      else if (language === "python") driverCode = question.driverCodePython || undefined;
     }
 
     const result = await compileAndRun(code, language, stdin, driverCode);
@@ -235,6 +239,7 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
     if (language === "cpp") driverCode = question.driverCodeCpp || undefined;
     else if (language === "java") driverCode = question.driverCodeJava || undefined;
     else if (language === "c") driverCode = question.driverCodeC || undefined;
+    else if (language === "python") driverCode = question.driverCodePython || undefined;
 
     // Run compile check first
     // To check compile errors without running, we can run compiler once with empty input
@@ -494,6 +499,8 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
         driverCodeCpp: body.driverCodeCpp || null,
         driverCodeJava: body.driverCodeJava || null,
         driverCodeC: body.driverCodeC || null,
+        defaultCodePython: body.defaultCodePython || null,
+        driverCodePython: body.driverCodePython || null,
       },
     });
 
@@ -538,6 +545,8 @@ router.put("/admin/questions/:id", authenticate, requireRole(Role.ADMIN), async 
         driverCodeCpp: body.driverCodeCpp,
         driverCodeJava: body.driverCodeJava,
         driverCodeC: body.driverCodeC,
+        defaultCodePython: body.defaultCodePython,
+        driverCodePython: body.driverCodePython,
       },
     });
     return res.json({ question });

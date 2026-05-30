@@ -18,6 +18,7 @@ const templates: Record<string, string> = {
   cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Online C++ Compiler\n    cout << "Hello, C++ World!" << endl;\n    \n    // Example of reading standard input\n    int n;\n    if (cin >> n) {\n        cout << "Standard input received: " << n << endl;\n    }\n    return 0;\n}`,
   c: `#include <stdio.h>\n\nint main() {\n    // Online C Compiler\n    printf("Hello, C World!\\n");\n    \n    // Example of reading standard input\n    int n;\n    if (scanf("%d", &n) == 1) {\n        printf("Standard input received: %d\\n", n);\n    }\n    return 0;\n}`,
   java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Online Java Compiler\n        System.out.println("Hello, Java World!");\n        \n        // Example of reading standard input\n        Scanner sc = new Scanner(System.in);\n        if (sc.hasNextInt()) {\n            int n = sc.nextInt();\n            System.out.println("Standard input received: " + n);\n        }\n    }\n}`,
+  python: `# Online Python Compiler\n# Write, Edit and Run your Python code using Python 3\n\nprint("Hello, Python World!")\n\n# Example of reading standard input\nimport sys\n# input_data = sys.stdin.read()\n# print(f"Standard input received: {input_data}")`,
 };
 
 export default function StandaloneCompilerPage() {
@@ -38,6 +39,7 @@ export default function StandaloneCompilerPage() {
     cpp: templates.cpp,
     c: templates.c,
     java: templates.java,
+    python: templates.python,
   });
 
   // Right side panel active tab
@@ -274,6 +276,7 @@ export default function StandaloneCompilerPage() {
             <option value="cpp">C++ (GCC)</option>
             <option value="c">C (GCC)</option>
             <option value="java">Java (JDK)</option>
+            <option value="python">Python 3</option>
           </select>
 
           <Button
@@ -300,7 +303,7 @@ export default function StandaloneCompilerPage() {
           <div className="flex-1 relative min-h-[300px]">
             <Editor
               height="100%"
-              language={language === "cpp" ? "cpp" : language === "c" ? "c" : "java"}
+              language={language === "cpp" ? "cpp" : language === "c" ? "c" : language === "python" ? "python" : "java"}
               theme={resolvedTheme === "dark" ? "vs-dark" : "vs"}
               value={code}
               onChange={(value) => setCode(value || "")}

@@ -139,6 +139,8 @@ model CodingQuestion {
   driverCodeCpp   String?
   driverCodeJava  String?
   driverCodeC     String?
+  defaultCodePython String?
+  driverCodePython  String?
 
   submissions     CodingSubmission[]
   dailyChallenges DailyChallenge[]

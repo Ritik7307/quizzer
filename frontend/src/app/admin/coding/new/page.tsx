@@ -55,6 +55,8 @@ export default function AdminNewCodingQuestionPage() {
   
   const [defaultCodeCpp, setDefaultCodeCpp] = useState("");
   const [driverCodeCpp, setDriverCodeCpp] = useState("");
+  const [defaultCodePython, setDefaultCodePython] = useState("");
+  const [driverCodePython, setDriverCodePython] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -126,6 +128,8 @@ export default function AdminNewCodingQuestionPage() {
           isExternalOnly,
           defaultCodeCpp: defaultCodeCpp.trim() || undefined,
           driverCodeCpp: driverCodeCpp.trim() || undefined,
+          defaultCodePython: defaultCodePython.trim() || undefined,
+          driverCodePython: driverCodePython.trim() || undefined,
         }),
         token,
       });
@@ -376,6 +380,33 @@ export default function AdminNewCodingQuestionPage() {
                     rows={8}
                     value={driverCodeCpp}
                     onChange={(e) => setDriverCodeCpp(e.target.value)}
+                    className="bg-slate-50 border-slate-200 text-slate-900 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="defaultCodePython">Default Boilerplate Code (Python)</Label>
+                  <Textarea
+                    id="defaultCodePython"
+                    placeholder="def solve(): ..."
+                    rows={4}
+                    value={defaultCodePython}
+                    onChange={(e) => setDefaultCodePython(e.target.value)}
+                    className="bg-slate-50 border-slate-200 text-slate-900 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="driverCodePython">Hidden Driver Code (Python)</Label>
+                    <span className="text-[10px] text-slate-500">Appended to user code</span>
+                  </div>
+                  <Textarea
+                    id="driverCodePython"
+                    placeholder="if __name__ == '__main__': ..."
+                    rows={8}
+                    value={driverCodePython}
+                    onChange={(e) => setDriverCodePython(e.target.value)}
                     className="bg-slate-50 border-slate-200 text-slate-900 font-mono text-xs leading-relaxed focus-visible:ring-2 focus-visible:ring-indigo-500"
                   />
                 </div>

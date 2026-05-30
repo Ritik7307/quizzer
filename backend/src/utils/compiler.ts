@@ -124,36 +124,44 @@ export async function compileAndRun(
       compileCmd = "javac Main.java";
       runExecutable = "java";
       runArgs = ["Main"];
+    } else if (language === "python") {
+      sourceFile = path.join(runDir, "code.py");
+      fs.writeFileSync(sourceFile, finalCode);
+      compileCmd = "";
+      runExecutable = isWindows ? "python" : "python3";
+      runArgs = [sourceFile];
     } else {
       return { status: "System Error", output: "Unsupported language" };
     }
 
-    // 1. Compile phase
-    const compileRes = await new Promise<{ stdout: string; stderr: string; code: number | null }>((resolve) => {
-      exec(compileCmd, { cwd: runDir }, (err, stdout, stderr) => {
-        resolve({
-          stdout,
-          stderr,
-          code: err ? (err as any).code : 0,
+    // 1. Compile phase (if applicable)
+    if (compileCmd) {
+      const compileRes = await new Promise<{ stdout: string; stderr: string; code: number | null }>((resolve) => {
+        exec(compileCmd, { cwd: runDir }, (err, stdout, stderr) => {
+          resolve({
+            stdout,
+            stderr,
+            code: err ? (err as any).code : 0,
+          });
         });
       });
-    });
 
-    if (compileRes.code !== 0) {
-      const errMsg = compileRes.stderr || compileRes.stdout;
-      // Check if compiler is missing
-      if (errMsg.includes("not recognized") || errMsg.includes("not found") || errMsg.includes("Command failed")) {
+      if (compileRes.code !== 0) {
+        const errMsg = compileRes.stderr || compileRes.stdout;
+        // Check if compiler is missing
+        if (errMsg.includes("not recognized") || errMsg.includes("not found") || errMsg.includes("Command failed")) {
+          return {
+            status: "Compile Error",
+            output: "Compiler not installed",
+            errorDetails: `The required compiler for ${language} is not installed or configured on the server PATH.\n\nError details: ${errMsg}`,
+          };
+        }
         return {
           status: "Compile Error",
-          output: "Compiler not installed",
-          errorDetails: `The required compiler for ${language} is not installed or configured on the server PATH.\n\nError details: ${errMsg}`,
+          output: "Compilation failed",
+          errorDetails: errMsg,
         };
       }
-      return {
-        status: "Compile Error",
-        output: "Compilation failed",
-        errorDetails: errMsg,
-      };
     }
 
     // 2. Execution phase
@@ -167,10 +175,18 @@ export async function compileAndRun(
     }
 
     if (runRes.error && runRes.code !== 0) {
+      const errMsg = runRes.stderr || runRes.stdout || runRes.error.message;
+      if (errMsg.includes("ENOENT") || errMsg.includes("not found")) {
+        return {
+          status: "Runtime Error",
+          output: "Runtime not installed",
+          errorDetails: `The required runtime for ${language} is not installed or configured on the server PATH.\n\nError details: ${errMsg}`,
+        };
+      }
       return {
         status: "Runtime Error",
         output: "Program crashed",
-        errorDetails: runRes.stderr || runRes.stdout || runRes.error.message,
+        errorDetails: errMsg,
       };
     }
 
