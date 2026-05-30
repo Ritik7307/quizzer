@@ -302,13 +302,13 @@ export default function CodingBattlePage() {
         
         {/* User Progress */}
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-650/15 border border-indigo-500/20 text-indigo-500">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600/15 border border-indigo-500/20 text-indigo-500">
             <User className="h-4.5 w-4.5" />
           </div>
           <div className="flex-1 md:flex-initial">
             <div className="flex items-center justify-between gap-4">
               <span className="text-xs font-black text-foreground">{user?.name} (You)</span>
-              <span className="text-[10px] font-extrabold text-indigo-655">{userProgress.passedCount}/{userProgress.totalCount} test cases</span>
+              <span className="text-[10px] font-extrabold text-indigo-600">{userProgress.passedCount}/{userProgress.totalCount} test cases</span>
             </div>
             <div className="w-48 bg-muted rounded-full h-2 border border-border mt-1 overflow-hidden">
               <div
@@ -321,7 +321,7 @@ export default function CodingBattlePage() {
 
         {/* Versus Indicator */}
         <div className="flex items-center gap-2 select-none">
-          <Badge className="bg-red-500/10 text-red-655 dark:text-red-400 border border-red-500/20 font-black px-3 py-1 flex items-center gap-1.5 shrink-0 animate-pulse">
+          <Badge className="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 font-black px-3 py-1 flex items-center gap-1.5 shrink-0 animate-pulse">
             <Swords className="h-4 w-4" /> BATTLE MODE
           </Badge>
         </div>
@@ -336,7 +336,7 @@ export default function CodingBattlePage() {
                   <span className="text-xs font-black text-foreground">{opponent.name}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4 mt-0.5">
-                  <span className="text-[10px] font-extrabold text-amber-555">{(opponent.passedCount || 0)}/{(opponent.totalCount || 1)} test cases</span>
+                  <span className="text-[10px] font-extrabold text-amber-500">{(opponent.passedCount || 0)}/{(opponent.totalCount || 1)} test cases</span>
                 </div>
                 <div className="w-48 bg-muted rounded-full h-2 border border-border mt-1 overflow-hidden">
                   <div
@@ -368,8 +368,8 @@ export default function CodingBattlePage() {
                 question.difficulty === "Easy"
                   ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 font-bold"
                   : question.difficulty === "Medium"
-                  ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-450 border border-yellow-500/20 font-bold"
-                  : "bg-red-500/10 text-red-655 dark:text-red-400 border border-red-500/20 font-bold"
+                  ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20 font-bold"
+                  : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 font-bold"
               }
             >
               {question.difficulty}
@@ -429,7 +429,7 @@ export default function CodingBattlePage() {
           {/* Header toolbar */}
           <div className="flex items-center justify-between border-b border-border px-4 py-2 bg-card">
             <div className="flex items-center gap-1.5">
-              <Code className="h-4 w-4 text-indigo-550 dark:text-indigo-400" />
+              <Code className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
               <span className="text-[10px] font-extrabold uppercase text-muted-foreground tracking-wider">Source Editor</span>
             </div>
 
@@ -460,7 +460,7 @@ export default function CodingBattlePage() {
                 size="sm"
                 onClick={handleSubmitCode}
                 disabled={running || submitting || matchEnded}
-                className="flex items-center gap-1.5 text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold rounded-lg h-8 shadow-sm"
+                className="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg h-8 shadow-sm"
               >
                 {submitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3 fill-current" />}
                 Submit
@@ -520,7 +520,7 @@ export default function CodingBattlePage() {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] uppercase font-extrabold text-muted-foreground">Execution Output</span>
                   {runStatus && (
-                    <Badge className={cn("text-[9px] font-black border uppercase px-1.5 py-0.2 shadow-sm leading-none", runStatus === "Accepted" ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-red-500/10 text-red-550 border-red-500/20")}>
+                    <Badge className={cn("text-[9px] font-black border uppercase px-1.5 py-0.2 shadow-sm leading-none", runStatus === "Accepted" ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-red-500/10 text-red-500 border-red-500/20")}>
                       {runStatus}
                     </Badge>
                   )}
@@ -529,8 +529,8 @@ export default function CodingBattlePage() {
                 <div className="flex-1 overflow-y-auto rounded-lg border border-border bg-card p-2.5 font-mono text-xs leading-relaxed text-foreground/90 whitespace-pre-wrap shadow-inner">
                   {terminalOutput}
                   {errorDetails && (
-                    <div className="mt-2 text-red-500 dark:text-red-450 border-t border-border pt-2 text-[11px] leading-relaxed">
-                      <p className="font-bold uppercase tracking-wider text-[9px] text-red-650 leading-none">Error Details</p>
+                    <div className="mt-2 text-red-500 dark:text-red-400 border-t border-border pt-2 text-[11px] leading-relaxed">
+                      <p className="font-bold uppercase tracking-wider text-[9px] text-red-600 leading-none">Error Details</p>
                       {errorDetails}
                     </div>
                   )}
@@ -549,7 +549,7 @@ export default function CodingBattlePage() {
         <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
           <Card className="max-w-md w-full border border-border bg-card shadow-2xl rounded-3xl overflow-hidden p-6 sm:p-8 text-center animate-scale-in">
             <CardContent className="space-y-6 pt-4">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-500/15 border border-indigo-500/25 text-indigo-500 shadow-lg shadow-indigo-650/15 animate-bounce">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-500/15 border border-indigo-500/25 text-indigo-500 shadow-lg shadow-indigo-600/15 animate-bounce">
                 <Swords className="h-8 w-8" />
               </div>
 
