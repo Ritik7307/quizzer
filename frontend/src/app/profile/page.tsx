@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, Image as ImageIcon, ExternalLink, Award, Shield, Star, Globe, Trophy } from "lucide-react";
+import { User, Image as ImageIcon, ExternalLink, Award, Shield, Star, Globe, Trophy, FileText, ChevronRight, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { api, ApiError } from "@/lib/api";
 import type { User as UserType } from "@/types";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const { user, refresh, token } = useAuth();
@@ -55,6 +56,24 @@ export default function ProfilePage() {
     }
   }, [user?.codeforcesHandle]);
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be smaller than 2MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setAvatarUrl(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!token) return;
@@ -67,8 +86,8 @@ export default function ProfilePage() {
         body: JSON.stringify({
           name: name.trim(),
           avatarUrl: avatarUrl.trim(),
-          leetcodeHandle: leetcodeHandle.trim() || null,
-          codeforcesHandle: codeforcesHandle.trim() || null,
+          leetcodeHandle: leetcodeHandle.replace(/^https?:\/\/(www\.)?leetcode\.com\//, "").replace(/\/$/, "").trim() || null,
+          codeforcesHandle: codeforcesHandle.replace(/^https?:\/\/(www\.)?codeforces\.com\/(profile\/)?/, "").replace(/\/$/, "").trim() || null,
         }),
       });
       await refresh();
@@ -174,20 +193,36 @@ export default function ProfilePage() {
                       )}
                     </div>
                     <div className="flex-1 space-y-2">
-                      <Label htmlFor="avatarUrl" className="text-xs font-bold text-foreground/80">Avatar Image URL</Label>
-                      <div className="relative">
-                        <ImageIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="avatarUrl"
-                          type="url"
-                          placeholder="https://example.com/image.png"
-                          className="pl-9 bg-muted/20 border-border text-foreground focus-visible:ring-indigo-500 rounded-lg"
-                          value={avatarUrl}
-                          onChange={(e) => setAvatarUrl(e.target.value)}
-                        />
+                      <Label htmlFor="avatarUrl" className="text-xs font-bold text-foreground/80">Avatar Image</Label>
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1">
+                          <ImageIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="avatarUrl"
+                            type="text"
+                            placeholder="https://example.com/image.png"
+                            className="pl-9 bg-muted/20 border-border text-foreground focus-visible:ring-indigo-500 rounded-lg text-xs"
+                            value={avatarUrl.startsWith("data:image") ? "(Custom Uploaded Image)" : avatarUrl}
+                            onChange={(e) => setAvatarUrl(e.target.value)}
+                            disabled={avatarUrl.startsWith("data:image")}
+                          />
+                        </div>
+                        <span className="text-muted-foreground text-xs font-bold">OR</span>
+                        <div className="relative">
+                          <input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            title="Upload custom picture"
+                          />
+                          <Button type="button" variant="outline" size="sm" className="pointer-events-none bg-muted/40 text-foreground border-border rounded-lg">
+                            <UploadCloud className="h-4 w-4 mr-1.5" /> Upload File
+                          </Button>
+                        </div>
                       </div>
                       <p className="text-[10px] text-muted-foreground font-medium">
-                        Paste a direct link to an image (e.g., from Imgur, Discord, or GitHub).
+                        Upload a file directly (max 2MB) or paste a direct link to an image (e.g., from GitHub).
                       </p>
                     </div>
                   </div>
@@ -227,11 +262,12 @@ export default function ProfilePage() {
                       <Input
                         id="leetcodeHandle"
                         type="text"
-                        placeholder="e.g. janesmith"
+                        placeholder="e.g. janesmith (Username only)"
                         value={leetcodeHandle}
                         onChange={(e) => setLeetcodeHandle(e.target.value)}
                         className="bg-muted/20 border-border text-foreground focus-visible:ring-indigo-500 font-mono text-xs rounded-lg"
                       />
+                      <p className="text-[10px] text-muted-foreground">Enter only the username, not the full URL.</p>
                     </div>
 
                     {/* Codeforces handle */}
@@ -242,11 +278,12 @@ export default function ProfilePage() {
                       <Input
                         id="codeforcesHandle"
                         type="text"
-                        placeholder="e.g. Tourist"
+                        placeholder="e.g. Tourist (Username only)"
                         value={codeforcesHandle}
                         onChange={(e) => setCodeforcesHandle(e.target.value)}
                         className="bg-muted/20 border-border text-foreground focus-visible:ring-indigo-500 font-mono text-xs rounded-lg"
                       />
+                      <p className="text-[10px] text-muted-foreground">Enter only the username, not the full URL.</p>
                     </div>
                   </div>
 
@@ -262,7 +299,27 @@ export default function ProfilePage() {
 
           {/* Programming Cards Sidebar */}
           <div className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Coding Profiles</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Tools & Career</h3>
+
+            {/* Resume Builder Tool */}
+            <Card className="border border-border bg-indigo-600/5 backdrop-blur-sm overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <Link href="/profile/resume" className="block">
+                <div className="p-4 flex items-center justify-between border-indigo-500/10">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-inner">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-sm text-foreground">Resume Builder</h4>
+                      <p className="text-[10px] text-muted-foreground font-semibold">Generate ATS-friendly PDFs</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </Link>
+            </Card>
+
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mt-8">Coding Profiles</h3>
 
             {/* LeetCode Profile */}
             {user?.leetcodeHandle ? (

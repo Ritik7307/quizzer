@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, Code2, MessageSquare, Star, CheckCircle2, BookOpen, BookOpenCheck, Swords, Calendar } from "lucide-react";
+import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, Code2, MessageSquare, Star, CheckCircle2, BookOpen, BookOpenCheck, Swords, Calendar, FileText } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -41,7 +41,8 @@ export function Navbar() {
     { href: dashHref, label: "Dashboard", icon: LayoutDashboard },
     { href: "/arena", label: "1v1 Arena", icon: Swords },
     { href: "/practice", label: "Practice Sheet", icon: BookOpenCheck },
-    { href: "/compiler", label: "Compiler", icon: Code2 }
+    { href: "/compiler", label: "Compiler", icon: Code2 },
+    { href: "/profile/resume", label: "Resume Builder", icon: FileText }
   ] : [
     { href: "/practice", label: "Practice Sheet", icon: BookOpenCheck },
     { href: "/compiler", label: "Compiler", icon: Code2 }
@@ -135,7 +136,7 @@ export function Navbar() {
                     
                     {/* Category Selector */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Category</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</label>
                       <div className="grid grid-cols-3 gap-2">
                         {(["General", "Suggestion", "Bug"] as const).map((cat) => (
                           <button
@@ -146,7 +147,7 @@ export function Navbar() {
                               "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
                               category === cat
                                 ? "border-indigo-500 bg-indigo-600 text-white font-bold"
-                                : "border-slate-200 bg-white/40 text-slate-600 hover:border-neutral-750"
+                                : "border-border bg-muted/40 text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                             )}
                           >
                             {cat === "Bug" ? "🐛 Bug" : cat === "Suggestion" ? "💡 Suggestion" : "💬 General"}
@@ -157,7 +158,7 @@ export function Navbar() {
 
                     {/* Star Rating */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Rating</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Rating</label>
                       <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
@@ -171,7 +172,7 @@ export function Navbar() {
                                 "h-6 w-6 transition-colors",
                                 star <= rating
                                   ? "fill-amber-500 text-amber-500"
-                                  : "text-neutral-700 fill-transparent hover:text-slate-500"
+                                  : "text-muted-foreground/30 fill-transparent hover:text-muted-foreground"
                               )}
                             />
                           </button>
@@ -181,7 +182,7 @@ export function Navbar() {
 
                     {/* Comments */}
                     <div className="space-y-1.5">
-                      <label htmlFor="platformComments" className="text-xs font-bold uppercase tracking-wider text-slate-600">Comments & Details</label>
+                      <label htmlFor="platformComments" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Comments & Details</label>
                       <textarea
                         id="platformComments"
                         rows={4}
@@ -189,7 +190,7 @@ export function Navbar() {
                         value={comments}
                         onChange={(e) => setComments(e.target.value)}
                         required
-                        className="w-full rounded-lg border border-slate-200 bg-slate-50/40 p-3 text-sm text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full rounded-lg border border-border bg-muted/20 p-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-muted-foreground/50"
                       />
                     </div>
 
@@ -204,8 +205,8 @@ export function Navbar() {
                 ) : (
                   <div className="py-8 text-center space-y-3">
                     <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto animate-bounce" />
-                    <h3 className="font-bold text-slate-900 text-lg">Thank You!</h3>
-                    <p className="text-xs text-slate-600">Your feedback has been successfully logged.</p>
+                    <h3 className="font-bold text-foreground text-lg">Thank You!</h3>
+                    <p className="text-xs text-muted-foreground">Your feedback has been successfully logged.</p>
                   </div>
                 )}
               </DialogContent>
@@ -236,12 +237,12 @@ export function Navbar() {
           ) : (
             <div className="hidden items-center gap-3 sm:flex">
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/login" className="text-slate-800 no-underline hover:text-slate-900">
+                <Link href="/login" className="text-foreground no-underline hover:text-foreground/80">
                   Login
                 </Link>
               </Button>
-              <Button size="sm" asChild className="bg-indigo-600 text-white">
-                <Link href="/signup" className="text-slate-900 no-underline">
+              <Button size="sm" asChild className="bg-indigo-600 text-white hover:bg-indigo-700">
+                <Link href="/signup" className="text-white no-underline">
                   Sign up
                 </Link>
               </Button>
@@ -251,7 +252,7 @@ export function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden text-slate-600"
+            className="md:hidden text-foreground"
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >

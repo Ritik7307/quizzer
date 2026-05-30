@@ -58,9 +58,13 @@ export function registerSocketHandlers(io: Server, socket: Socket) {
     removePlayerFromQueues(userId);
 
     // Check if player has an active match in database already in progress
+    // Ignore matches older than 30 minutes to prevent getting stuck in ghost matches
     const activeDbMatch = await prisma.match.findFirst({
       where: {
         status: "IN_PROGRESS",
+        startTime: {
+          gt: new Date(Date.now() - 30 * 60 * 1000), // Only reconnect if started within the last 30 minutes
+        },
         participants: {
           some: { userId }
         }

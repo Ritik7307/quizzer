@@ -636,6 +636,38 @@ router.get("/matches/:id", authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// 10. Abandon an active match (e.g. if opponent disconnected)
+router.post("/matches/:id/abandon", authenticate, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.id;
+    const matchId = String(req.params.id);
+
+    const match = await prisma.match.findUnique({
+      where: { id: matchId },
+      include: { participants: true }
+    });
+
+    if (!match || match.status !== "IN_PROGRESS") {
+      return res.status(400).json({ error: "Match is not active" });
+    }
+
+    const isParticipant = match.participants.some(p => p.userId === userId);
+    if (!isParticipant) {
+      return res.status(403).json({ error: "Not a participant in this match" });
+    }
+
+    await prisma.match.update({
+      where: { id: matchId },
+      data: { status: "COMPLETED", endTime: new Date() }
+    });
+
+    return res.json({ message: "Match abandoned" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to abandon match" });
+  }
+});
+
 // External Problem Caches
 let leetCodeCache: any[] = [];
 let leetCodeCacheTime = 0;

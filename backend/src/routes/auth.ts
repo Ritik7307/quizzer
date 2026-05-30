@@ -132,7 +132,7 @@ router.get("/ping", authenticate, async (_req, res) => {
 
 const updateProfileSchema = z.object({
   name: z.string().min(2).optional(),
-  avatarUrl: z.string().url().or(z.literal("")).optional(),
+  avatarUrl: z.string().max(2000000).or(z.literal("")).optional(), // Allow up to ~2MB base64 strings
   leetcodeHandle: z.string().max(60).or(z.literal("")).optional().nullable(),
   codeforcesHandle: z.string().max(60).or(z.literal("")).optional().nullable(),
 });

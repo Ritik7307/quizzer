@@ -288,6 +288,17 @@ export default function CodingBattlePage() {
     }
   };
 
+  const handleAbandonMatch = async () => {
+    if (!matchId) return;
+    try {
+      await api(`/api/coding/matches/${matchId}/abandon`, { method: "POST", token });
+      toast.success("Match ended successfully");
+      router.push("/arena");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err));
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-background text-foreground">
@@ -336,12 +347,22 @@ export default function CodingBattlePage() {
         <div className="flex items-center gap-3 w-full md:w-auto justify-end">
           {opponent ? (
             <>
-              <div className="text-right">
-                <div className="flex items-center justify-end gap-2">
+              <div className="text-right flex flex-col items-end">
+                <div className="flex items-center justify-end gap-2 mb-1">
+                  {opponent.disconnected && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleAbandonMatch}
+                      className="h-6 text-[10px] font-bold text-red-600 border-red-500/30 hover:bg-red-50"
+                    >
+                      Leave Match
+                    </Button>
+                  )}
                   {opponent.disconnected && <Badge variant="destructive" className="text-[8px] font-black tracking-wider uppercase px-1 h-4">DISCONNECTED</Badge>}
                   <span className="text-xs font-black text-foreground">{opponent.name}</span>
                 </div>
-                <div className="flex items-center justify-between gap-4 mt-0.5">
+                <div className="flex items-center justify-between gap-4 w-full mt-0.5">
                   <span className="text-[10px] font-extrabold text-amber-500">{(opponent.passedCount || 0)}/{(opponent.totalCount || 1)} test cases</span>
                 </div>
                 <div className="w-48 bg-muted rounded-full h-2 border border-border mt-1 overflow-hidden">
