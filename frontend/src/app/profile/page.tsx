@@ -108,29 +108,7 @@ export default function ProfilePage() {
     }
   }
 
-  // Generate placeholder heatmap data based on user streak (for visual aesthetic like LeetCode)
-  const heatmapData = useMemo(() => {
-    const today = new Date();
-    const streak = user?.streak || 0;
-    return Array.from({ length: 168 }).map((_, i) => { // 24 weeks * 7 days
-      const d = new Date(today);
-      d.setDate(d.getDate() - (167 - i));
-      
-      let isActive = false;
-      let count = 0;
 
-      // If within recent streak days, mark active
-      if (167 - i < streak) {
-         isActive = true;
-         count = Math.floor(Math.random() * 4) + 1;
-      } else {
-         // Random historical activity to populate the chart
-         isActive = Math.random() > 0.85; 
-         count = isActive ? Math.floor(Math.random() * 3) + 1 : 0;
-      }
-      return { date: d, count };
-    });
-  }, [user?.streak]);
 
   if (!user) return null;
 
@@ -166,7 +144,7 @@ export default function ProfilePage() {
 
                 <Button 
                   onClick={() => setIsEditModalOpen(true)}
-                  className="w-full bg-emerald-650 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-sm"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-sm"
                 >
                   Edit Profile
                 </Button>
@@ -250,45 +228,7 @@ export default function ProfilePage() {
                 </Card>
             </div>
 
-            {/* Heatmap Card */}
-            <Card className="border border-border bg-card/45 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden">
-                <CardHeader className="p-4 border-b border-border flex flex-row items-center justify-between bg-muted/10">
-                  <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2">
-                    <CalendarDays className="h-4 w-4 text-emerald-600 dark:text-emerald-500"/> 
-                    Submission Activity
-                  </CardTitle>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">Past 6 Months</span>
-                </CardHeader>
-                <CardContent className="p-6 overflow-x-auto">
-                  <div className="min-w-[650px]">
-                    <div className="grid grid-flow-col gap-1.5" style={{ gridTemplateRows: "repeat(7, 1fr)" }}>
-                        {heatmapData.map((day, i) => (
-                          <div 
-                            key={i}
-                            title={`${day.date.toDateString()}: ${day.count} submissions`}
-                            className={cn(
-                              "h-3 w-3 rounded-[2px] transition-all cursor-pointer",
-                              day.count === 0 ? "bg-muted hover:bg-muted/80" : 
-                              day.count < 2 ? "bg-emerald-500/40 hover:bg-emerald-500/60" :
-                              day.count < 4 ? "bg-emerald-500/70 hover:bg-emerald-500/90" :
-                              "bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-500"
-                            )}
-                          />
-                        ))}
-                    </div>
-                    <div className="flex items-center justify-end gap-2 mt-4 text-[10px] font-bold text-muted-foreground">
-                        <span>Less</span>
-                        <div className="flex gap-1">
-                          <div className="h-3 w-3 rounded-[2px] bg-muted" />
-                          <div className="h-3 w-3 rounded-[2px] bg-emerald-500/40" />
-                          <div className="h-3 w-3 rounded-[2px] bg-emerald-500/70" />
-                          <div className="h-3 w-3 rounded-[2px] bg-emerald-500 dark:bg-emerald-500" />
-                        </div>
-                        <span>More</span>
-                    </div>
-                  </div>
-                </CardContent>
-            </Card>
+
 
             {/* Live Codeforces Stats */}
             {user.codeforcesHandle && (
