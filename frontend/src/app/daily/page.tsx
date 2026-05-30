@@ -147,12 +147,19 @@ export default function DailyChallengePage() {
                 </p>
                 
                 {data.isSolved ? (
-                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4 flex items-center gap-3">
-                    <Trophy className="w-5 h-5 text-emerald-500" />
-                    <div>
-                      <p className="font-bold text-emerald-600 dark:text-emerald-400">Challenge Completed!</p>
-                      <p className="text-sm text-emerald-600/80 dark:text-emerald-400/80">You've earned your points for today.</p>
+                  <div className="space-y-4">
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4 flex items-center gap-3">
+                      <Trophy className="w-5 h-5 text-emerald-500" />
+                      <div>
+                        <p className="font-bold text-emerald-600 dark:text-emerald-400">Challenge Completed!</p>
+                        <p className="text-sm text-emerald-600/80 dark:text-emerald-400/80">You've earned your points for today.</p>
+                      </div>
                     </div>
+                    <Button asChild variant="outline" size="lg" className="w-full sm:w-auto font-bold border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10">
+                      <Link href={`/coding/${data.daily.codingQuestion.id}`}>
+                        Reattempt Challenge
+                      </Link>
+                    </Button>
                   </div>
                 ) : (
                   <Button asChild size="lg" className="w-full sm:w-auto font-bold">
