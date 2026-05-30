@@ -51,7 +51,7 @@ export default function CandidateDashboard() {
   const [loadingResources, setLoadingResources] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<"quizzes" | "coding" | "history" | "resources">("quizzes");
+  const [activeTab, setActiveTab] = useState<"quizzes" | "history" | "resources">("quizzes");
   const [expandedSubId, setExpandedSubId] = useState<string | null>(null);
 
   // Load data based on selected tab
@@ -178,7 +178,6 @@ export default function CandidateDashboard() {
         <div className="bg-muted/40 dark:bg-zinc-900/60 p-1.5 rounded-2xl flex flex-wrap sm:flex-nowrap gap-1 mb-8 shadow-sm backdrop-blur-sm border border-border">
           {[
             { id: "quizzes", label: "Quizzes", icon: BookOpen },
-            { id: "coding", label: "Coding Practice", icon: Code },
             { id: "history", label: "Submissions History", icon: History },
             { id: "resources", label: "Study Resources", icon: FileText },
           ].map((t) => (
@@ -210,8 +209,6 @@ export default function CandidateDashboard() {
               placeholder={
                 activeTab === "quizzes"
                   ? "Search quizzes..."
-                  : activeTab === "coding"
-                  ? "Search coding problems..."
                   : "Search resources..."
               }
               value={search}
@@ -284,63 +281,7 @@ export default function CandidateDashboard() {
           )
         )}
 
-        {activeTab === "coding" && (
-          /* 2. CODING PRACTICE TAB */
-          loadingCoding ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-40 rounded-2xl" />
-              ))}
-            </div>
-          ) : filteredCoding.length === 0 ? (
-            <Card className="border-border bg-card/45 backdrop-blur-md">
-              <CardContent className="py-16 text-center flex flex-col items-center justify-center space-y-4">
-                <div className="h-16 w-16 rounded-full bg-emerald-500/10 flex items-center justify-center animate-pulse">
-                  <Code className="h-8 w-8 text-emerald-500/65" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-foreground">No Coding Questions</h3>
-                  <p className="text-sm text-muted-foreground max-w-sm">
-                    No programming exercises match your search query. Try typing something else!
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredCoding.map((question) => (
-                <Card key={question.id} className="flex flex-col transition-all duration-300 border border-border bg-card/45 backdrop-blur-md hover:border-emerald-500/35 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 rounded-2xl overflow-hidden group">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="text-lg font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-450 transition-colors duration-200 leading-snug">{question.title}</CardTitle>
-                      <Badge
-                        className={
-                          question.difficulty === "Easy"
-                            ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
-                            : question.difficulty === "Medium"
-                            ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-450 border border-yellow-500/20"
-                            : "bg-red-500/10 text-red-650 dark:text-red-400 border border-red-500/20"
-                        }
-                      >
-                        {question.difficulty}
-                      </Badge>
-                    </div>
-                    <CardDescription className="line-clamp-2 text-sm text-muted-foreground mt-1">
-                      Practice inputs: {question.sampleInput.trim() || "None"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="mt-auto pt-3 flex items-center justify-end border-t border-border bg-muted/10 px-6 py-4">
-                    <Button size="sm" className="h-8 rounded-lg bg-emerald-650 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1" asChild>
-                      <Link href={`/coding/${question.id}`}>
-                        <Play className="h-3.5 w-3.5 fill-current" /> Practice
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )
-        )}
+
 
         {activeTab === "history" && (
           /* 3. SUBMISSION HISTORY TAB */
