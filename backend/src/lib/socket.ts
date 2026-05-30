@@ -207,6 +207,8 @@ export function registerSocketHandlers(io: Server, socket: Socket) {
           // Inform opponent
           socket.to(`match:${matchId}`).emit("match:opponent-disconnected", { userId });
           console.log(`[Arena] Player ${userId} disconnected from active match ${matchId}`);
+          
+          activeMatches.delete(userId);
         } catch (err) {
           console.error("[Arena] Failed to handle match disconnect:", err);
         }

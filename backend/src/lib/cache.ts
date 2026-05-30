@@ -2,6 +2,16 @@ type CacheEntry<T> = { value: T; expiresAt: number };
 
 const store = new Map<string, CacheEntry<unknown>>();
 
+// Periodic cleanup of expired cache entries to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of store.entries()) {
+    if (now > entry.expiresAt) {
+      store.delete(key);
+    }
+  }
+}, 60 * 1000).unref();
+
 export function cacheGet<T>(key: string): T | null {
   const entry = store.get(key);
   if (!entry) return null;
