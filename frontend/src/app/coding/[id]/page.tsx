@@ -381,9 +381,18 @@ export default function CodingWorkspacePage() {
                   </div>
                 )}
 
-                <div>
+                <div className="flex flex-col gap-4">
+                  <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 text-sm text-blue-700 dark:text-blue-300 flex items-start gap-3 shadow-sm">
+                    <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold">Full Program Required</p>
+                      <p className="mt-1 text-xs opacity-90 leading-relaxed">
+                        Unlike LeetCode, you must write a <strong>complete executable program</strong> (e.g., with a <code className="bg-blue-500/20 px-1 py-0.5 rounded">main()</code> function). You are responsible for reading the input from <strong>Standard Input (stdin)</strong> and printing the result to <strong>Standard Output (stdout)</strong>.
+                      </p>
+                    </div>
+                  </div>
                   <h2 className="text-xl font-bold text-foreground leading-snug">{question.title}</h2>
-                  <div className="mt-4 text-sm leading-relaxed text-foreground/90 prose prose-sm dark:prose-invert max-w-none prose-pre:bg-muted/50 prose-pre:border prose-pre:border-border/50">
+                  <div className="text-sm leading-relaxed text-foreground/90 prose prose-sm dark:prose-invert max-w-none prose-pre:bg-muted/50 prose-pre:border prose-pre:border-border/50">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {question.description
                         .replace(/&lt;/g, "<")
