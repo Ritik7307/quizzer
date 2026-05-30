@@ -514,7 +514,7 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
 router.put("/admin/questions/:id", authenticate, requireRole(Role.ADMIN), async (req, res) => {
   try {
     const body = createQuestionSchema.parse(req.body);
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     const question = await prisma.codingQuestion.update({
       where: { id },
