@@ -30,6 +30,9 @@ interface QuestionDetails {
   referenceUrl?: string | null;
   editorial?: string | null;
   isEditorialLocked?: boolean;
+  defaultCodeCpp?: string | null;
+  defaultCodeJava?: string | null;
+  defaultCodeC?: string | null;
 }
 
 const templates: Record<string, string> = {
@@ -81,7 +84,7 @@ export default function CodingWorkspacePage() {
       .then((data) => {
         setQuestion(data.question);
         if (initCode) {
-          setCode(templates.cpp);
+          setCode(data.question.defaultCodeCpp || templates.cpp);
         }
         setCustomInput(data.question.sampleInput);
       })
@@ -136,7 +139,13 @@ export default function CodingWorkspacePage() {
   const handleLanguageChange = (newLang: string) => {
     userEditedCode.current[language] = true;
     setLanguage(newLang);
-    setCode(templates[newLang]);
+    let newCode = templates[newLang];
+    if (question) {
+      if (newLang === "cpp" && question.defaultCodeCpp) newCode = question.defaultCodeCpp;
+      if (newLang === "java" && question.defaultCodeJava) newCode = question.defaultCodeJava;
+      if (newLang === "c" && question.defaultCodeC) newCode = question.defaultCodeC;
+    }
+    setCode(newCode);
   };
 
   async function handleRunCode() {

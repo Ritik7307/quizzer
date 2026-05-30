@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { exec, execFile } from "child_process";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
@@ -11,18 +11,20 @@ interface RunResult {
   errorDetails?: string;
 }
 
-// Helper to run a command with timeout and stdin input
-function execWithTimeout(
+// Helper to run a command with timeout and stdin input without spawning a shell
+function execFileWithTimeout(
   cmd: string,
+  args: string[],
   cwd: string,
   stdin: string,
   timeoutMs = 3000
 ): Promise<{ stdout: string; stderr: string; code: number | null; error: Error | null }> {
   return new Promise((resolve) => {
-    const child = exec(cmd, { cwd }, (error, stdout, stderr) => {
+    // Use execFile instead of exec so we can kill the actual process, not just the shell
+    const child = execFile(cmd, args, { cwd, maxBuffer: 10 * 1024 * 1024 }, (error: any, stdout: any, stderr: any) => {
       resolve({
-        stdout,
-        stderr,
+        stdout: String(stdout),
+        stderr: String(stderr),
         code: child.exitCode,
         error,
       });
@@ -51,6 +53,8 @@ function execWithTimeout(
   });
 }
 
+
+
 // Clean up sandbox folder
 function deleteFolderRecursive(dirPath: string) {
   if (fs.existsSync(dirPath)) {
@@ -69,7 +73,8 @@ function deleteFolderRecursive(dirPath: string) {
 export async function compileAndRun(
   code: string,
   language: string,
-  stdin: string
+  stdin: string,
+  driverCode?: string
 ): Promise<RunResult> {
   const isWindows = process.platform === "win32";
   const id = crypto.randomUUID();
@@ -84,28 +89,43 @@ export async function compileAndRun(
 
     let sourceFile = "";
     let compileCmd = "";
-    let runCmd = "";
+    let runExecutable = "";
+    let runArgs: string[] = [];
+
+    let finalCode = code;
+    if (driverCode) {
+      if (language === "cpp") {
+        finalCode = `#include <bits/stdc++.h>\nusing namespace std;\n${code}\n${driverCode}`;
+      } else if (language === "java") {
+        finalCode = `import java.util.*;\n${code}\n${driverCode}`;
+      } else {
+        finalCode = `${code}\n${driverCode}`;
+      }
+    }
 
     if (language === "cpp") {
       sourceFile = path.join(runDir, "code.cpp");
-      fs.writeFileSync(sourceFile, code);
+      fs.writeFileSync(sourceFile, finalCode);
       const binaryName = isWindows ? "code.exe" : "code";
       compileCmd = `g++ code.cpp -o ${binaryName}`;
-      runCmd = isWindows ? binaryName : `./${binaryName}`;
+      runExecutable = isWindows ? binaryName : `./${binaryName}`;
+      runArgs = [];
     } else if (language === "c") {
       sourceFile = path.join(runDir, "code.c");
-      fs.writeFileSync(sourceFile, code);
+      fs.writeFileSync(sourceFile, finalCode);
       const binaryName = isWindows ? "code.exe" : "code";
       compileCmd = `gcc code.c -o ${binaryName}`;
-      runCmd = isWindows ? binaryName : `./${binaryName}`;
+      runExecutable = isWindows ? binaryName : `./${binaryName}`;
+      runArgs = [];
     } else if (language === "java") {
       // Create Main.java class
       sourceFile = path.join(runDir, "Main.java");
-      fs.writeFileSync(sourceFile, code);
+      fs.writeFileSync(sourceFile, finalCode);
       compileCmd = "javac Main.java";
-      runCmd = "java Main";
+      runExecutable = "java";
+      runArgs = ["Main"];
     } else {
-      return { status: "SystemError" as any, output: "Unsupported language" };
+      return { status: "System Error", output: "Unsupported language" };
     }
 
     // 1. Compile phase
@@ -137,7 +157,7 @@ export async function compileAndRun(
     }
 
     // 2. Execution phase
-    const runRes = await execWithTimeout(runCmd, runDir, stdin, 3000);
+    const runRes = await execFileWithTimeout(runExecutable, runArgs, runDir, stdin, 3000);
 
     if (runRes.stderr === "Time Limit Exceeded") {
       return {

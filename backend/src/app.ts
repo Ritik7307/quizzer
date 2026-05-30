@@ -19,7 +19,7 @@ import dailyRoutes from "./routes/daily.js";
 import aiRoutes from "./routes/ai.js";
 import { prisma } from "./lib/prisma.js";
 import path from "path";
-import { registerSocketHandlers } from "./lib/socket.js";
+import { registerSocketHandlers, registerChallengeHandlers } from "./lib/socket.js";
 
 const defaultOrigins = [
   "http://localhost:3000",
@@ -133,6 +133,7 @@ export function attachSocket(httpServer: Server, app: ReturnType<typeof createAp
     
     // Register 1v1 Arena Socket Handlers
     registerSocketHandlers(io, socket);
+    registerChallengeHandlers(io, socket);
   });
 
   return io;

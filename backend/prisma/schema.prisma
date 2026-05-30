@@ -131,6 +131,15 @@ model CodingQuestion {
   constraints     String             @default("")
   topic           String             @default("General")
   isExternalOnly  Boolean            @default(false)
+  
+  // LeetCode-style boilerplate
+  defaultCodeCpp  String?
+  defaultCodeJava String?
+  defaultCodeC    String?
+  driverCodeCpp   String?
+  driverCodeJava  String?
+  driverCodeC     String?
+
   submissions     CodingSubmission[]
   dailyChallenges DailyChallenge[]
   matches         Match[]

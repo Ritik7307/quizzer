@@ -31,6 +31,12 @@ const createQuestionSchema = z.object({
   referenceUrl: z.string().url("Must be a valid URL").or(z.literal("")).nullable().optional(),
   editorial: z.string().nullable().optional(),
   isExternalOnly: z.boolean().default(false),
+  defaultCodeCpp: z.string().optional(),
+  defaultCodeJava: z.string().optional(),
+  defaultCodeC: z.string().optional(),
+  driverCodeCpp: z.string().optional(),
+  driverCodeJava: z.string().optional(),
+  driverCodeC: z.string().optional(),
 });
 
 const runCodeSchema = z.object({
@@ -141,6 +147,9 @@ router.get("/questions/:id", authenticate, async (req: AuthRequest, res) => {
         editorial: isEditorialLocked ? null : question.editorial,
         isEditorialLocked,
         isExternalOnly: question.isExternalOnly,
+        defaultCodeCpp: question.defaultCodeCpp,
+        defaultCodeJava: question.defaultCodeJava,
+        defaultCodeC: question.defaultCodeC,
       },
     });
   } catch (e) {
@@ -152,9 +161,21 @@ router.get("/questions/:id", authenticate, async (req: AuthRequest, res) => {
 // 3. Run code on custom/sample input (does not save submission history)
 router.post("/questions/:id/run", authenticate, async (req, res) => {
   try {
+    const id = String(req.params.id);
     const { code, language, stdin } = runCodeSchema.parse(req.body);
 
-    const result = await compileAndRun(code, language, stdin);
+    const question = await prisma.codingQuestion.findUnique({
+      where: { id },
+    });
+
+    let driverCode: string | undefined = undefined;
+    if (question) {
+      if (language === "cpp") driverCode = question.driverCodeCpp || undefined;
+      else if (language === "java") driverCode = question.driverCodeJava || undefined;
+      else if (language === "c") driverCode = question.driverCodeC || undefined;
+    }
+
+    const result = await compileAndRun(code, language, stdin, driverCode);
     return res.json(result);
   } catch (e) {
     if (e instanceof z.ZodError) {
@@ -210,9 +231,14 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
     let finalStatus: "Accepted" | "Wrong Answer" | "Compile Error" | "Runtime Error" | "Time Limit Exceeded" = "Accepted";
     let firstErrorDetails = "";
 
+    let driverCode: string | undefined = undefined;
+    if (language === "cpp") driverCode = question.driverCodeCpp || undefined;
+    else if (language === "java") driverCode = question.driverCodeJava || undefined;
+    else if (language === "c") driverCode = question.driverCodeC || undefined;
+
     // Run compile check first
     // To check compile errors without running, we can run compiler once with empty input
-    const initialRun = await compileAndRun(code, language, "");
+    const initialRun = await compileAndRun(code, language, "", driverCode);
     if (initialRun.status === "Compile Error") {
       finalStatus = "Compile Error";
       firstErrorDetails = initialRun.errorDetails || "Compilation failed";
@@ -220,7 +246,7 @@ router.post("/questions/:id/submit", authenticate, async (req: AuthRequest, res)
       // Run code against all test cases
       for (let i = 0; i < testCases.length; i++) {
         const tc = testCases[i];
-        const tcResult = await compileAndRun(code, language, tc.input);
+        const tcResult = await compileAndRun(code, language, tc.input, driverCode);
 
         if (tcResult.status === "Accepted") {
           const normalizedActual = normalizeOutput(tcResult.output);
@@ -462,6 +488,12 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
         referenceUrl: body.referenceUrl || null,
         editorial: body.editorial || null,
         isExternalOnly: body.isExternalOnly,
+        defaultCodeCpp: body.defaultCodeCpp || null,
+        defaultCodeJava: body.defaultCodeJava || null,
+        defaultCodeC: body.defaultCodeC || null,
+        driverCodeCpp: body.driverCodeCpp || null,
+        driverCodeJava: body.driverCodeJava || null,
+        driverCodeC: body.driverCodeC || null,
       },
     });
 
