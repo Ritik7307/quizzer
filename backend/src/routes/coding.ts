@@ -639,7 +639,7 @@ router.get("/matches/:id", authenticate, async (req: AuthRequest, res) => {
 // 10. Abandon an active match (e.g. if opponent disconnected)
 router.post("/matches/:id/abandon", authenticate, async (req: AuthRequest, res) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user!.userId;
     const matchId = String(req.params.id);
 
     const match = await prisma.match.findUnique({
