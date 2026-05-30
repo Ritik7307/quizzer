@@ -46,7 +46,9 @@ export default function PracticeSheetPage() {
 
   const [randomDifficulty, setRandomDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All");
   const [randomCount, setRandomCount] = useState(1);
-  const [generatedProblems, setGeneratedProblems] = useState<CodingQuestion[]>([]);
+  const [randomPlatform, setRandomPlatform] = useState<"All" | "LeetCode" | "Codeforces">("All");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedProblems, setGeneratedProblems] = useState<any[]>([]);
 
   const [leetcodeInput, setLeetcodeInput] = useState("");
   const [codeforcesInput, setCodeforcesInput] = useState("");
@@ -173,33 +175,30 @@ export default function PracticeSheetPage() {
     }));
   };
 
-  const handleRandomPractice = () => {
-    let pool = questions.filter((q) => q.isExternalOnly);
-    if (randomDifficulty !== "All") {
-      pool = pool.filter((q) => q.difficulty === randomDifficulty);
-    }
-
-    if (pool.length === 0) {
-      pool = questions.filter((q) =>
-        randomDifficulty === "All" ? true : q.difficulty === randomDifficulty
+  const handleRandomPractice = async () => {
+    setIsGenerating(true);
+    setGeneratedProblems([]);
+    try {
+      const finalCount = parseInt(String(randomCount), 10) || 1;
+      const res = await api<{ problems: any[] }>(
+        `/api/coding/external/random?count=${finalCount}&difficulty=${randomDifficulty}&platform=${randomPlatform}`,
+        { token }
       );
+      if (res.problems && res.problems.length > 0) {
+        setGeneratedProblems(res.problems);
+        toast.success(
+          res.problems.length === 1
+            ? "Generated 1 practice problem."
+            : `Generated ${res.problems.length} practice problems.`
+        );
+      } else {
+        toast.error("No questions found for the selected criteria.");
+      }
+    } catch (err) {
+      toast.error("Failed to generate problems: " + getApiErrorMessage(err));
+    } finally {
+      setIsGenerating(false);
     }
-
-    if (pool.length === 0) {
-      toast.error("No questions found for the selected difficulty.");
-      return;
-    }
-
-    const count = Math.min(Math.max(1, randomCount), pool.length);
-    const shuffled = [...pool].sort(() => Math.random() - 0.5);
-    const picked = shuffled.slice(0, count);
-
-    setGeneratedProblems(picked);
-    toast.success(
-      count === 1
-        ? "Generated 1 practice problem."
-        : `Generated ${count} practice problems.`
-    );
   };
 
   if (loading) {
@@ -654,11 +653,38 @@ export default function PracticeSheetPage() {
                   max={20}
                   value={randomCount}
                   onChange={(e) => {
-                    const n = parseInt(e.target.value, 10);
-                    setRandomCount(Number.isNaN(n) ? 1 : Math.min(20, Math.max(1, n)));
+                    const val = e.target.value;
+                    if (val === "") {
+                      setRandomCount("" as any);
+                    } else {
+                      const n = parseInt(val, 10);
+                      if (!Number.isNaN(n)) {
+                        setRandomCount(Math.min(20, Math.max(1, n)));
+                      }
+                    }
                   }}
                   className="w-full sm:w-24 h-10"
                 />
+              </div>
+              <div className="space-y-1.5">
+                <span className="text-xs text-muted-foreground block">Platform</span>
+                <div className="flex bg-muted/50 p-1 rounded-lg border border-border">
+                  {["All", "LeetCode", "Codeforces"].map((plat) => (
+                    <button
+                      key={plat}
+                      type="button"
+                      onClick={() => setRandomPlatform(plat as any)}
+                      className={cn(
+                        "px-3 py-1.5 text-xs font-bold rounded-md transition-colors",
+                        randomPlatform === plat
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      {plat}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="space-y-1.5">
                 <span className="text-xs text-muted-foreground block">Difficulty</span>
@@ -667,7 +693,7 @@ export default function PracticeSheetPage() {
                     <button
                       key={diff}
                       type="button"
-                      onClick={() => setRandomDifficulty(diff as typeof randomDifficulty)}
+                      onClick={() => setRandomDifficulty(diff as any)}
                       className={cn(
                         "px-3 py-1.5 text-xs font-bold rounded-md transition-colors",
                         randomDifficulty === diff
@@ -682,9 +708,10 @@ export default function PracticeSheetPage() {
               </div>
               <Button
                 onClick={handleRandomPractice}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-bold tracking-wide h-10"
+                disabled={isGenerating}
+                className="bg-amber-500 hover:bg-amber-600 text-white font-bold tracking-wide h-10 w-full sm:w-auto mt-auto flex items-center justify-center gap-2"
               >
-                Generate {randomCount > 1 ? "Problems" : "Problem"}
+                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Generate"}
               </Button>
             </div>
           </div>
@@ -708,13 +735,13 @@ export default function PracticeSheetPage() {
                         <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                           {q.difficulty}
                         </Badge>
-                        {q.solved && (
-                          <span className="text-[10px] text-emerald-500 font-medium">Solved</span>
-                        )}
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                          {q.platform}
+                        </Badge>
                       </div>
                     </div>
                     <Button size="sm" variant="outline" asChild className="shrink-0">
-                      <Link href={`/coding/${q.id}`}>Open</Link>
+                      <a href={q.referenceUrl} target="_blank" rel="noopener noreferrer">Solve</a>
                     </Button>
                   </li>
                 ))}

@@ -555,4 +555,136 @@ router.get("/matches/:id", authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// External Problem Caches
+let leetCodeCache: any[] = [];
+let leetCodeCacheTime = 0;
+let codeforcesCache: any[] = [];
+let codeforcesCacheTime = 0;
+const CACHE_TTL = 1000 * 60 * 60; // 1 hour
+
+async function getLeetCodeProblems() {
+  const now = Date.now();
+  if (leetCodeCache.length > 0 && now - leetCodeCacheTime < CACHE_TTL) {
+    return leetCodeCache;
+  }
+  try {
+    const res = await fetch("https://leetcode.com/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `
+          query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
+            problemsetQuestionList: questionList(
+              categorySlug: $categorySlug
+              limit: $limit
+              skip: $skip
+              filters: $filters
+            ) {
+              questions: data {
+                difficulty
+                title
+                titleSlug
+                isPaidOnly
+              }
+            }
+          }
+        `,
+        variables: { categorySlug: "", skip: 0, limit: 3000, filters: {} }
+      })
+    });
+    const data = await res.json();
+    const questions = data?.data?.problemsetQuestionList?.questions || [];
+    leetCodeCache = questions.filter((q: any) => !q.isPaidOnly);
+    leetCodeCacheTime = now;
+    return leetCodeCache;
+  } catch (err) {
+    console.error("Failed to fetch LeetCode problems", err);
+    return leetCodeCache;
+  }
+}
+
+async function getCodeforcesProblems() {
+  const now = Date.now();
+  if (codeforcesCache.length > 0 && now - codeforcesCacheTime < CACHE_TTL) {
+    return codeforcesCache;
+  }
+  try {
+    const res = await fetch("https://codeforces.com/api/problemset.problems");
+    const data = await res.json();
+    if (data.status === "OK") {
+      codeforcesCache = data.result.problems;
+      codeforcesCacheTime = now;
+    }
+    return codeforcesCache;
+  } catch (err) {
+    console.error("Failed to fetch Codeforces problems", err);
+    return codeforcesCache;
+  }
+}
+
+// 10. Generate random external problems
+router.get("/external/random", authenticate, async (req: AuthRequest, res) => {
+  try {
+    const count = Math.min(20, Math.max(1, parseInt(String(req.query.count)) || 1));
+    const difficulty = String(req.query.difficulty || "All");
+    const platform = String(req.query.platform || "All");
+
+    let pool: any[] = [];
+
+    // Fetch LeetCode
+    if (platform === "All" || platform === "LeetCode") {
+      const lcProblems = await getLeetCodeProblems();
+      const mappedLc = lcProblems.map((q: any) => ({
+        id: `lc-${q.titleSlug}`,
+        title: q.title,
+        difficulty: q.difficulty, // "Easy", "Medium", "Hard"
+        platform: "LeetCode",
+        referenceUrl: `https://leetcode.com/problems/${q.titleSlug}/`,
+        isExternalOnly: true,
+        solved: false
+      }));
+      pool = pool.concat(mappedLc);
+    }
+
+    // Fetch Codeforces
+    if (platform === "All" || platform === "Codeforces") {
+      const cfProblems = await getCodeforcesProblems();
+      const mappedCf = cfProblems.map((q: any) => {
+        let diff = "Medium";
+        if (q.rating && q.rating < 1200) diff = "Easy";
+        else if (q.rating && q.rating > 1600) diff = "Hard";
+
+        return {
+          id: `cf-${q.contestId}-${q.index}`,
+          title: `${q.contestId}${q.index} - ${q.name}`,
+          difficulty: diff,
+          platform: "Codeforces",
+          referenceUrl: `https://codeforces.com/problemset/problem/${q.contestId}/${q.index}`,
+          isExternalOnly: true,
+          solved: false
+        };
+      });
+      pool = pool.concat(mappedCf);
+    }
+
+    // Filter by difficulty
+    if (difficulty !== "All") {
+      pool = pool.filter(q => q.difficulty === difficulty);
+    }
+
+    if (pool.length === 0) {
+      return res.status(404).json({ error: "No problems found for the selected criteria" });
+    }
+
+    // Pick random
+    const shuffled = pool.sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, count);
+
+    return res.json({ problems: selected });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to generate random problems" });
+  }
+});
+
 export default router;
