@@ -510,6 +510,46 @@ router.post("/admin/questions", authenticate, requireRole(Role.ADMIN), async (re
   }
 });
 
+// 7. Admin: Update coding question
+router.put("/admin/questions/:id", authenticate, requireRole(Role.ADMIN), async (req, res) => {
+  try {
+    const body = createQuestionSchema.parse(req.body);
+    const { id } = req.params;
+
+    const question = await prisma.codingQuestion.update({
+      where: { id },
+      data: {
+        title: body.title,
+        description: body.description,
+        inputFormat: body.inputFormat,
+        outputFormat: body.outputFormat,
+        constraints: body.constraints,
+        sampleInput: body.sampleInput,
+        sampleOutput: body.sampleOutput,
+        testCases: body.testCases,
+        difficulty: body.difficulty,
+        topic: body.topic,
+        referenceUrl: body.referenceUrl,
+        editorial: body.editorial,
+        isExternalOnly: body.isExternalOnly,
+        defaultCodeCpp: body.defaultCodeCpp,
+        defaultCodeJava: body.defaultCodeJava,
+        defaultCodeC: body.defaultCodeC,
+        driverCodeCpp: body.driverCodeCpp,
+        driverCodeJava: body.driverCodeJava,
+        driverCodeC: body.driverCodeC,
+      },
+    });
+    return res.json({ question });
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      return res.status(400).json({ error: e.errors });
+    }
+    console.error(e);
+    return res.status(500).json({ error: "Failed to update coding question" });
+  }
+});
+
 // 7. Get comments for a coding question
 router.get("/questions/:id/comments", authenticate, async (req: AuthRequest, res) => {
   try {

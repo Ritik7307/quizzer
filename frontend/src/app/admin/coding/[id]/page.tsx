@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api, getApiErrorMessage } from "@/lib/api";
@@ -10,34 +10,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Code, Loader2, Plus } from "lucide-react";
+import { Code, Loader2, Save } from "lucide-react";
 
-export default function AdminNewCodingQuestionPage() {
+export default function AdminEditCodingQuestionPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { user, token } = useAuth();
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect if not admin
   useEffect(() => {
     if (user && user.role !== "ADMIN") {
       router.replace("/dashboard");
     }
   }, [user, router]);
-
-  const defaultTestCases = JSON.stringify(
-    [
-      {
-        input: "5 7\n",
-        output: "12\n",
-      },
-      {
-        input: "10 -3\n",
-        output: "7\n",
-      },
-    ],
-    null,
-    2
-  );
 
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
@@ -48,13 +34,41 @@ export default function AdminNewCodingQuestionPage() {
   const [topic, setTopic] = useState("General");
   const [sampleInput, setSampleInput] = useState("");
   const [sampleOutput, setSampleOutput] = useState("");
-  const [testCasesJson, setTestCasesJson] = useState(defaultTestCases);
+  const [testCasesJson, setTestCasesJson] = useState("[]");
   const [referenceUrl, setReferenceUrl] = useState("");
   const [editorial, setEditorial] = useState("");
   const [isExternalOnly, setIsExternalOnly] = useState(false);
   
   const [defaultCodeCpp, setDefaultCodeCpp] = useState("");
   const [driverCodeCpp, setDriverCodeCpp] = useState("");
+
+  useEffect(() => {
+    if (!token) return;
+    api<any>(`/api/coding/questions/${id}`, { token })
+      .then((data) => {
+        const q = data.question;
+        setTitle(q.title || "");
+        setDifficulty(q.difficulty || "Easy");
+        setDescription(q.description || "");
+        setInputFormat(q.inputFormat || "");
+        setOutputFormat(q.outputFormat || "");
+        setConstraints(q.constraints || "");
+        setTopic(q.topic || "General");
+        setSampleInput(q.sampleInput || "");
+        setSampleOutput(q.sampleOutput || "");
+        setTestCasesJson(q.testCases || "[]");
+        setReferenceUrl(q.referenceUrl || "");
+        setEditorial(q.editorial || "");
+        setIsExternalOnly(q.isExternalOnly || false);
+        setDefaultCodeCpp(q.defaultCodeCpp || "");
+        setDriverCodeCpp(q.driverCodeCpp || "");
+      })
+      .catch((err) => {
+        toast.error("Failed to load question");
+        router.push("/admin");
+      })
+      .finally(() => setLoading(false));
+  }, [id, token, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -81,7 +95,6 @@ export default function AdminNewCodingQuestionPage() {
         toast.error("Description is required");
         return;
       }
-      // Validate test cases JSON structure
       try {
         const parsed = JSON.parse(testCasesJson);
         if (!Array.isArray(parsed)) {
@@ -96,7 +109,6 @@ export default function AdminNewCodingQuestionPage() {
       }
     }
 
-    // Validate URL if present
     if (referenceUrl.trim()) {
       try {
         new URL(referenceUrl.trim());
@@ -108,8 +120,8 @@ export default function AdminNewCodingQuestionPage() {
 
     setSubmitting(true);
     try {
-      await api("/api/coding/admin/questions", {
-        method: "POST",
+      await api(`/api/coding/admin/questions/${id}`, {
+        method: "PUT",
         body: JSON.stringify({
           title: title.trim(),
           description: finalDescription,
@@ -130,13 +142,17 @@ export default function AdminNewCodingQuestionPage() {
         token,
       });
 
-      toast.success("Coding question created successfully!");
+      toast.success("Coding question updated successfully!");
       router.push("/admin");
     } catch (err) {
       toast.error(getApiErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (loading) {
+    return <div className="p-12 text-center">Loading...</div>;
   }
 
   return (
@@ -148,9 +164,9 @@ export default function AdminNewCodingQuestionPage() {
               <Code className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle>Add Coding Question</CardTitle>
+              <CardTitle>Edit Coding Question</CardTitle>
               <CardDescription>
-                Create a new programming problem for candidates to solve and practice.
+                Update problem statements, test cases, and hidden driver code.
               </CardDescription>
             </div>
           </div>
@@ -169,7 +185,6 @@ export default function AdminNewCodingQuestionPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              {/* Difficulty */}
               <div className="space-y-2">
                 <Label htmlFor="difficulty">Difficulty</Label>
                 <select
@@ -184,9 +199,8 @@ export default function AdminNewCodingQuestionPage() {
                 </select>
               </div>
 
-              {/* Topic */}
               <div className="space-y-2">
-                <Label htmlFor="topic">Topic / Category (Practice Sheet)</Label>
+                <Label htmlFor="topic">Topic / Category</Label>
                 <select
                   id="topic"
                   value={topic}
@@ -200,16 +214,11 @@ export default function AdminNewCodingQuestionPage() {
                   <option value="Trees">Trees</option>
                   <option value="Graphs">Graphs</option>
                   <option value="Dynamic Programming">Dynamic Programming</option>
-                  <option value="Greedy Algorithms">Greedy Algorithms</option>
-                  <option value="Recursion & Backtracking">Recursion & Backtracking</option>
-                  <option value="Sorting & Searching">Sorting & Searching</option>
-                  <option value="Bit Manipulation">Bit Manipulation</option>
                   <option value="General">General</option>
                 </select>
               </div>
             </div>
 
-            {/* External-Only Toggle */}
             <div className="flex items-center space-x-3 rounded-lg border border-slate-200 bg-white/60 p-4">
               <input
                 id="isExternalOnly"
@@ -218,11 +227,6 @@ export default function AdminNewCodingQuestionPage() {
                 onChange={(e) => {
                   const checked = e.target.checked;
                   setIsExternalOnly(checked);
-                  if (checked) {
-                    if (!description.trim()) {
-                      setDescription("Solve this question on the external platform using the link provided.");
-                    }
-                  }
                 }}
                 className="h-4 w-4 rounded border-slate-200 bg-white text-indigo-600 focus:ring-indigo-500 focus:ring-offset-black"
               />
@@ -231,20 +235,16 @@ export default function AdminNewCodingQuestionPage() {
                   External-Only Problem (Solved on LeetCode / Codeforces)
                 </Label>
                 <p className="text-[11px] text-slate-500">
-                  Checking this disables the inline compiler workspace. Candidates will solve the question on the external site, and click "Mark as Solved" on their sheet to claim points and advance their daily active days count.
+                  Checking this disables the inline compiler workspace. Candidates will solve the question on the external site.
                 </p>
               </div>
             </div>
 
-            {/* Reference URL */}
             <div className="space-y-2">
-              <Label htmlFor="referenceUrl">
-                Reference Question URL (LeetCode / Codeforces) {isExternalOnly ? "— Required" : "— Optional"}
-              </Label>
+              <Label htmlFor="referenceUrl">Reference Question URL {isExternalOnly ? "— Required" : "— Optional"}</Label>
               <Input
                 id="referenceUrl"
                 type="url"
-                placeholder="e.g. https://leetcode.com/problems/two-sum/"
                 value={referenceUrl}
                 onChange={(e) => setReferenceUrl(e.target.value)}
                 required={isExternalOnly}
@@ -252,12 +252,10 @@ export default function AdminNewCodingQuestionPage() {
               />
             </div>
 
-            {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">Problem Statement</Label>
               <Textarea
                 id="description"
-                placeholder={isExternalOnly ? "e.g. Solve the Two Sum problem on LeetCode..." : "Describe the problem, requirements, logic, and output constraints..."}
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -269,25 +267,20 @@ export default function AdminNewCodingQuestionPage() {
             {!isExternalOnly && (
               <>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {/* Input Format */}
                   <div className="space-y-2">
                     <Label htmlFor="inputFormat">Input Format</Label>
                     <Textarea
                       id="inputFormat"
-                      placeholder="e.g. Two space-separated integers, a and b."
                       rows={3}
                       value={inputFormat}
                       onChange={(e) => setInputFormat(e.target.value)}
                       className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
-
-                  {/* Output Format */}
                   <div className="space-y-2">
                     <Label htmlFor="outputFormat">Output Format</Label>
                     <Textarea
                       id="outputFormat"
-                      placeholder="e.g. Print a single integer representing the sum."
                       rows={3}
                       value={outputFormat}
                       onChange={(e) => setOutputFormat(e.target.value)}
@@ -296,12 +289,10 @@ export default function AdminNewCodingQuestionPage() {
                   </div>
                 </div>
 
-                {/* Constraints */}
                 <div className="space-y-2">
                   <Label htmlFor="constraints">Constraints</Label>
                   <Textarea
                     id="constraints"
-                    placeholder="e.g. 1 <= N <= 10^5, Time Limit: 1.0s, Memory Limit: 256MB"
                     rows={3}
                     value={constraints}
                     onChange={(e) => setConstraints(e.target.value)}
@@ -310,25 +301,20 @@ export default function AdminNewCodingQuestionPage() {
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {/* Sample Input */}
                   <div className="space-y-2">
                     <Label htmlFor="sampleInput">Sample Input</Label>
                     <Textarea
                       id="sampleInput"
-                      placeholder="5 7"
                       rows={3}
                       value={sampleInput}
                       onChange={(e) => setSampleInput(e.target.value)}
                       className="bg-slate-50 border-slate-200 text-slate-900 font-mono focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
-
-                  {/* Sample Output */}
                   <div className="space-y-2">
                     <Label htmlFor="sampleOutput">Sample Output</Label>
                     <Textarea
                       id="sampleOutput"
-                      placeholder="12"
                       rows={3}
                       value={sampleOutput}
                       onChange={(e) => setSampleOutput(e.target.value)}
@@ -337,7 +323,6 @@ export default function AdminNewCodingQuestionPage() {
                   </div>
                 </div>
 
-                {/* Test Cases */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="testCases">Test Cases (JSON Format)</Label>
@@ -382,21 +367,7 @@ export default function AdminNewCodingQuestionPage() {
               </>
             )}
 
-            {/* Editorial Solution */}
-            <div className="space-y-2">
-              <Label htmlFor="editorial">Editorial / Solution Explanation (Markdown/Text) — Optional</Label>
-              <Textarea
-                id="editorial"
-                placeholder="Provide a detailed explanation of the solution, algorithm approach, and the solution code..."
-                rows={6}
-                value={editorial}
-                onChange={(e) => setEditorial(e.target.value)}
-                className="bg-slate-50 border-slate-200 text-slate-900 focus-visible:ring-2 focus-visible:ring-indigo-500"
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 pt-4">
               <Button
                 type="button"
                 variant="outline"
@@ -408,16 +379,11 @@ export default function AdminNewCodingQuestionPage() {
               </Button>
               <Button type="submit" disabled={submitting} className="w-2/3 flex items-center justify-center gap-2 bg-indigo-600 text-white font-semibold">
                 {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating question...
-                  </>
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <>
-                    <Plus className="h-4 w-4" />
-                    Create Question
-                  </>
+                  <Save className="h-4 w-4" />
                 )}
+                Save Changes
               </Button>
             </div>
           </form>
