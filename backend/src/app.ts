@@ -37,7 +37,17 @@ const envOrigins = [process.env.FRONTEND_URLS, process.env.FRONTEND_URL]
 const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
 
 const isLocalDevOrigin = (origin: string) =>
-  /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+|172\.\d+\.\d+\.\d+)(:\d+)?$/.test(origin);
+
+const corsOrigin = function(origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+  if (!origin || allowedOrigins.includes(origin)) {
+    callback(null, true);
+  } else if (process.env.NODE_ENV !== "production" && isLocalDevOrigin(origin)) {
+    callback(null, true);
+  } else {
+    callback(new Error(`Origin not allowed: ${origin}`));
+  }
+};
 
 export function createApp() {
   const app = express();
@@ -46,15 +56,7 @@ export function createApp() {
   app.use(compression());
   app.use(
     cors({
-      origin(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else if (process.env.NODE_ENV !== "production" && isLocalDevOrigin(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error(`Origin not allowed: ${origin}`));
-        }
-      },
+      origin: corsOrigin,
       credentials: true,
     })
   );
@@ -113,7 +115,7 @@ export function createApp() {
 
 export function attachSocket(httpServer: Server, app: ReturnType<typeof createApp>) {
   const io = new SocketServer(httpServer, {
-    cors: { origin: allowedOrigins, methods: ["GET", "POST"] },
+    cors: { origin: corsOrigin, methods: ["GET", "POST"], credentials: true },
     pingInterval: 25_000,
     pingTimeout: 20_000,
     maxHttpBufferSize: 1e5,

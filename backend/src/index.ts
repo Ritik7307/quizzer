@@ -30,8 +30,8 @@ export async function startServer() {
   attachSocket(httpServer, app);
 
   await new Promise<void>((resolve) => {
-    httpServer.listen(PORT, () => {
-      console.log(`Quizzer API running on http://localhost:${PORT}`);
+    httpServer.listen(PORT, "0.0.0.0", () => {
+      console.log(`Quizzer API running on http://0.0.0.0:${PORT}`);
       console.log(`Max connections: ${httpServer.maxConnections}`);
       resolve();
     });
