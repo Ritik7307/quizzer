@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { FileText, Download, Plus, Trash2, Mail, Phone, Globe, ChevronLeft, Code2, Briefcase } from "lucide-react";
+import { FileText, Download, Plus, Trash2, Mail, Phone, Globe, ChevronLeft, Code2, Briefcase, ArrowUp, ArrowDown, Layout } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -58,13 +58,141 @@ export default function ResumeBuilderPage() {
 
   const [skills, setSkills] = useState("JavaScript, TypeScript, React, Next.js, Node.js, Express, PostgreSQL, Prisma, Tailwind CSS, Git, Docker");
 
+  const [template, setTemplate] = useState("modern");
+  const [sectionOrder, setSectionOrder] = useState([
+    "summary",
+    "experience",
+    "projects",
+    "education",
+    "skills"
+  ]);
+
+  const moveSection = (index: number, direction: 'up' | 'down') => {
+    const newOrder = [...sectionOrder];
+    if (direction === 'up' && index > 0) {
+      [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+    } else if (direction === 'down' && index < newOrder.length - 1) {
+      [newOrder[index + 1], newOrder[index]] = [newOrder[index], newOrder[index + 1]];
+    }
+    setSectionOrder(newOrder);
+  };
+
   const handlePrint = () => {
     window.print();
   };
 
+  const renderSection = (sectionId: string) => {
+    switch(sectionId) {
+      case 'summary':
+        return summary ? (
+          <div className="mb-6" key="summary">
+            {template === 'classic' && <h2 className="text-lg font-bold text-black uppercase border-b-2 border-black pb-1 mb-3">Professional Summary</h2>}
+            <p className={`text-[15px] leading-relaxed text-slate-800 ${template === 'classic' ? 'font-serif' : ''}`}>{summary}</p>
+          </div>
+        ) : null;
+        
+      case 'experience':
+        return experience.length > 0 && experience.some(e => e.company || e.role) ? (
+          <div className="mb-6" key="experience">
+            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-4`}>Experience</h2>
+            <div className="space-y-4">
+              {experience.map(exp => (
+                <div key={exp.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}`}>
+                  {template === 'minimalist' && (
+                    <div className="text-sm font-semibold text-slate-600 mt-1">{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
+                  )}
+                  <div>
+                    <div className={`flex justify-between items-baseline mb-1 ${template === 'minimalist' ? 'flex-col sm:flex-row' : ''}`}>
+                      <h3 className={`text-[16px] font-bold text-slate-900 ${template === 'classic' ? 'font-serif' : ''}`}>{exp.role}</h3>
+                      {template !== 'minimalist' && (
+                        <span className={`text-sm font-semibold text-slate-600 ${template === 'classic' ? 'font-serif font-normal' : ''}`}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</span>
+                      )}
+                    </div>
+                    <div className={`text-[15px] font-semibold mb-1.5 ${template === 'classic' ? 'text-black font-serif italic' : template === 'minimalist' ? 'text-slate-700' : 'text-indigo-700'}`}>{exp.company}</div>
+                    {exp.description && (
+                      <div className={`text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap ${template === 'classic' ? 'font-serif' : template === 'minimalist' ? '' : 'pl-3 border-l-2 border-slate-200'}`}>
+                        {exp.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null;
+
+      case 'projects':
+        return projects.length > 0 && projects.some(p => p.name) ? (
+          <div className="mb-6" key="projects">
+            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-4`}>Projects</h2>
+            <div className="space-y-4">
+              {projects.map(proj => (
+                <div key={proj.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}`}>
+                  {template === 'minimalist' && <div />}
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className={`text-[16px] font-bold text-slate-900 ${template === 'classic' ? 'font-serif' : ''}`}>{proj.name}</h3>
+                      {proj.link && <span className={`text-[13px] ${template === 'classic' ? 'text-slate-600 font-serif' : template === 'minimalist' ? 'text-slate-500' : 'font-semibold text-indigo-600'}`}>({proj.link.replace(/^https?:\/\//, '')})</span>}
+                    </div>
+                    {proj.description && (
+                      <div className={`text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap ${template === 'classic' ? 'font-serif' : template === 'minimalist' ? '' : 'pl-3 border-l-2 border-slate-200'}`}>
+                        {proj.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null;
+
+      case 'education':
+        return education.length > 0 && education.some(e => e.institution || e.degree) ? (
+          <div className="mb-6" key="education">
+            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-4`}>Education</h2>
+            <div className="space-y-3">
+              {education.map(edu => (
+                <div key={edu.id} className={`flex justify-between items-baseline ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}`}>
+                  {template === 'minimalist' && (
+                    <div className="text-sm font-semibold text-slate-600">{edu.year}</div>
+                  )}
+                  <div className={template === 'minimalist' ? 'flex flex-col' : ''}>
+                    <div className={`text-[15px] font-bold text-slate-900 ${template === 'classic' ? 'font-serif' : ''}`}>{edu.institution}</div>
+                    <div className={`text-[14px] font-medium text-slate-700 ${template === 'classic' ? 'font-serif italic text-black' : ''}`}>{edu.degree}</div>
+                  </div>
+                  {template !== 'minimalist' && (
+                    <div className={`text-sm font-semibold text-slate-600 ${template === 'classic' ? 'font-serif font-normal text-black' : ''}`}>{edu.year}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null;
+
+      case 'skills':
+        return skills ? (
+          <div className="mb-6" key="skills">
+            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-3`}>Skills</h2>
+            <div className={`text-[14px] text-slate-800 leading-relaxed ${template === 'classic' ? 'font-serif' : 'font-medium'}`}>
+              {template === 'modern' ? (
+                skills.split(',').map((skill, i) => (
+                  <span key={i} className="inline-block mr-2 mb-1 px-2 py-0.5 bg-slate-100 rounded-sm">{skill.trim()}</span>
+                ))
+              ) : (
+                <p>{skills}</p>
+              )}
+            </div>
+          </div>
+        ) : null;
+        
+      default:
+        return null;
+    }
+  };
+
   return (
     <ProtectedRoute>
-      <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden print-override">
+      <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden print-override print:h-auto print:overflow-visible">
         
         {/* Header - Hidden on Print */}
         <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-card px-6 print:hidden">
@@ -78,7 +206,7 @@ export default function ResumeBuilderPage() {
           </Button>
         </header>
 
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 overflow-hidden print:block print:overflow-visible h-full">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 overflow-hidden print:block print:overflow-visible h-full print:h-auto">
           
           {/* Left Panel - Editor (Hidden on Print) */}
           <div className="overflow-y-auto p-6 bg-muted/20 border-r border-border print:hidden space-y-8">
@@ -86,6 +214,46 @@ export default function ResumeBuilderPage() {
               <h1 className="text-2xl font-bold tracking-tight">Resume Builder</h1>
               <p className="text-sm text-muted-foreground">Fill in your details below to generate a professional, ATS-friendly resume.</p>
             </div>
+
+            {/* Layout Settings */}
+            <Card className="shadow-sm border-indigo-500/20 bg-indigo-50/50 dark:bg-indigo-500/5">
+              <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2"><Layout className="w-5 h-5 text-indigo-500" /> Layout Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label>Resume Template</Label>
+                  <select 
+                    value={template} 
+                    onChange={(e) => setTemplate(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  >
+                    <option value="modern">Modern (Default)</option>
+                    <option value="classic">Classic (ATS-Friendly)</option>
+                    <option value="minimalist">Minimalist</option>
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Section Order</Label>
+                  <div className="space-y-2 bg-card rounded-md border p-2">
+                    {sectionOrder.map((section, idx) => (
+                      <div key={section} className="flex items-center justify-between bg-muted/50 p-2 rounded border border-border/50">
+                        <span className="text-sm font-medium capitalize">{section}</span>
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(idx, 'up')} disabled={idx === 0}>
+                            <ArrowUp className="w-3 h-3" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(idx, 'down')} disabled={idx === sectionOrder.length - 1}>
+                            <ArrowDown className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Personal Info */}
             <Card className="shadow-sm">
@@ -206,101 +374,22 @@ export default function ResumeBuilderPage() {
           <div className="overflow-y-auto bg-slate-200 dark:bg-slate-900 flex justify-center p-8 print:p-0 print:bg-white print:block">
             
             {/* A4 Paper Container */}
-            <div className="bg-white text-black w-full max-w-[850px] min-h-[1100px] shadow-2xl print:shadow-none print:w-full print:max-w-none print:m-0 p-[10%]">
+            <div className={`bg-white text-black w-full max-w-[850px] min-h-[1100px] shadow-2xl print:shadow-none print:w-full print:max-w-none print:m-0 p-[10%] ${template === 'classic' ? 'font-serif' : ''}`}>
               
               {/* Header section */}
-              <div className="border-b-2 border-slate-800 pb-6 mb-6">
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase mb-3 text-center">{personalInfo.name || "YOUR NAME"}</h1>
-                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-slate-700 font-medium">
-                  {personalInfo.email && <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> {personalInfo.email}</div>}
-                  {personalInfo.phone && <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> {personalInfo.phone}</div>}
-                  {personalInfo.website && <div className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> {personalInfo.website.replace(/^https?:\/\//, '')}</div>}
-                  {personalInfo.linkedin && <div className="flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" /> {personalInfo.linkedin.replace(/^https?:\/\//, '')}</div>}
-                  {personalInfo.github && <div className="flex items-center gap-1.5"><Code2 className="w-3.5 h-3.5" /> {personalInfo.github.replace(/^https?:\/\//, '')}</div>}
+              <div className={`border-b-2 ${template === 'classic' ? 'border-black' : 'border-slate-800'} pb-6 mb-6`}>
+                <h1 className={`text-4xl font-black text-slate-900 tracking-tight uppercase mb-3 text-center ${template === 'minimalist' ? 'font-light tracking-widest' : template === 'classic' ? 'font-serif' : ''}`}>{personalInfo.name || "YOUR NAME"}</h1>
+                <div className={`flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm font-medium ${template === 'classic' ? 'text-black font-serif' : 'text-slate-700'}`}>
+                  {personalInfo.email && <div className="flex items-center gap-1.5">{template !== 'classic' && <Mail className="w-3.5 h-3.5" />} {personalInfo.email}</div>}
+                  {personalInfo.phone && <div className="flex items-center gap-1.5">{template !== 'classic' && <Phone className="w-3.5 h-3.5" />} {personalInfo.phone}</div>}
+                  {personalInfo.website && <div className="flex items-center gap-1.5">{template !== 'classic' && <Globe className="w-3.5 h-3.5" />} {personalInfo.website.replace(/^https?:\/\//, '')}</div>}
+                  {personalInfo.linkedin && <div className="flex items-center gap-1.5">{template !== 'classic' && <Briefcase className="w-3.5 h-3.5" />} {personalInfo.linkedin.replace(/^https?:\/\//, '')}</div>}
+                  {personalInfo.github && <div className="flex items-center gap-1.5">{template !== 'classic' && <Code2 className="w-3.5 h-3.5" />} {personalInfo.github.replace(/^https?:\/\//, '')}</div>}
                 </div>
               </div>
 
-              {/* Summary */}
-              {summary && (
-                <div className="mb-6">
-                  <p className="text-[15px] leading-relaxed text-slate-800">{summary}</p>
-                </div>
-              )}
-
-              {/* Experience */}
-              {experience.length > 0 && experience.some(e => e.company || e.role) && (
-                <div className="mb-6">
-                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-widest border-b border-slate-300 pb-1 mb-4">Experience</h2>
-                  <div className="space-y-4">
-                    {experience.map(exp => (
-                      <div key={exp.id}>
-                        <div className="flex justify-between items-baseline mb-1">
-                          <h3 className="text-[16px] font-bold text-slate-900">{exp.role}</h3>
-                          <span className="text-sm font-semibold text-slate-600">{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</span>
-                        </div>
-                        <div className="text-[15px] font-semibold text-indigo-700 mb-1.5">{exp.company}</div>
-                        {exp.description && (
-                          <div className="text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap pl-3 border-l-2 border-slate-200">
-                            {exp.description}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Projects */}
-              {projects.length > 0 && projects.some(p => p.name) && (
-                <div className="mb-6">
-                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-widest border-b border-slate-300 pb-1 mb-4">Projects</h2>
-                  <div className="space-y-4">
-                    {projects.map(proj => (
-                      <div key={proj.id}>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-[16px] font-bold text-slate-900">{proj.name}</h3>
-                          {proj.link && <span className="text-[13px] font-semibold text-indigo-600">({proj.link.replace(/^https?:\/\//, '')})</span>}
-                        </div>
-                        {proj.description && (
-                          <div className="text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap pl-3 border-l-2 border-slate-200">
-                            {proj.description}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Education */}
-              {education.length > 0 && education.some(e => e.institution || e.degree) && (
-                <div className="mb-6">
-                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-widest border-b border-slate-300 pb-1 mb-4">Education</h2>
-                  <div className="space-y-3">
-                    {education.map(edu => (
-                      <div key={edu.id} className="flex justify-between items-baseline">
-                        <div>
-                          <div className="text-[15px] font-bold text-slate-900">{edu.institution}</div>
-                          <div className="text-[14px] font-medium text-slate-700">{edu.degree}</div>
-                        </div>
-                        <div className="text-sm font-semibold text-slate-600">{edu.year}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Skills */}
-              {skills && (
-                <div className="mb-6">
-                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-widest border-b border-slate-300 pb-1 mb-3">Skills</h2>
-                  <div className="text-[14px] text-slate-800 font-medium leading-relaxed">
-                    {skills.split(',').map((skill, i) => (
-                      <span key={i} className="inline-block mr-2 mb-1 px-2 py-0.5 bg-slate-100 rounded-sm">{skill.trim()}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Dynamic Sections */}
+              {sectionOrder.map(section => renderSection(section))}
 
             </div>
           </div>
@@ -316,12 +405,11 @@ export default function ResumeBuilderPage() {
               visibility: visible;
             }
             .print-override {
-              position: absolute;
-              left: 0;
-              top: 0;
+              position: relative;
               width: 100%;
-              height: 100%;
+              height: auto !important;
               background: white !important;
+              overflow: visible !important;
             }
             @page {
               size: auto;
