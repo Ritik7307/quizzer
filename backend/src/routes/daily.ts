@@ -20,6 +20,7 @@ router.get("/today", authenticate, async (req: AuthRequest, res) => {
             difficulty: true,
             topic: true,
             referenceUrl: true,
+            isExternalOnly: true,
           }
         }
       }
@@ -38,11 +39,13 @@ router.get("/today", authenticate, async (req: AuthRequest, res) => {
 
       const randomQ = allQuestions[Math.floor(Math.random() * allQuestions.length)];
 
-      // Make the selected question visible in the regular practice sheet
+      // Commented out: DO NOT change isExternalOnly to false, as it breaks the submission logic which expects test cases.
+      /*
       await prisma.codingQuestion.update({
         where: { id: randomQ.id },
         data: { isExternalOnly: false }
       });
+      */
 
       daily = await prisma.dailyChallenge.create({
         data: {
@@ -57,6 +60,7 @@ router.get("/today", authenticate, async (req: AuthRequest, res) => {
               difficulty: true,
               topic: true,
               referenceUrl: true,
+              isExternalOnly: true,
             }
           }
         }

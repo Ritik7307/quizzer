@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, CheckCircle2, Clock, Swords, Trophy } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ExternalLink, CheckCircle } from "lucide-react";
 
 interface DailyChallengeData {
   daily: {
@@ -21,6 +22,7 @@ interface DailyChallengeData {
       difficulty: string;
       topic: string;
       referenceUrl: string | null;
+      isExternalOnly?: boolean;
     };
   };
   isSolved: boolean;
@@ -32,6 +34,8 @@ export default function DailyChallengePage() {
   const [data, setData] = useState<DailyChallengeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeftStr, setTimeLeftStr] = useState("");
+  const [markingSolved, setMarkingSolved] = useState(false);
+  const { refresh: refreshUser } = useAuth();
 
   useEffect(() => {
     if (!token) return;
@@ -74,6 +78,37 @@ export default function DailyChallengePage() {
     
     return () => clearInterval(interval);
   }, [data]);
+
+  const handleMarkSolved = async () => {
+    if (!token || !data) return;
+    setMarkingSolved(true);
+    try {
+      const res = await api<{
+        success: boolean;
+        pointsAwarded: number;
+        currentStreak: number;
+      }>(`/api/coding/questions/${data.daily.codingQuestion.id}/mark-solved`, {
+        method: "POST",
+        token,
+      });
+
+      if (res.success) {
+        const pts = res.pointsAwarded;
+        const streak = res.currentStreak;
+        if (pts > 0) {
+          toast.success(`Correct! Marked as solved. +${pts} points earned. Active Days: ${streak}`);
+        } else {
+          toast.success(`Correct! Marked as solved. Active Days: ${streak}`);
+        }
+        setData((prev) => prev ? { ...prev, isSolved: true } : prev);
+        await refreshUser();
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to mark as solved");
+    } finally {
+      setMarkingSolved(false);
+    }
+  };
 
   return (
     <ProtectedRoute>
@@ -155,18 +190,49 @@ export default function DailyChallengePage() {
                         <p className="text-sm text-emerald-600/80 dark:text-emerald-400/80">You've earned your points for today.</p>
                       </div>
                     </div>
-                    <Button asChild variant="outline" size="lg" className="w-full sm:w-auto font-bold border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10">
-                      <Link href={`/coding/${data.daily.codingQuestion.id}`}>
-                        Reattempt Challenge
-                      </Link>
-                    </Button>
+                    {data.daily.codingQuestion.isExternalOnly ? (
+                      <Button asChild variant="outline" size="lg" className="w-full sm:w-auto font-bold border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10">
+                        <a href={data.daily.codingQuestion.referenceUrl!} target="_blank" rel="noopener noreferrer">
+                          Reattempt on Platform
+                        </a>
+                      </Button>
+                    ) : (
+                      <Button asChild variant="outline" size="lg" className="w-full sm:w-auto font-bold border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10">
+                        <Link href={`/coding/${data.daily.codingQuestion.id}`}>
+                          Reattempt Challenge
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 ) : (
-                  <Button asChild size="lg" className="w-full sm:w-auto font-bold">
-                    <Link href={`/coding/${data.daily.codingQuestion.id}`}>
-                      Solve Challenge
-                    </Link>
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {data.daily.codingQuestion.isExternalOnly ? (
+                      <>
+                        <Button asChild size="lg" className="w-full sm:w-auto font-bold flex items-center gap-2">
+                          <a href={data.daily.codingQuestion.referenceUrl!} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="w-4 h-4" />
+                            Solve on Platform
+                          </a>
+                        </Button>
+                        <Button 
+                          onClick={handleMarkSolved} 
+                          disabled={markingSolved}
+                          variant="outline"
+                          size="lg" 
+                          className="w-full sm:w-auto font-bold text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/10"
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          {markingSolved ? "Marking..." : "Mark as Solved"}
+                        </Button>
+                      </>
+                    ) : (
+                      <Button asChild size="lg" className="w-full sm:w-auto font-bold">
+                        <Link href={`/coding/${data.daily.codingQuestion.id}`}>
+                          Solve Challenge
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
                 )}
               </CardContent>
             </Card>

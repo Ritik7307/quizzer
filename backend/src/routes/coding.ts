@@ -707,7 +707,11 @@ async function getLeetCodeProblems() {
     });
     const data = await res.json();
     const questions = data?.data?.problemsetQuestionList?.questions || [];
-    leetCodeCache = questions.filter((q: any) => !q.isPaidOnly);
+    leetCodeCache = questions.filter((q: any) => !q.isPaidOnly).map((q: any) => ({
+      title: q.title,
+      titleSlug: q.titleSlug,
+      difficulty: q.difficulty
+    }));
     leetCodeCacheTime = now;
     return leetCodeCache;
   } catch (err) {
@@ -725,7 +729,12 @@ async function getCodeforcesProblems() {
     const res = await fetch("https://codeforces.com/api/problemset.problems");
     const data = await res.json();
     if (data.status === "OK") {
-      codeforcesCache = data.result.problems;
+      codeforcesCache = data.result.problems.map((q: any) => ({
+        contestId: q.contestId,
+        index: q.index,
+        name: q.name,
+        rating: q.rating
+      }));
       codeforcesCacheTime = now;
     }
     return codeforcesCache;
