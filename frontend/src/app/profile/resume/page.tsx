@@ -329,7 +329,7 @@ export default function ResumeBuilderPage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden print-override print:h-auto print:overflow-visible">
+      <div className="flex flex-col h-[calc(100vh-4rem)] bg-background text-foreground overflow-hidden print-override print:h-auto print:overflow-visible">
         
         {/* Header - Hidden on Print */}
         <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-card px-6 print:hidden">

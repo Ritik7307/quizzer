@@ -94,7 +94,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-card/85 backdrop-blur-md">
-      <div className="mx-auto flex h-14 min-h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
+      <div className="mx-auto flex h-14 min-h-14 w-full items-center justify-between gap-2 px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-indigo-500" onClick={() => setMobileOpen(false)}>
           <span className="text-base text-foreground font-bold tracking-tight sm:text-lg">Quizzer</span>
         </Link>
