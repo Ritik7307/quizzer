@@ -397,10 +397,10 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* Right Panel - Live Preview */}
-          <div className="overflow-y-auto bg-slate-200 dark:bg-slate-900 flex justify-center items-start p-8 print:p-0 print:bg-white print:block">
+          <div className="overflow-auto bg-slate-200 dark:bg-slate-900 flex justify-center items-start p-4 sm:p-8 print:p-0 print:bg-white print:block">
             
             {/* A4 Paper Container */}
-            <div className={`bg-white text-black w-full max-w-[850px] min-h-[1100px] shadow-2xl print:shadow-none print:w-full print:max-w-none print:m-0 p-[10%] ${template === 'classic' ? 'font-serif' : ''}`}>
+            <div className={`bg-white text-black shrink-0 w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none print:w-full print:min-h-0 print:max-w-none print:m-0 p-[20mm] ${template === 'classic' ? 'font-serif' : ''}`}>
               
               {/* Header section */}
               <div className={`border-b-2 ${template === 'classic' ? 'border-black' : 'border-slate-800'} pb-6 mb-6`}>
@@ -438,7 +438,7 @@ export default function ResumeBuilderPage() {
               overflow: visible !important;
             }
             @page {
-              size: auto;
+              size: A4;
               margin: 0mm;
             }
           }
