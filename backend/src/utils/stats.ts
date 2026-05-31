@@ -21,6 +21,14 @@ export async function syncUserStats(userId: string) {
       },
     });
 
+    const allDailies = await prisma.dailyChallenge.findMany();
+    const dailyMap = new Map<string, Set<string>>();
+    for (const d of allDailies) {
+      const dStr = d.date.toLocaleDateString("en-CA");
+      if (!dailyMap.has(d.codingQuestionId)) dailyMap.set(d.codingQuestionId, new Set());
+      dailyMap.get(d.codingQuestionId)!.add(dStr);
+    }
+
     if (submissions.length === 0) {
       const updated = await prisma.user.update({
         where: { id: userId },
@@ -35,13 +43,25 @@ export async function syncUserStats(userId: string) {
 
     // 2. Calculate points: distinct solved questions
     const solvedQuestionIds = new Set<string>();
+    const completedDailies = new Set<string>();
+    let dailyCompletedCount = 0;
     let points = 0;
+
     for (const sub of submissions) {
       if (sub.codingQuestion && !solvedQuestionIds.has(sub.codingQuestionId)) {
         solvedQuestionIds.add(sub.codingQuestionId);
         if (sub.codingQuestion.difficulty === "Easy") points += 10;
         else if (sub.codingQuestion.difficulty === "Medium") points += 20;
         else if (sub.codingQuestion.difficulty === "Hard") points += 30;
+      }
+
+      const subDateStr = new Date(sub.createdAt).toLocaleDateString("en-CA");
+      if (dailyMap.has(sub.codingQuestionId) && dailyMap.get(sub.codingQuestionId)!.has(subDateStr)) {
+        const uniqueKey = `${sub.codingQuestionId}-${subDateStr}`;
+        if (!completedDailies.has(uniqueKey)) {
+          completedDailies.add(uniqueKey);
+          dailyCompletedCount++;
+        }
       }
     }
 
@@ -85,6 +105,10 @@ export async function syncUserStats(userId: string) {
         }
       }
     }
+
+    // Add Daily Challenge completion and Streak bonus points
+    points += dailyCompletedCount * 50;
+    points += uniqueDates.length * 10;
 
     // 4. Update the user record
     const updatedUser = await prisma.user.update({
