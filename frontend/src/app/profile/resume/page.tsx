@@ -81,6 +81,143 @@ export default function ResumeBuilderPage() {
     window.print();
   };
 
+  const renderEditorSection = (sectionId: string, index: number) => {
+    const isFirst = index === 0;
+    const isLast = index === sectionOrder.length - 1;
+    const upDownButtons = (
+      <div className="flex items-center gap-1">
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveSection(index, 'up')} disabled={isFirst} title="Move Section Up">
+          <ArrowUp className="w-4 h-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveSection(index, 'down')} disabled={isLast} title="Move Section Down">
+          <ArrowDown className="w-4 h-4" />
+        </Button>
+      </div>
+    );
+
+    switch(sectionId) {
+      case 'summary':
+        return (
+          <Card className="shadow-sm" key="summary">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Professional Summary</CardTitle>
+              {upDownButtons}
+            </CardHeader>
+            <CardContent>
+              <Textarea rows={4} value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="A brief summary of your background and goals..." />
+            </CardContent>
+          </Card>
+        );
+
+      case 'experience':
+        return (
+          <Card className="shadow-sm" key="experience">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Experience</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setExperience([...experience, { id: Date.now().toString(), company: "", role: "", startDate: "", endDate: "", description: "" }])}>
+                  <Plus className="h-4 w-4 mr-1" /> Add
+                </Button>
+                {upDownButtons}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {experience.map((exp, i) => (
+                <div key={exp.id} className="p-4 border rounded-lg bg-card space-y-3 relative group">
+                  <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setExperience(experience.filter(e => e.id !== exp.id))}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1"><Label>Company</Label><Input value={exp.company} onChange={(e) => {const newE = [...experience]; newE[i].company = e.target.value; setExperience(newE);}} /></div>
+                    <div className="space-y-1"><Label>Role</Label><Input value={exp.role} onChange={(e) => {const newE = [...experience]; newE[i].role = e.target.value; setExperience(newE);}} /></div>
+                    <div className="space-y-1"><Label>Start Date</Label><Input value={exp.startDate} placeholder="e.g. Jan 2020" onChange={(e) => {const newE = [...experience]; newE[i].startDate = e.target.value; setExperience(newE);}} /></div>
+                    <div className="space-y-1"><Label>End Date</Label><Input value={exp.endDate} placeholder="e.g. Present" onChange={(e) => {const newE = [...experience]; newE[i].endDate = e.target.value; setExperience(newE);}} /></div>
+                  </div>
+                  <div className="space-y-1"><Label>Description / Accomplishments</Label><Textarea rows={3} value={exp.description} onChange={(e) => {const newE = [...experience]; newE[i].description = e.target.value; setExperience(newE);}} /></div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        );
+
+      case 'education':
+        return (
+          <Card className="shadow-sm" key="education">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Education</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setEducation([...education, { id: Date.now().toString(), institution: "", degree: "", year: "" }])}>
+                  <Plus className="h-4 w-4 mr-1" /> Add
+                </Button>
+                {upDownButtons}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {education.map((edu, i) => (
+                <div key={edu.id} className="p-4 border rounded-lg bg-card space-y-3 relative group">
+                  <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setEducation(education.filter(e => e.id !== edu.id))}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1"><Label>Institution</Label><Input value={edu.institution} onChange={(e) => {const newE = [...education]; newE[i].institution = e.target.value; setEducation(newE);}} /></div>
+                    <div className="space-y-1"><Label>Degree</Label><Input value={edu.degree} onChange={(e) => {const newE = [...education]; newE[i].degree = e.target.value; setEducation(newE);}} /></div>
+                    <div className="col-span-2 space-y-1"><Label>Timeline (e.g. 2018 - 2022)</Label><Input value={edu.year} onChange={(e) => {const newE = [...education]; newE[i].year = e.target.value; setEducation(newE);}} /></div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        );
+
+      case 'projects':
+        return (
+          <Card className="shadow-sm" key="projects">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Projects</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setProjects([...projects, { id: Date.now().toString(), name: "", link: "", description: "" }])}>
+                  <Plus className="h-4 w-4 mr-1" /> Add
+                </Button>
+                {upDownButtons}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {projects.map((proj, i) => (
+                <div key={proj.id} className="p-4 border rounded-lg bg-card space-y-3 relative group">
+                  <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setProjects(projects.filter(p => p.id !== proj.id))}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1"><Label>Project Name</Label><Input value={proj.name} onChange={(e) => {const newP = [...projects]; newP[i].name = e.target.value; setProjects(newP);}} /></div>
+                    <div className="space-y-1"><Label>Link (Optional)</Label><Input value={proj.link} onChange={(e) => {const newP = [...projects]; newP[i].link = e.target.value; setProjects(newP);}} /></div>
+                  </div>
+                  <div className="space-y-1"><Label>Description</Label><Textarea rows={2} value={proj.description} onChange={(e) => {const newP = [...projects]; newP[i].description = e.target.value; setProjects(newP);}} /></div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        );
+
+      case 'skills':
+        return (
+          <Card className="shadow-sm" key="skills">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">Skills</CardTitle>
+                <CardDescription>Comma separated list of your technical skills.</CardDescription>
+              </div>
+              {upDownButtons}
+            </CardHeader>
+            <CardContent>
+              <Textarea rows={3} value={skills} onChange={(e) => setSkills(e.target.value)} />
+            </CardContent>
+          </Card>
+        );
+
+      default: return null;
+    }
+  };
+
   const renderSection = (sectionId: string) => {
     switch(sectionId) {
       case 'summary':
@@ -220,7 +357,7 @@ export default function ResumeBuilderPage() {
               <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2"><Layout className="w-5 h-5 text-indigo-500" /> Layout Settings</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent>
                 <div className="space-y-2">
                   <Label>Resume Template</Label>
                   <select 
@@ -232,25 +369,6 @@ export default function ResumeBuilderPage() {
                     <option value="classic">Classic (ATS-Friendly)</option>
                     <option value="minimalist">Minimalist</option>
                   </select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Section Order</Label>
-                  <div className="space-y-2 bg-card rounded-md border p-2">
-                    {sectionOrder.map((section, idx) => (
-                      <div key={section} className="flex items-center justify-between bg-muted/50 p-2 rounded border border-border/50">
-                        <span className="text-sm font-medium capitalize">{section}</span>
-                        <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(idx, 'up')} disabled={idx === 0}>
-                            <ArrowUp className="w-3 h-3" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(idx, 'down')} disabled={idx === sectionOrder.length - 1}>
-                            <ArrowDown className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -272,106 +390,14 @@ export default function ResumeBuilderPage() {
               </CardContent>
             </Card>
 
-            {/* Summary */}
-            <Card className="shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Professional Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea rows={4} value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="A brief summary of your background and goals..." />
-              </CardContent>
-            </Card>
-
-            {/* Experience */}
-            <Card className="shadow-sm">
-              <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">Experience</CardTitle>
-                <Button variant="outline" size="sm" onClick={() => setExperience([...experience, { id: Date.now().toString(), company: "", role: "", startDate: "", endDate: "", description: "" }])}>
-                  <Plus className="h-4 w-4 mr-1" /> Add
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {experience.map((exp, i) => (
-                  <div key={exp.id} className="p-4 border rounded-lg bg-card space-y-3 relative group">
-                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setExperience(experience.filter(e => e.id !== exp.id))}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1"><Label>Company</Label><Input value={exp.company} onChange={(e) => {const newE = [...experience]; newE[i].company = e.target.value; setExperience(newE);}} /></div>
-                      <div className="space-y-1"><Label>Role</Label><Input value={exp.role} onChange={(e) => {const newE = [...experience]; newE[i].role = e.target.value; setExperience(newE);}} /></div>
-                      <div className="space-y-1"><Label>Start Date</Label><Input value={exp.startDate} placeholder="e.g. Jan 2020" onChange={(e) => {const newE = [...experience]; newE[i].startDate = e.target.value; setExperience(newE);}} /></div>
-                      <div className="space-y-1"><Label>End Date</Label><Input value={exp.endDate} placeholder="e.g. Present" onChange={(e) => {const newE = [...experience]; newE[i].endDate = e.target.value; setExperience(newE);}} /></div>
-                    </div>
-                    <div className="space-y-1"><Label>Description / Accomplishments</Label><Textarea rows={3} value={exp.description} onChange={(e) => {const newE = [...experience]; newE[i].description = e.target.value; setExperience(newE);}} /></div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Education */}
-            <Card className="shadow-sm">
-              <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">Education</CardTitle>
-                <Button variant="outline" size="sm" onClick={() => setEducation([...education, { id: Date.now().toString(), institution: "", degree: "", year: "" }])}>
-                  <Plus className="h-4 w-4 mr-1" /> Add
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {education.map((edu, i) => (
-                  <div key={edu.id} className="p-4 border rounded-lg bg-card space-y-3 relative group">
-                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setEducation(education.filter(e => e.id !== edu.id))}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1"><Label>Institution</Label><Input value={edu.institution} onChange={(e) => {const newE = [...education]; newE[i].institution = e.target.value; setEducation(newE);}} /></div>
-                      <div className="space-y-1"><Label>Degree</Label><Input value={edu.degree} onChange={(e) => {const newE = [...education]; newE[i].degree = e.target.value; setEducation(newE);}} /></div>
-                      <div className="col-span-2 space-y-1"><Label>Timeline (e.g. 2018 - 2022)</Label><Input value={edu.year} onChange={(e) => {const newE = [...education]; newE[i].year = e.target.value; setEducation(newE);}} /></div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Projects */}
-            <Card className="shadow-sm">
-              <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">Projects</CardTitle>
-                <Button variant="outline" size="sm" onClick={() => setProjects([...projects, { id: Date.now().toString(), name: "", link: "", description: "" }])}>
-                  <Plus className="h-4 w-4 mr-1" /> Add
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {projects.map((proj, i) => (
-                  <div key={proj.id} className="p-4 border rounded-lg bg-card space-y-3 relative group">
-                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setProjects(projects.filter(p => p.id !== proj.id))}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1"><Label>Project Name</Label><Input value={proj.name} onChange={(e) => {const newP = [...projects]; newP[i].name = e.target.value; setProjects(newP);}} /></div>
-                      <div className="space-y-1"><Label>Link (Optional)</Label><Input value={proj.link} onChange={(e) => {const newP = [...projects]; newP[i].link = e.target.value; setProjects(newP);}} /></div>
-                    </div>
-                    <div className="space-y-1"><Label>Description</Label><Textarea rows={2} value={proj.description} onChange={(e) => {const newP = [...projects]; newP[i].description = e.target.value; setProjects(newP);}} /></div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Skills */}
-            <Card className="shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Skills</CardTitle>
-                <CardDescription>Comma separated list of your technical skills.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Textarea rows={3} value={skills} onChange={(e) => setSkills(e.target.value)} />
-              </CardContent>
-            </Card>
+            {/* Dynamic Editor Sections */}
+            {sectionOrder.map((section, idx) => renderEditorSection(section, idx))}
 
             <div className="h-8" />
           </div>
 
           {/* Right Panel - Live Preview */}
-          <div className="overflow-y-auto bg-slate-200 dark:bg-slate-900 flex justify-center p-8 print:p-0 print:bg-white print:block">
+          <div className="overflow-y-auto bg-slate-200 dark:bg-slate-900 flex justify-center items-start p-8 print:p-0 print:bg-white print:block">
             
             {/* A4 Paper Container */}
             <div className={`bg-white text-black w-full max-w-[850px] min-h-[1100px] shadow-2xl print:shadow-none print:w-full print:max-w-none print:m-0 p-[10%] ${template === 'classic' ? 'font-serif' : ''}`}>
