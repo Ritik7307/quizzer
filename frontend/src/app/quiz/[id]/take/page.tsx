@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Send, Flag, CheckCircle2, AlertTriangle, HelpCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Send, Flag, CheckCircle2, AlertTriangle, HelpCircle, Star } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Button } from "@/components/ui/button";
@@ -41,11 +41,18 @@ export default function TakeQuizPage() {
   const [showInstructions, setShowInstructions] = useState(true);
   const [savingStatus, setSavingStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [difficulty, setDifficulty] = useState<"Easy" | "Medium" | "Hard">("Medium");
+  const [comments, setComments] = useState("");
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const submittingRef = useRef(false);
 
   const submitQuiz = useCallback(async () => {
     if (submittingRef.current || !attemptId || !token) return;
     submittingRef.current = true;
+    setIsSubmitting(true);
     try {
       await api(`/api/attempts/${attemptId}/submit`, {
         method: "POST",
@@ -53,12 +60,36 @@ export default function TakeQuizPage() {
         body: JSON.stringify({ answers }),
       });
       toast.success("Quiz submitted!");
-      router.push(`/quiz/${id}/result`);
+      setFeedbackDialogOpen(true);
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Submit failed");
       submittingRef.current = false;
+      setIsSubmitting(false);
     }
-  }, [attemptId, token, answers, id, router]);
+  }, [attemptId, token, answers]);
+
+  const handleFeedbackSubmit = async (skipped = false) => {
+    if (!skipped && token) {
+      setSubmittingFeedback(true);
+      try {
+        await api(`/api/attempts/${attemptId}/feedback`, {
+          method: "POST",
+          token,
+          body: JSON.stringify({
+            rating,
+            difficulty,
+            comments: comments.trim() || null,
+          }),
+        });
+        toast.success("Thank you for your feedback!");
+      } catch (err: any) {
+        toast.error(err.message || "Failed to submit feedback");
+      } finally {
+        setSubmittingFeedback(false);
+      }
+    }
+    router.push(`/quiz/${id}/result`);
+  };
 
   // Load Quiz Attempt
   useEffect(() => {
@@ -320,8 +351,8 @@ export default function TakeQuizPage() {
         <p className="text-[10px] text-center text-muted-foreground/60 mt-2 font-medium">Click a question number to jump to it directly.</p>
       </div>
 
-      <Button onClick={submitQuiz} className="w-full bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-2.5 mt-2 rounded-lg shadow-sm">
-        Finish & Submit Exam
+      <Button onClick={submitQuiz} disabled={isSubmitting} className="w-full bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-2.5 mt-2 rounded-lg shadow-sm">
+        {isSubmitting ? "Submitting..." : "Finish & Submit Exam"}
       </Button>
     </div>
   );
@@ -386,7 +417,7 @@ export default function TakeQuizPage() {
 
         {/* Visual Progress Bar */}
         <div className="mb-6 space-y-2 bg-card/45 border border-border rounded-2xl p-3.5 sm:p-4 shadow-sm">
-          <div className="flex items-center justify-between text-xs font-bold text-muted-foreground sm:text-sm">
+          <div className="flex items-center justify-between text-sm font-bold text-muted-foreground sm:text-base">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
               Completion Progress
@@ -420,7 +451,7 @@ export default function TakeQuizPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6 pt-6">
-              <p className="text-base leading-relaxed text-foreground sm:text-lg font-extrabold">{q?.text}</p>
+              <p className="text-lg leading-relaxed text-foreground sm:text-xl font-extrabold">{q?.text}</p>
               
               {/* Options list based on type */}
               {q?.type === "MULTI_SELECT" ? (
@@ -448,7 +479,7 @@ export default function TakeQuizPage() {
                           }
                         }}
                         className={cn(
-                          "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none cursor-pointer",
+                          "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-base transition-all sm:p-4 sm:text-lg outline-none cursor-pointer",
                           isSelected
                             ? "border-indigo-500 bg-indigo-600 text-white font-bold ring-1 ring-indigo-550 shadow-md"
                             : "border-border text-foreground/90 hover:border-indigo-500/40 hover:bg-muted/40 dark:hover:bg-zinc-800/40 bg-card"
@@ -495,7 +526,7 @@ export default function TakeQuizPage() {
                       type="button"
                       onClick={() => setAnswers({ ...answers, [q.id]: i })}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition-all sm:p-4 sm:text-base outline-none cursor-pointer",
+                        "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-base transition-all sm:p-4 sm:text-lg outline-none cursor-pointer",
                         answers[q.id] === i
                           ? "border-indigo-500 bg-indigo-600 text-white font-bold ring-1 ring-indigo-550 shadow-md"
                           : "border-border text-foreground/90 hover:border-indigo-500/40 hover:bg-muted/40 dark:hover:bg-zinc-800/40 bg-card"
@@ -518,7 +549,7 @@ export default function TakeQuizPage() {
               {/* Card Actions Footer */}
               <div className="flex flex-col gap-2 pt-6 sm:flex-row sm:justify-between border-t border-border mt-4">
                 <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                  <Button variant="outline" disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className="w-full sm:w-auto h-9 text-xs rounded-lg">
+                  <Button variant="outline" disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className="w-full sm:w-auto h-10 text-sm rounded-lg">
                     <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                   </Button>
                   
@@ -530,7 +561,7 @@ export default function TakeQuizPage() {
                         delete newAnswers[q.id];
                         setAnswers(newAnswers);
                       }}
-                      className="w-full sm:w-auto h-9 text-xs text-muted-foreground hover:text-foreground rounded-lg"
+                      className="w-full sm:w-auto h-10 text-sm text-muted-foreground hover:text-foreground rounded-lg"
                     >
                       Clear Selection
                     </Button>
@@ -542,7 +573,7 @@ export default function TakeQuizPage() {
                     variant="outline"
                     onClick={() => setFlagged((prev) => ({ ...prev, [q.id]: !prev[q.id] }))}
                     className={cn(
-                      "w-full sm:w-auto h-9 text-xs gap-2 rounded-lg",
+                      "w-full sm:w-auto h-10 text-sm gap-2 rounded-lg",
                       flagged[q?.id]
                         ? "border-amber-500/20 bg-amber-500/10 text-amber-555 dark:text-amber-400 hover:bg-amber-500/15"
                         : "text-muted-foreground hover:text-foreground"
@@ -556,7 +587,7 @@ export default function TakeQuizPage() {
                     <Button
                       onClick={() => setCurrent((c) => c + 1)}
                       className={cn(
-                        "w-full sm:w-auto h-9 text-xs font-bold gap-1 rounded-lg",
+                        "w-full sm:w-auto h-10 text-sm font-bold gap-1 rounded-lg",
                         answers[q?.id] === undefined
                           ? "bg-muted text-muted-foreground border border-border hover:bg-muted/70 hover:text-foreground"
                           : "bg-indigo-600 text-white hover:bg-indigo-700"
@@ -568,7 +599,7 @@ export default function TakeQuizPage() {
                   ) : (
                     <Dialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button className="w-full sm:w-auto h-9 text-xs bg-emerald-650 hover:bg-emerald-700 text-white font-extrabold rounded-lg shadow-sm">
+                        <Button className="w-full sm:w-auto h-10 text-sm bg-emerald-650 hover:bg-emerald-700 text-white font-extrabold rounded-lg shadow-sm">
                           <Send className="h-4 w-4 mr-1" /> Submit Exam
                         </Button>
                       </DialogTrigger>
@@ -594,8 +625,8 @@ export default function TakeQuizPage() {
             {/* Palette Card */}
             <Card className="border border-border bg-card/45 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden">
               <CardHeader className="pb-2.5 border-b border-border bg-muted/5">
-                <CardTitle className="text-sm font-bold text-foreground">Question Palette</CardTitle>
-                <CardDescription className="text-xs text-muted-foreground">Navigate between questions</CardDescription>
+                <CardTitle className="text-base font-bold text-foreground">Question Palette</CardTitle>
+                <CardDescription className="text-sm text-muted-foreground">Navigate between questions</CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="grid grid-cols-5 gap-2">
@@ -610,7 +641,7 @@ export default function TakeQuizPage() {
                         type="button"
                         onClick={() => setCurrent(i)}
                         className={cn(
-                          "relative flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold border transition-all duration-200 outline-none select-none cursor-pointer",
+                          "relative flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold border transition-all duration-200 outline-none select-none cursor-pointer",
                           isSel
                             ? "ring-2 ring-indigo-500 bg-indigo-500/10 text-indigo-650 dark:text-indigo-450 border-transparent scale-105 shadow-sm"
                             : isFlg
@@ -632,7 +663,7 @@ export default function TakeQuizPage() {
                 </div>
 
                 {/* Palette Legend */}
-                <div className="mt-4 border-t border-border pt-3 flex flex-wrap gap-2 text-[10px] text-muted-foreground font-semibold">
+                <div className="mt-4 border-t border-border pt-3 flex flex-wrap gap-2 text-xs text-muted-foreground font-semibold">
                   <div className="flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded bg-card border border-border" />
                     <span>Unvisited</span>
@@ -652,41 +683,41 @@ export default function TakeQuizPage() {
             {/* Keyboard Shortcuts Card */}
             <Card className="border border-border bg-card/45 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden">
               <CardHeader className="pb-2.5 border-b border-border bg-muted/5">
-                <CardTitle className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest leading-none">Keyboard Controls</CardTitle>
+                <CardTitle className="text-xs font-extrabold text-muted-foreground uppercase tracking-widest leading-none">Keyboard Controls</CardTitle>
               </CardHeader>
               <CardContent className="pt-3">
-                <div className="space-y-2 text-xs text-muted-foreground font-semibold">
+                <div className="space-y-2 text-sm text-muted-foreground font-semibold">
                   <div className="flex items-center justify-between border-b border-border/40 pb-1">
-                    <span className="text-[11px]">Select Option</span>
+                    <span className="text-xs">Select Option</span>
                     <span className="flex gap-1.5">
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">A-D</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">1-4</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">A-D</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">1-4</kbd>
                     </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-border/40 pb-1">
-                    <span className="text-[11px]">Next / Skip</span>
+                    <span className="text-xs">Next / Skip</span>
                     <span className="flex gap-1.5">
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">N</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">→</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">N</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">→</kbd>
                     </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-border/40 pb-1">
-                    <span className="text-[11px]">Previous</span>
+                    <span className="text-xs">Previous</span>
                     <span className="flex gap-1.5">
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">P</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">←</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">P</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">←</kbd>
                     </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-border/40 pb-1">
-                    <span className="text-[11px]">Flag for Review</span>
+                    <span className="text-xs">Flag for Review</span>
                     <span className="flex gap-1.5">
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">F</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">R</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">F</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">R</kbd>
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px]">Clear Selection</span>
-                    <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono text-muted-foreground">C</kbd>
+                    <span className="text-xs">Clear Selection</span>
+                    <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-muted-foreground">C</kbd>
                   </div>
                 </div>
               </CardContent>
@@ -696,6 +727,96 @@ export default function TakeQuizPage() {
 
         </div>
       </div>
+
+      {/* Feedback Dialog */}
+      <Dialog open={feedbackDialogOpen} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-md border-border bg-card shadow-2xl text-foreground" onInteractOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-center">Rate this Quiz</DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground mt-1">
+              Your feedback helps us improve future quiz questions and difficulty scaling.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-5 pt-3">
+            {/* Star Rating */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground block text-center">Rating</label>
+              <div className="flex items-center justify-center gap-1.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star)}
+                    className="outline-none focus:outline-none transition-transform active:scale-95"
+                  >
+                    <Star
+                      className={cn(
+                        "h-8 w-8 transition-colors",
+                        star <= rating
+                          ? "fill-amber-450 text-amber-500"
+                          : "text-neutral-700 fill-transparent hover:text-slate-500"
+                      )}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Perceived Difficulty */}
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground block text-center">Perceived Difficulty</label>
+              <div className="grid grid-cols-3 gap-2">
+                {(["Easy", "Medium", "Hard"] as const).map((diff) => (
+                  <button
+                    key={diff}
+                    type="button"
+                    onClick={() => setDifficulty(diff)}
+                    className={cn(
+                      "rounded-lg border py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 outline-none shadow-sm",
+                      difficulty === diff
+                        ? "border-indigo-500 bg-indigo-650 text-white font-bold"
+                        : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    {diff === "Easy" ? "🟢 Easy" : diff === "Medium" ? "🟡 Medium" : "🔴 Hard"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Suggestions Comments */}
+            <div className="space-y-1.5">
+              <label htmlFor="comments" className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground block">Comments & Suggestions (Optional)</label>
+              <textarea
+                id="comments"
+                rows={3}
+                placeholder="Tell us what you liked or what can be improved..."
+                value={comments}
+                onChange={(e) => setComments(e.target.value)}
+                className="w-full rounded-lg border border-border bg-muted/20 p-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-muted-foreground/60 shadow-inner"
+              />
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => handleFeedbackSubmit(true)}
+                disabled={submittingFeedback}
+                className="w-full font-bold py-2.5 rounded-lg"
+              >
+                Skip
+              </Button>
+              <Button
+                onClick={() => handleFeedbackSubmit(false)}
+                disabled={submittingFeedback}
+                className="w-full bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-2.5 rounded-lg shadow-sm"
+              >
+                {submittingFeedback ? "Submitting..." : "Submit Review"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </ProtectedRoute>
   );
 }
