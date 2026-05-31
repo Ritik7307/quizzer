@@ -249,14 +249,14 @@ export default function AdminDashboard() {
                       )}
                     >
                       <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
+                        <CardTitle className="text-xs lg:text-sm font-extrabold uppercase tracking-widest text-muted-foreground">
                           {s.label}
                         </CardTitle>
                         <s.icon className={cn("h-4.5 w-4.5", s.color.split(" ")[0])} />
                       </CardHeader>
                       <CardContent className="space-y-1">
-                        <p className="text-3xl font-extrabold text-foreground tracking-tight">{s.value}</p>
-                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{s.desc}</p>
+                        <p className="text-4xl font-extrabold text-foreground tracking-tight">{s.value}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{s.desc}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -282,15 +282,15 @@ export default function AdminDashboard() {
                             className="flex flex-col gap-4 rounded-xl border border-border p-4 sm:flex-row sm:items-center sm:justify-between bg-accent/20 hover:bg-accent/40 hover:border-border/80 transition-all duration-200 shadow-sm"
                           >
                             <div className="space-y-1">
-                              <p className="font-extrabold text-sm text-foreground tracking-tight">{q.title}</p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="font-extrabold text-base text-foreground tracking-tight">{q.title}</p>
+                              <p className="text-sm text-muted-foreground">
                                 {q._count?.questions ?? 0} questions · {q.duration} min
                               </p>
                             </div>
                             <div className="flex items-center gap-2.5 justify-between sm:justify-end">
                               <Badge
                                 variant={q.published ? "success" : "warning"}
-                                className="text-[9px] uppercase font-extrabold tracking-wider py-0.5 px-2"
+                                className="text-xs uppercase font-extrabold tracking-wider py-0.5 px-2"
                               >
                                 {q.published ? "Published" : "Draft"}
                               </Badge>
@@ -298,7 +298,7 @@ export default function AdminDashboard() {
                                 variant="outline"
                                 size="sm"
                                 asChild
-                                className="h-8 border-border text-[10px] font-extrabold uppercase text-muted-foreground bg-secondary/50 hover:bg-secondary hover:text-foreground"
+                                className="h-8 border-border text-xs font-extrabold uppercase text-muted-foreground bg-secondary/50 hover:bg-secondary hover:text-foreground"
                               >
                                 <Link href={`/admin/quizzes/${q.id}`}>Manage</Link>
                               </Button>
@@ -353,17 +353,17 @@ export default function AdminDashboard() {
                                 <p className="font-extrabold text-foreground text-sm leading-tight flex items-center gap-1.5">
                                   {a.user.name} <ChevronRight className="h-3 w-3 text-muted-foreground" />
                                 </p>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
+                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
                                   Quiz: {a.quiz.title}
                                 </p>
                               </div>
                               
                               <div className="flex items-center gap-4">
                                 <div className="text-right">
-                                  <p className="font-extrabold text-indigo-400 text-sm">{a.percentage}%</p>
-                                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{a.score} pts</p>
+                                  <p className="font-extrabold text-indigo-400 text-base">{a.percentage}%</p>
+                                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{a.score} pts</p>
                                 </div>
-                                <div className="text-[10px] text-muted-foreground font-semibold bg-secondary border border-border px-2 py-0.5 rounded shrink-0">
+                                <div className="text-xs text-muted-foreground font-semibold bg-secondary border border-border px-2 py-0.5 rounded shrink-0">
                                   {new Date(a.submittedAt).toLocaleDateString([], { month: "short", day: "numeric" })}
                                 </div>
                               </div>
@@ -384,13 +384,13 @@ export default function AdminDashboard() {
                   {/* Rating Card */}
                   <Card className="border-border bg-card/40 backdrop-blur-md shadow-xl hover:border-indigo-500/50 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">Average Rating</CardTitle>
+                      <CardTitle className="text-sm font-extrabold uppercase tracking-widest text-muted-foreground">Average Rating</CardTitle>
                     </CardHeader>
                     <CardContent className="flex items-baseline gap-2 py-1">
-                      <p className="text-4xl font-extrabold text-amber-500 tracking-tight">{avgRating}</p>
+                      <p className="text-5xl font-extrabold text-amber-500 tracking-tight">{avgRating}</p>
                       <div className="flex items-center text-amber-500">
                         <Star className="h-4.5 w-4.5 fill-amber-500" />
-                        <span className="text-[10px] text-muted-foreground ml-1 font-bold">/ 5.0</span>
+                        <span className="text-xs text-muted-foreground ml-1 font-bold">/ 5.0</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -398,17 +398,17 @@ export default function AdminDashboard() {
                   {/* Reviews Card */}
                   <Card className="border-border bg-card/40 backdrop-blur-md shadow-xl hover:border-indigo-500/50 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">Total Reviews</CardTitle>
+                      <CardTitle className="text-sm font-extrabold uppercase tracking-widest text-muted-foreground">Total Reviews</CardTitle>
                     </CardHeader>
                     <CardContent className="py-1">
-                      <p className="text-4xl font-extrabold text-foreground tracking-tight">{totalReviews}</p>
+                      <p className="text-5xl font-extrabold text-foreground tracking-tight">{totalReviews}</p>
                     </CardContent>
                   </Card>
 
                   {/* Difficulty Distribution Card */}
                   <Card className="border-border bg-card/40 backdrop-blur-md shadow-xl sm:col-span-2 hover:border-indigo-500/50 transition-colors duration-300">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">Difficulty Rating Distribution</CardTitle>
+                      <CardTitle className="text-sm font-extrabold uppercase tracking-widest text-muted-foreground">Difficulty Rating Distribution</CardTitle>
                     </CardHeader>
                     <CardContent className="flex items-center gap-4 py-2 mt-auto">
                       <div className="flex-1 flex gap-1 h-3 rounded-full overflow-hidden bg-secondary border border-border p-0.5">
@@ -440,7 +440,7 @@ export default function AdminDashboard() {
                           title={`Hard: ${diffCounts.Hard}`}
                         />
                       </div>
-                      <div className="flex gap-3 text-[10px] font-extrabold tracking-wider text-muted-foreground shrink-0">
+                      <div className="flex gap-3 text-xs font-extrabold tracking-wider text-muted-foreground shrink-0">
                         <span className="flex items-center gap-1">🟢 {diffCounts.Easy}</span>
                         <span className="flex items-center gap-1">🟡 {diffCounts.Medium}</span>
                         <span className="flex items-center gap-1">🔴 {diffCounts.Hard}</span>
@@ -482,7 +482,7 @@ export default function AdminDashboard() {
                               <div className="flex items-start justify-between gap-3">
                                 <div className="space-y-0.5">
                                   <p className="font-extrabold text-foreground text-sm tracking-tight">{f.user.name}</p>
-                                  <p className="text-[10px] text-muted-foreground font-medium">{f.user.email}</p>
+                                  <p className="text-sm text-muted-foreground font-medium">{f.user.email}</p>
                                 </div>
                                 {isQuizFeedback ? (
                                   <Badge
@@ -494,7 +494,7 @@ export default function AdminDashboard() {
                                         : "outline"
                                     }
                                     className={cn(
-                                      "text-[9px] py-0.5 px-2.5 font-extrabold uppercase tracking-wider",
+                                      "text-xs py-0.5 px-2.5 font-extrabold uppercase tracking-wider",
                                       f.difficulty === "Hard" && "border-red-500/30 text-red-400 bg-red-950/20"
                                     )}
                                   >
@@ -510,7 +510,7 @@ export default function AdminDashboard() {
                                         : "default"
                                     }
                                     className={cn(
-                                      "text-[9px] py-0.5 px-2.5 font-extrabold uppercase tracking-widest",
+                                      "text-xs py-0.5 px-2.5 font-extrabold uppercase tracking-widest",
                                       f.category === "Bug" && "border-red-500/30 text-red-450 bg-red-955/20"
                                     )}
                                   >
@@ -522,17 +522,17 @@ export default function AdminDashboard() {
                             <CardContent className="pt-4 space-y-4 flex-1 flex flex-col justify-between">
                               <div className="space-y-3.5">
                                 {isQuizFeedback ? (
-                                  <div className="flex items-center justify-between text-xs text-muted-foreground border-b border-border/40 pb-2">
+                                  <div className="flex items-center justify-between text-sm text-muted-foreground border-b border-border/40 pb-2">
                                     <span className="font-bold text-foreground truncate max-w-[200px]">
                                       Quiz: {f.attempt!.quiz.title}
                                     </span>
-                                    <span className="flex items-center gap-1 text-[10px] font-extrabold text-indigo-400 uppercase tracking-wider">
+                                    <span className="flex items-center gap-1 text-xs font-extrabold text-indigo-400 uppercase tracking-wider">
                                       <Award className="h-3.5 w-3.5" /> {f.attempt!.percentage}% ({f.attempt!.score} pts)
                                     </span>
                                   </div>
                                 ) : (
-                                  <div className="flex items-center justify-between text-xs border-b border-border/40 pb-2">
-                                    <span className="font-extrabold text-indigo-450 uppercase tracking-widest text-[9px]">Platform Feedback Review</span>
+                                  <div className="flex items-center justify-between text-sm border-b border-border/40 pb-2">
+                                    <span className="font-extrabold text-indigo-450 uppercase tracking-widest text-xs">Platform Feedback Review</span>
                                   </div>
                                 )}
 
@@ -552,28 +552,28 @@ export default function AdminDashboard() {
                                 </div>
 
                                 {f.comments ? (
-                                  <div className="rounded-lg bg-muted/30 border border-border/50 p-3.5 font-sans text-xs text-foreground/80 leading-relaxed italic whitespace-pre-wrap">
+                                  <div className="rounded-lg bg-muted/30 border border-border/50 p-3.5 font-sans text-sm text-foreground/80 leading-relaxed italic whitespace-pre-wrap">
                                     "{f.comments}"
                                   </div>
                                 ) : (
-                                  <p className="text-[10px] text-muted-foreground italic">No textual comments provided.</p>
+                                  <p className="text-xs text-muted-foreground italic">No textual comments provided.</p>
                                 )}
                                 {f.adminResponse && (
-                                  <div className="rounded-lg bg-indigo-900/30 border border-indigo-500/20 p-3.5 font-sans text-xs text-indigo-200 leading-relaxed italic whitespace-pre-wrap">
+                                  <div className="rounded-lg bg-indigo-900/30 border border-indigo-500/20 p-3.5 font-sans text-sm text-indigo-200 leading-relaxed italic whitespace-pre-wrap">
                                     <strong>Admin Response:</strong> {f.adminResponse}
                                   </div>
                                 )}
                                 <div className="flex gap-2 mt-2">
-                                  <Button size="sm" variant="outline" className="text-[10px] h-6 py-0 bg-background text-foreground border-border hover:bg-accent hover:text-accent-foreground" onClick={() => handleRespondFeedback(f.id)}>
+                                  <Button size="sm" variant="outline" className="text-xs h-7 py-0 bg-background text-foreground border-border hover:bg-accent hover:text-accent-foreground" onClick={() => handleRespondFeedback(f.id)}>
                                     {f.adminResponse ? "Edit Response" : "Respond"}
                                   </Button>
-                                  <Button size="sm" variant="destructive" className="text-[10px] h-6 py-0 bg-red-900/50 hover:bg-red-900 text-red-200" onClick={() => handleDeleteFeedback(f.id)}>
+                                  <Button size="sm" variant="destructive" className="text-xs h-7 py-0 bg-red-900/50 hover:bg-red-900 text-red-200" onClick={() => handleDeleteFeedback(f.id)}>
                                     Delete
                                   </Button>
                                 </div>
                               </div>
 
-                              <div className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest text-right">
+                              <div className="text-xs text-muted-foreground font-bold uppercase tracking-widest text-right">
                                 Submitted: {new Date(f.createdAt).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}
                               </div>
                             </CardContent>

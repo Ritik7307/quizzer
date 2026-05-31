@@ -50,7 +50,7 @@ export function Navbar() {
 
   const linkClass = (href: string) =>
     cn(
-      "flex items-center gap-1.5 rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium transition-all duration-200 whitespace-nowrap",
+      "flex items-center gap-1.5 rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap",
       pathname === href || pathname.startsWith(href + "/")
         ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400"
         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -96,7 +96,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-card/85 backdrop-blur-md">
       <div className="mx-auto flex h-14 min-h-14 w-full items-center justify-between gap-2 px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-indigo-500" onClick={() => setMobileOpen(false)}>
-          <span className="text-base text-foreground font-bold tracking-tight sm:text-lg">Quizzer</span>
+          <span className="text-lg text-foreground font-bold tracking-tight sm:text-xl">Quizzer</span>
         </Link>
 
         <nav className="hidden items-center gap-0.5 lg:gap-1.5 md:flex">
@@ -136,7 +136,7 @@ export function Navbar() {
                     
                     {/* Category Selector */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</label>
+                      <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Category</label>
                       <div className="grid grid-cols-3 gap-2">
                         {(["General", "Suggestion", "Bug"] as const).map((cat) => (
                           <button
@@ -144,7 +144,7 @@ export function Navbar() {
                             type="button"
                             onClick={() => setCategory(cat)}
                             className={cn(
-                              "rounded-lg border py-2 text-xs font-semibold transition-all outline-none",
+                              "rounded-lg border py-2 text-sm font-semibold transition-all outline-none",
                               category === cat
                                 ? "border-indigo-500 bg-indigo-600 text-white font-bold"
                                 : "border-border bg-muted/40 text-muted-foreground hover:border-foreground/30 hover:text-foreground"
@@ -158,7 +158,7 @@ export function Navbar() {
 
                     {/* Star Rating */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Rating</label>
+                      <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Rating</label>
                       <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
@@ -182,7 +182,7 @@ export function Navbar() {
 
                     {/* Comments */}
                     <div className="space-y-1.5">
-                      <label htmlFor="platformComments" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Comments & Details</label>
+                      <label htmlFor="platformComments" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Comments & Details</label>
                       <textarea
                         id="platformComments"
                         rows={4}
@@ -225,7 +225,7 @@ export function Navbar() {
                     <User className="h-4 w-4" />
                   </div>
                 )}
-                <span className="hidden max-w-[120px] truncate text-sm text-muted-foreground md:inline lg:max-w-[180px]">
+                <span className="hidden max-w-[120px] truncate text-sm lg:text-base text-muted-foreground md:inline lg:max-w-[180px]">
                   {user.name}
                 </span>
               </Link>
