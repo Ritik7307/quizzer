@@ -685,7 +685,7 @@ function getExternalProblems() {
       externalProblems = { leetCode: [], codeforces: [] };
     }
   }
-  return externalProblems;
+  return externalProblems!;
 }
 
 async function getLeetCodeProblems() {
