@@ -178,7 +178,9 @@ export default function DailyChallengePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-6">
-                  Ready to test your skills? Write your solution in our built-in compiler and get it tested automatically against sample test cases!
+                  {data.daily.codingQuestion.isExternalOnly || !!data.daily.codingQuestion.referenceUrl
+                    ? "Ready to test your skills? Solve this challenge on the external platform and mark it as solved here to earn your points!"
+                    : "Ready to test your skills? Write your solution in our built-in compiler and get it tested automatically against sample test cases!"}
                 </p>
                 
                 {data.isSolved ? (
@@ -190,7 +192,7 @@ export default function DailyChallengePage() {
                         <p className="text-sm text-emerald-600/80 dark:text-emerald-400/80">You've earned your points for today.</p>
                       </div>
                     </div>
-                    {data.daily.codingQuestion.isExternalOnly ? (
+                    {data.daily.codingQuestion.isExternalOnly || !!data.daily.codingQuestion.referenceUrl ? (
                       <Button asChild variant="outline" size="lg" className="w-full sm:w-auto font-bold border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10">
                         <a href={data.daily.codingQuestion.referenceUrl!} target="_blank" rel="noopener noreferrer">
                           Reattempt on Platform
@@ -206,7 +208,7 @@ export default function DailyChallengePage() {
                   </div>
                 ) : (
                   <div className="flex flex-col sm:flex-row gap-3">
-                    {data.daily.codingQuestion.isExternalOnly ? (
+                    {data.daily.codingQuestion.isExternalOnly || !!data.daily.codingQuestion.referenceUrl ? (
                       <>
                         <Button asChild size="lg" className="w-full sm:w-auto font-bold flex items-center gap-2">
                           <a href={data.daily.codingQuestion.referenceUrl!} target="_blank" rel="noopener noreferrer">
