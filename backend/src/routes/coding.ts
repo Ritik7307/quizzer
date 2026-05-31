@@ -668,80 +668,32 @@ router.post("/matches/:id/abandon", authenticate, async (req: AuthRequest, res) 
   }
 });
 
-// External Problem Caches
-let leetCodeCache: any[] = [];
-let leetCodeCacheTime = 0;
-let codeforcesCache: any[] = [];
-let codeforcesCacheTime = 0;
-const CACHE_TTL = 1000 * 60 * 60; // 1 hour
+import fs from "fs";
+import path from "path";
+
+// External Problem Caches loaded statically
+let externalProblems: { leetCode: any[]; codeforces: any[] } | null = null;
+
+function getExternalProblems() {
+  if (!externalProblems) {
+    try {
+      const filePath = path.join(process.cwd(), "data", "external_problems.json");
+      const fileContent = fs.readFileSync(filePath, "utf-8");
+      externalProblems = JSON.parse(fileContent);
+    } catch (err) {
+      console.error("Failed to load static external problems", err);
+      externalProblems = { leetCode: [], codeforces: [] };
+    }
+  }
+  return externalProblems;
+}
 
 async function getLeetCodeProblems() {
-  const now = Date.now();
-  if (leetCodeCache.length > 0 && now - leetCodeCacheTime < CACHE_TTL) {
-    return leetCodeCache;
-  }
-  try {
-    const res = await fetch("https://leetcode.com/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: `
-          query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
-            problemsetQuestionList: questionList(
-              categorySlug: $categorySlug
-              limit: $limit
-              skip: $skip
-              filters: $filters
-            ) {
-              questions: data {
-                difficulty
-                title
-                titleSlug
-                isPaidOnly
-              }
-            }
-          }
-        `,
-        variables: { categorySlug: "", skip: 0, limit: 3000, filters: {} }
-      })
-    });
-    const data = await res.json();
-    const questions = data?.data?.problemsetQuestionList?.questions || [];
-    leetCodeCache = questions.filter((q: any) => !q.isPaidOnly).map((q: any) => ({
-      title: q.title,
-      titleSlug: q.titleSlug,
-      difficulty: q.difficulty
-    }));
-    leetCodeCacheTime = now;
-    return leetCodeCache;
-  } catch (err) {
-    console.error("Failed to fetch LeetCode problems", err);
-    return leetCodeCache;
-  }
+  return getExternalProblems().leetCode;
 }
 
 async function getCodeforcesProblems() {
-  const now = Date.now();
-  if (codeforcesCache.length > 0 && now - codeforcesCacheTime < CACHE_TTL) {
-    return codeforcesCache;
-  }
-  try {
-    const res = await fetch("https://codeforces.com/api/problemset.problems");
-    const data = await res.json();
-    if (data.status === "OK") {
-      codeforcesCache = data.result.problems.map((q: any) => ({
-        contestId: q.contestId,
-        index: q.index,
-        name: q.name,
-        rating: q.rating
-      }));
-      codeforcesCacheTime = now;
-    }
-    return codeforcesCache;
-  } catch (err) {
-    console.error("Failed to fetch Codeforces problems", err);
-    return codeforcesCache;
-  }
+  return getExternalProblems().codeforces;
 }
 
 // 10. Generate random external problems
