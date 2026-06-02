@@ -37,6 +37,7 @@ export function Navbar() {
 
   const navLinks = user ? [
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+    { href: "/gym", label: "Gym Leaderboard", icon: Trophy },
     { href: "/daily", label: "Daily Challenge", icon: Calendar },
     { href: dashHref, label: "Dashboard", icon: LayoutDashboard },
     { href: "/arena", label: "1v1 Arena", icon: Swords },
