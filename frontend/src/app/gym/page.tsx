@@ -29,15 +29,13 @@ interface CodeforcesStandings {
 export default function GymLeaderboardPage() {
   const { token } = useAuth();
   const [gymId, setGymId] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [apiSecret, setApiSecret] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<CodeforcesStandings | null>(null);
 
   const fetchStandings = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token || !gymId || !apiKey || !apiSecret) {
-      toast.error("Please fill in all fields");
+    if (!token || !gymId) {
+      toast.error("Please provide a Gym ID");
       return;
     }
 
@@ -46,7 +44,7 @@ export default function GymLeaderboardPage() {
       const res = await api<CodeforcesStandings>("/api/codeforces/gym-standings", {
         method: "POST",
         token,
-        body: JSON.stringify({ gymId, apiKey, apiSecret }),
+        body: JSON.stringify({ gymId }),
       });
       setData(res);
       toast.success("Leaderboard loaded successfully");
@@ -81,7 +79,7 @@ export default function GymLeaderboardPage() {
                   API Credentials
                 </CardTitle>
                 <CardDescription>
-                  Enter your Codeforces API Key and Secret to access private Gym standings.
+                  Enter the Codeforces Gym Contest ID to view the standings. The platform will securely handle API access behind the scenes.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -93,28 +91,6 @@ export default function GymLeaderboardPage() {
                       placeholder="e.g. 100001"
                       value={gymId}
                       onChange={(e) => setGymId(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="apiKey">API Key</Label>
-                    <Input
-                      id="apiKey"
-                      type="password"
-                      placeholder="Codeforces API Key"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="apiSecret">API Secret</Label>
-                    <Input
-                      id="apiSecret"
-                      type="password"
-                      placeholder="Codeforces API Secret"
-                      value={apiSecret}
-                      onChange={(e) => setApiSecret(e.target.value)}
                       required
                     />
                   </div>

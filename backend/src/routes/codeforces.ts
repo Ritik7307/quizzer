@@ -8,16 +8,20 @@ const router = Router();
 
 const gymSchema = z.object({
   gymId: z.string().min(1, "Gym ID is required"),
-  apiKey: z.string().min(1, "API Key is required"),
-  apiSecret: z.string().min(1, "API Secret is required"),
 });
 
 router.post("/gym-standings", authenticate, async (req, res) => {
   try {
-    const { gymId, apiKey, apiSecret } = gymSchema.parse(req.body);
+    const { gymId } = gymSchema.parse(req.body);
+    const apiKey = process.env.CODEFORCES_API_KEY;
+    const apiSecret = process.env.CODEFORCES_API_SECRET;
 
-    // Cache by gymId + apiKey to prevent rate limits on refreshes for the same user/gym
-    const cacheKey = `cf_gym_${gymId}_${apiKey}`;
+    if (!apiKey || !apiSecret) {
+      return res.status(500).json({ error: "Codeforces API keys are not configured on the server." });
+    }
+
+    // Cache by gymId to prevent rate limits on refreshes
+    const cacheKey = `cf_gym_${gymId}`;
     const cached = cacheGet(cacheKey);
     if (cached) {
       return res.json(cached);
