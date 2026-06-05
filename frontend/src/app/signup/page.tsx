@@ -63,7 +63,7 @@ export default function SignupPage() {
               <Label htmlFor="password" className="text-xs font-bold text-foreground/80">Password</Label>
               <Input id="password" name="password" type="password" required minLength={6} className="bg-card border-border text-foreground" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="leetcodeHandle" className="text-xs font-bold text-foreground/80">LeetCode Username</Label>
                 <Input id="leetcodeHandle" name="leetcodeHandle" required placeholder="leetcode_user" className="bg-card border-border text-foreground" />

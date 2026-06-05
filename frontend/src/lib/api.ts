@@ -1,6 +1,6 @@
-/** Use same-origin /api (proxied by Next.js) to avoid CORS issues. Socket.IO still uses API_ORIGIN. */
+/** Use direct API_ORIGIN to bypass Next.js dev proxy latency. CORS is configured on backend. */
 export const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL ?? (typeof window !== "undefined" ? `${window.location.protocol}//${window.location.hostname}:4000` : "http://localhost:4000");
-const API_BASE = "";
+const API_BASE = API_ORIGIN;
 
 export class ApiError extends Error {
   constructor(
