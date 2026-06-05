@@ -14,9 +14,8 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
       if (user) {
         req.user = {
           userId: user.id,
-          role: user.role,
-          iat: Date.now(),
-          exp: Date.now() + 1000000000
+          email: user.email,
+          role: user.role
         };
         // Update lastActiveAt occasionally
         const now = Date.now();
@@ -31,7 +30,7 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
         next();
       } else {
         // Fallback if no user exists at all
-        req.user = { userId: "dummy", role: "ADMIN", iat: Date.now(), exp: Date.now() + 1000000000 };
+        req.user = { userId: "dummy", email: "dummy@student.dev", role: "ADMIN" };
         next();
       }
     }).catch(() => next());
