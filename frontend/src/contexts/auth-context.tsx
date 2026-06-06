@@ -28,8 +28,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
 
   const refresh = useCallback(async () => {
-    // BYPASS
-    setLoading(false);
+    const t = getToken();
+    if (!t) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const data = await api<{ user: User }>("/api/auth/me", { token: t });
+      setAuth(t, data.user);
+      setUser(data.user);
+    } catch (err) {
+      console.error("Failed to refresh user", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
