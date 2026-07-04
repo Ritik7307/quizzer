@@ -102,11 +102,11 @@ export function Navbar() {
           <span className="text-lg text-foreground font-bold tracking-tight sm:text-xl">Quizzer</span>
         </Link>
 
-        <nav className="hidden items-center gap-0.5 lg:gap-1.5 md:flex">
+        <nav className="hidden items-center gap-1 xl:gap-1.5 md:flex flex-1 justify-center max-w-[60vw]">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className={linkClass(link.href)}>
-              <link.icon className="h-4 w-4" />
-              {link.label}
+            <Link key={link.href} href={link.href} className={cn(linkClass(link.href), "px-2 lg:px-3")} title={link.label}>
+              <link.icon className="h-4 w-4 shrink-0" />
+              <span className="hidden xl:inline-block">{link.label}</span>
             </Link>
           ))}
         </nav>
