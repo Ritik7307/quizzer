@@ -265,11 +265,11 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-border bg-card px-4 py-3 xl:hidden">
-          <nav className="flex flex-col gap-1">
+        <div className="border-t border-border bg-card px-4 py-4 xl:hidden shadow-inner">
+          <nav className="flex flex-col gap-2">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={linkClass(link.href)} onClick={() => setMobileOpen(false)}>
-                <link.icon className="h-4 w-4" />
+              <Link key={link.href} href={link.href} className={cn(linkClass(link.href), "text-base py-2.5")} onClick={() => setMobileOpen(false)}>
+                <link.icon className="h-5 w-5 mr-1" />
                 {link.label}
               </Link>
             ))}
@@ -278,42 +278,42 @@ export function Navbar() {
             {user && (
               <button
                 type="button"
-                className={cn(linkClass(""), "w-full text-left")}
+                className={cn(linkClass(""), "w-full text-left text-base py-2.5")}
                 onClick={() => {
                   setMobileOpen(false);
                   setFeedbackOpen(true);
                 }}
               >
-                <MessageSquare className="h-4 w-4" />
+                <MessageSquare className="h-5 w-5 mr-1" />
                 Feedback
               </button>
             )}
 
             {!user && (
               <>
-                <Link href="/login" className={linkClass("/login")} onClick={() => setMobileOpen(false)}>
+                <Link href="/login" className={cn(linkClass("/login"), "text-base py-2.5")} onClick={() => setMobileOpen(false)}>
                   Login
                 </Link>
-                <Link href="/signup" className={linkClass("/signup")} onClick={() => setMobileOpen(false)}>
+                <Link href="/signup" className={cn(linkClass("/signup"), "text-base py-2.5")} onClick={() => setMobileOpen(false)}>
                   Sign up
                 </Link>
               </>
             )}
             {user && (
               <>
-                <Link href="/profile" className={linkClass("/profile")} onClick={() => setMobileOpen(false)}>
-                  <User className="h-4 w-4" />
+                <Link href="/profile" className={cn(linkClass("/profile"), "text-base py-2.5")} onClick={() => setMobileOpen(false)}>
+                  <User className="h-5 w-5 mr-1" />
                   Profile
                 </Link>
                 <button
                   type="button"
-                  className={cn(linkClass(""), "w-full text-left")}
+                  className={cn(linkClass(""), "w-full text-left text-base py-2.5")}
                   onClick={() => {
                     setMobileOpen(false);
                     logout();
                   }}
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-5 w-5 mr-1" />
                   Logout
                 </button>
               </>
