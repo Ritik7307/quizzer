@@ -61,7 +61,7 @@ interface FeedbackItem {
 }
 
 export default function AdminDashboard() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
   const [loadingFeedback, setLoadingFeedback] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || user?.role !== "ADMIN") return;
     Promise.all([
       api<DashboardData>("/api/admin/dashboard", { token }),
       api<{ quizzes: Quiz[] }>("/api/quizzes", { token }),
@@ -85,11 +85,11 @@ export default function AdminDashboard() {
       })
       .catch(() => toast.error("Failed to load dashboard"))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, user]);
 
   // Fetch feedback reviews
   useEffect(() => {
-    if (activeTab === "feedback" && token) {
+    if (activeTab === "feedback" && token && user?.role === "ADMIN") {
       setLoadingFeedback(true);
       api<{ feedbacks: FeedbackItem[] }>("/api/admin/feedback", { token })
         .then((res) => {
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
         .catch(() => toast.error("Failed to load feedback reviews"))
         .finally(() => setLoadingFeedback(false));
     }
-  }, [activeTab, token]);
+  }, [activeTab, token, user]);
 
   // Compute feedback summary statistics
   const totalReviews = feedbacks.length;
