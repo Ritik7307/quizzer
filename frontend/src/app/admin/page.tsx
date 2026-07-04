@@ -83,7 +83,10 @@ export default function AdminDashboard() {
         setData(dash);
         setQuizzes(q.quizzes);
       })
-      .catch(() => toast.error("Failed to load dashboard"))
+      .catch((err) => {
+        console.error("Dashboard Load Error:", err);
+        toast.error("Failed to load dashboard: " + (err.message || "Unknown error"));
+      })
       .finally(() => setLoading(false));
   }, [token, user]);
 
