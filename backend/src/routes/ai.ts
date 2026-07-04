@@ -2,7 +2,14 @@ import express from "express";
 import { z } from "zod";
 import { authenticate } from "../middleware/auth.js";
 import { prisma } from "../lib/prisma.js";
-import { generateCodeHint } from "../services/ai.js";
+import {
+  generateCodeHint,
+  generateTopicQuiz,
+  generateSystemDesignScenario,
+  generateAptitudeTest,
+  generateCSCoreQuiz,
+  reviewResume,
+} from "../services/ai.js";
 
 const router = express.Router();
 
@@ -38,6 +45,84 @@ router.post("/hint", authenticate, async (req, res) => {
       return res.status(400).json({ error: "Invalid request data", details: error.errors });
     }
     console.error("Hint generation error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+const quizSchema = z.object({
+  topic: z.string().min(1),
+});
+
+router.post("/generate-quiz", authenticate, async (req, res) => {
+  try {
+    const { topic } = quizSchema.parse(req.body);
+    const quiz = await generateTopicQuiz(topic, 5);
+    res.json({ quiz });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: "Invalid request data", details: error.errors });
+    }
+    console.error("Quiz generation error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/generate-system-design", authenticate, async (req, res) => {
+  try {
+    const { topic } = quizSchema.parse(req.body);
+    const scenario = await generateSystemDesignScenario(topic);
+    res.json({ scenario });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: "Invalid request data", details: error.errors });
+    }
+    console.error("System Design generation error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/generate-aptitude", authenticate, async (req, res) => {
+  try {
+    const { topic } = quizSchema.parse(req.body);
+    const quiz = await generateAptitudeTest(topic, 5);
+    res.json({ quiz });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: "Invalid request data", details: error.errors });
+    }
+    console.error("Aptitude generation error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/generate-cs-core", authenticate, async (req, res) => {
+  try {
+    const { topic } = quizSchema.parse(req.body);
+    const quiz = await generateCSCoreQuiz(topic, 5);
+    res.json({ quiz });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: "Invalid request data", details: error.errors });
+    }
+    console.error("CS Core generation error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+const resumeSchema = z.object({
+  resumeText: z.string().min(10),
+});
+
+router.post("/review-resume", authenticate, async (req, res) => {
+  try {
+    const { resumeText } = resumeSchema.parse(req.body);
+    const review = await reviewResume(resumeText);
+    res.json({ review });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: "Invalid request data", details: error.errors });
+    }
+    console.error("Resume review error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

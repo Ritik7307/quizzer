@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, Code2, MessageSquare, Star, CheckCircle2, BookOpen, BookOpenCheck, Swords, Calendar, FileText } from "lucide-react";
+import { Brain, LayoutDashboard, LogOut, Menu, Trophy, User, Users, X, Bell, Code, Code2, MessageSquare, Star, CheckCircle2, BookOpen, BookOpenCheck, Swords, Calendar, FileText, Map } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,7 @@ export function Navbar() {
   const dashHref = user?.role === "ADMIN" ? "/admin" : user ? "/dashboard" : "/";
 
   const navLinks = user ? [
+    { href: "/roadmap", label: "My Journey", icon: Map },
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { href: "/gym", label: "Gym Leaderboard", icon: Trophy },
     { href: "/daily", label: "Daily Challenge", icon: Calendar },
@@ -45,6 +46,7 @@ export function Navbar() {
     { href: "/compiler", label: "Compiler", icon: Code2 },
     { href: "/profile/resume", label: "Resume Builder", icon: FileText }
   ] : [
+    { href: "/roadmap", label: "My Journey", icon: Map },
     { href: "/practice", label: "Practice Sheet", icon: BookOpenCheck },
     { href: "/compiler", label: "Compiler", icon: Code2 }
   ];

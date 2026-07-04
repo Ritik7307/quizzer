@@ -6,7 +6,7 @@ async function main() {
   try {
     const tables = await prisma.$queryRaw`SELECT tablename FROM pg_tables WHERE schemaname='public'`;
     for (const t of tables) {
-      if (t.tablename.startsWith('_')) continue; // Skip Prisma migration tables
+      if (t.tablename.startsWith('_')) continue; 
       await prisma.$executeRawUnsafe(`ALTER TABLE "${t.tablename}" ENABLE ROW LEVEL SECURITY`);
       console.log(`Enabled RLS on ${t.tablename}`);
     }

@@ -18,14 +18,9 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<StoredUser | null>({
-    id: "cmpj3d6gp0001up544ushy4d0",
-    name: "Alice Johnson",
-    email: "alice@student.dev",
-    role: "ADMIN"
-  });
-  const [token, setToken] = useState<string | null>("mock-token");
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<StoredUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     const t = getToken();

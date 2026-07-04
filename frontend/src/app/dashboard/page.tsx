@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Clock, Play, Search, Code, History, BookOpen, Loader2, ChevronDown, ChevronUp, AlertCircle, CheckCircle, Award, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
@@ -30,6 +31,7 @@ interface CodingSubmission {
 }
 
 export default function CandidateDashboard() {
+  const router = useRouter();
   const { token, user } = useAuth();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [submissions, setSubmissions] = useState<CodingSubmission[]>([]);
@@ -154,6 +156,7 @@ export default function CandidateDashboard() {
         {/* Tab Selection (Modern Segmented Pills) */}
         <div className="bg-muted/40 dark:bg-zinc-900/60 p-1.5 rounded-2xl flex flex-wrap sm:flex-nowrap gap-1 mb-8 shadow-sm backdrop-blur-sm border border-border">
           {[
+            { id: "learn", label: "Learn Library", icon: BookOpen },
             { id: "quizzes", label: "Quizzes", icon: BookOpen },
             { id: "history", label: "Submissions History", icon: History },
             { id: "resources", label: "Study Resources", icon: FileText },
@@ -161,6 +164,10 @@ export default function CandidateDashboard() {
             <button
               key={t.id}
               onClick={() => {
+                if (t.id === "learn") {
+                  router.push("/learn");
+                  return;
+                }
                 setActiveTab(t.id as any);
                 setSearch("");
                 setExpandedSubId(null);

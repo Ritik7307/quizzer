@@ -16,6 +16,7 @@ import {
   ChevronRight,
   TrendingUp,
   Code,
+  BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/auth/protected-route";
@@ -155,6 +156,11 @@ export default function AdminDashboard() {
             <p className="text-sm font-medium text-muted-foreground pl-4 sm:text-base">Manage quizzes, coding problems, notifications, and candidate reviews.</p>
           </div>
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+            <Button asChild variant="outline" className="w-full sm:w-auto shadow-sm transition-all border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400">
+              <Link href="/learn">
+                <BookOpen className="mr-2 h-4 w-4" /> Learn Library
+              </Link>
+            </Button>
             <Button asChild variant="outline" className="w-full sm:w-auto shadow-sm transition-all">
               <Link href="/admin/users">
                 <Users className="mr-2 h-4 w-4" /> Users

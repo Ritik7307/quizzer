@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { FileText, Download, Plus, Trash2, Mail, Phone, Globe, ChevronLeft, Code2, Briefcase, ArrowUp, ArrowDown, Layout } from "lucide-react";
+import { FileText, Download, Plus, Trash2, Mail, Phone, Globe, ChevronLeft, Code2, Briefcase, ArrowUp, ArrowDown, Layout, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function ResumeBuilderPage() {
   const { user } = useAuth();
@@ -66,6 +68,63 @@ export default function ResumeBuilderPage() {
     "education",
     "skills"
   ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    async function loadResume() {
+      try {
+        const data = await api<any>("/api/resume");
+        if (data) {
+          if (data.summary) setSummary(data.summary);
+          setPersonalInfo(prev => ({
+            ...prev,
+            phone: data.phone || prev.phone,
+            github: data.githubUrl || prev.github,
+            linkedin: data.linkedinUrl || prev.linkedin,
+            website: data.portfolioUrl || prev.website,
+          }));
+          if (data.experiences && data.experiences.length > 0) setExperience(data.experiences);
+          if (data.educations && data.educations.length > 0) setEducation(data.educations);
+          if (data.projects && data.projects.length > 0) setProjects(data.projects);
+          if (data.skills && data.skills.length > 0) {
+            setSkills(data.skills.map((s: any) => s.name).join(", "));
+          }
+        }
+      } catch (error) {
+        toast.error("Failed to load resume");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadResume();
+  }, []);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const skillsArray = skills.split(',').map(s => s.trim()).filter(Boolean).map(name => ({ name }));
+      await api("/api/resume", {
+        method: "PUT",
+        body: JSON.stringify({
+          summary,
+          phone: personalInfo.phone,
+          githubUrl: personalInfo.github,
+          linkedinUrl: personalInfo.linkedin,
+          portfolioUrl: personalInfo.website,
+          experiences: experience,
+          educations: education,
+          projects: projects,
+          skills: skillsArray,
+        }),
+      });
+      toast.success("Resume saved successfully!");
+    } catch (error) {
+      toast.error("Failed to save resume");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const moveSection = (index: number, direction: 'up' | 'down') => {
     const newOrder = [...sectionOrder];
@@ -338,6 +397,10 @@ export default function ResumeBuilderPage() {
             Back to Profile
           </Link>
           <div className="flex-1" />
+          <Button onClick={handleSave} disabled={isSaving} className="bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-md">
+            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            Save Resume
+          </Button>
           <Button onClick={handlePrint} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md">
             <Download className="mr-2 h-4 w-4" /> Download PDF
           </Button>

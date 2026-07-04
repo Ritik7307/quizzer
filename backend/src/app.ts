@@ -18,6 +18,7 @@ import resourcesRoutes from "./routes/resources.js";
 import dailyRoutes from "./routes/daily.js";
 import aiRoutes from "./routes/ai.js";
 import codeforcesRoutes from "./routes/codeforces.js";
+import resumeRoutes from "./routes/resume.js";
 import { prisma } from "./lib/prisma.js";
 import path from "path";
 import { registerSocketHandlers, registerChallengeHandlers } from "./lib/socket.js";
@@ -111,6 +112,7 @@ export function createApp() {
   app.use("/api/daily", dailyRoutes);
   app.use("/api/ai", aiRoutes);
   app.use("/api/codeforces", codeforcesRoutes);
+  app.use("/api/resume", resumeRoutes);
 
   return app;
 }

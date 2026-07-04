@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
 import { getApiErrorMessage } from "@/lib/api";
@@ -12,9 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function SignupPage() {
-  const { register } = useAuth();
+  const { register, user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.replace(user.role === "ADMIN" ? "/admin" : "/dashboard");
+    }
+  }, [user, router]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
