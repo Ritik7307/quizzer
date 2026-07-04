@@ -171,41 +171,53 @@ export default function ModulePage({ params }: { params: Promise<{ track: string
   if (isCSCore) generateBtnText = "📚 Generate Core Subjects Quiz";
 
   return (
-    <div className="container mx-auto py-10 space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="container mx-auto py-10 px-4 md:px-8 space-y-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mb-1">{formattedTrack}</p>
-          <h1 className="text-4xl font-bold capitalize">{formattedModule}</h1>
+          <p className="text-sm text-indigo-500 uppercase tracking-wider font-bold mb-2">{formattedTrack}</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold capitalize text-foreground tracking-tight">{formattedModule}</h1>
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating}>
-          {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : generateBtnText}
+        <Button onClick={handleGenerate} disabled={isGenerating} size="lg" className="shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full px-6 transition-all duration-300 hover:-translate-y-1">
+          {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : generateBtnText}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        <Card className="xl:col-span-2">
-          <CardHeader className="bg-muted/30 border-b">
-            <CardTitle>Documentation & Theory</CardTitle>
+        <Card className="xl:col-span-2 border-border/60 shadow-xl bg-card/60 backdrop-blur-sm overflow-hidden transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-muted/50 to-transparent border-b border-border/40 pb-4">
+            <CardTitle className="text-xl font-bold flex items-center">
+              <span className="bg-indigo-500/10 text-indigo-500 p-2 rounded-lg mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+              </span>
+              Documentation & Theory
+            </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <MarkdownRenderer content={markdownContent} />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Visualization / Notes</CardTitle>
+        <Card className="border-border/60 shadow-xl bg-card/60 backdrop-blur-sm overflow-hidden h-fit transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-emerald-500/10 to-transparent border-b border-border/40 pb-4">
+            <CardTitle className="text-xl font-bold flex items-center">
+              <span className="bg-emerald-500/10 text-emerald-500 p-2 rounded-lg mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              </span>
+              Visualization / Notes
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             {isSystemDesign ? (
                <SystemDiagramVisualizer topic={unwrappedParams.module} />
             ) : (unwrappedParams.module === 'trees' || unwrappedParams.module === 'graphs') ? (
               <GraphVisualizer topic={unwrappedParams.module} />
             ) : (
-              <div className="flex items-center justify-center h-[400px] border rounded-md bg-muted/20">
-                <p className="text-muted-foreground">
+              <div className="flex flex-col items-center justify-center h-[300px] border border-dashed border-border/80 rounded-xl bg-muted/10 text-center px-4">
+                <span className="text-4xl mb-4 opacity-50">🧭</span>
+                <p className="text-muted-foreground font-medium">
                   {isAptitude ? "Aptitude formula cheat sheets will appear here." : "Visualization not available for this topic yet."}
                 </p>
+                <p className="text-xs text-muted-foreground/60 mt-2">Our content team is adding visualizers daily.</p>
               </div>
             )}
           </CardContent>
