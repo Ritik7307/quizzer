@@ -42,7 +42,7 @@ export default function AdminNotificationsPage() {
   // Fetch users for the dropdown list
   useEffect(() => {
     async function fetchUsers() {
-      if (!token) return;
+      if (!token || user?.role !== "ADMIN") return;
       try {
         const data = await api<{ users: RegisteredUser[] }>("/api/admin/users", { token });
         // Sort users by name

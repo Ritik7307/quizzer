@@ -40,19 +40,19 @@ function isUserOnline(lastActiveAt?: string | null) {
 }
 
 export default function UsersPage() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || user?.role !== "ADMIN") return;
     api<{ users: AdminUser[] }>("/api/admin/users", { token })
       .then((res) => setUsers(res.users))
       .catch(() => toast.error("Failed to load users"))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, user]);
 
   return (
     <ProtectedRoute role="ADMIN">
