@@ -102,11 +102,11 @@ export function Navbar() {
           <span className="text-lg text-foreground font-bold tracking-tight sm:text-xl">Quizzer</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 xl:gap-1.5 md:flex flex-1 justify-center max-w-[60vw]">
+        <nav className="hidden items-center gap-1 xl:gap-1.5 xl:flex overflow-x-auto no-scrollbar flex-nowrap shrink-0 max-w-[50vw] xl:max-w-[60vw] px-2 py-1 mx-2">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className={cn(linkClass(link.href), "px-2 lg:px-3")} title={link.label}>
+            <Link key={link.href} href={link.href} className={cn(linkClass(link.href), "shrink-0")} title={link.label}>
               <link.icon className="h-4 w-4 shrink-0" />
-              <span className="hidden xl:inline-block">{link.label}</span>
+              <span>{link.label}</span>
             </Link>
           ))}
         </nav>
@@ -255,7 +255,7 @@ export function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden text-foreground"
+            className="xl:hidden text-foreground"
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
@@ -265,7 +265,7 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-border bg-card px-4 py-3 md:hidden">
+        <div className="border-t border-border bg-card px-4 py-3 xl:hidden">
           <nav className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} className={linkClass(link.href)} onClick={() => setMobileOpen(false)}>
