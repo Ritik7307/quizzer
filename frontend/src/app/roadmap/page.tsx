@@ -143,7 +143,7 @@ export default function RoadmapPage() {
                   {phase.modules.map((mod, i) => (
                     <Link href={mod.path} key={i}>
                       <Button 
-                        variant={phase.status === 'locked' ? "outline" : "secondary"} 
+                        variant={phase.status === 'locked' ? "outline" : "default"} 
                         className="w-full justify-start h-auto py-3 px-4 border border-border/50 hover:border-primary/50"
                       >
                         <BookOpen className="w-4 h-4 mr-3 opacity-70" />
