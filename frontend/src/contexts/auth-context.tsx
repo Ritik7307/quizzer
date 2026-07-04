@@ -32,8 +32,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await api<{ user: User }>("/api/auth/me", { token: t });
       setAuth(t, data.user);
       setUser(data.user);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to refresh user", err);
+      if (err?.message === "Invalid token" || err?.message === "Unauthorized") {
+        clearAuth();
+        setUser(null);
+        setToken(null);
+      }
     } finally {
       setLoading(false);
     }
