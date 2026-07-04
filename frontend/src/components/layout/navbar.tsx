@@ -102,7 +102,7 @@ export function Navbar() {
           <span className="text-lg text-foreground font-bold tracking-tight sm:text-xl">Quizzer</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 xl:gap-1.5 xl:flex overflow-x-auto no-scrollbar flex-nowrap shrink-0 max-w-[50vw] xl:max-w-[60vw] px-2 py-1 mx-2">
+        <nav className="hidden items-center gap-1 xl:gap-1.5 xl:flex overflow-x-auto no-scrollbar flex-nowrap flex-1 min-w-0 px-2 py-1 mx-2">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className={cn(linkClass(link.href), "shrink-0")} title={link.label}>
               <link.icon className="h-4 w-4 shrink-0" />
@@ -111,7 +111,7 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center shrink-0 gap-1.5 sm:gap-2">
           
           {/* General Platform Feedback Button (Desktop) */}
           {user && (

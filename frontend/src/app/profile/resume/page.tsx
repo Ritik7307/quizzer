@@ -14,7 +14,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 
 export default function ResumeBuilderPage() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   
   const [personalInfo, setPersonalInfo] = useState({
     name: user?.name || "John Doe",
@@ -73,8 +73,9 @@ export default function ResumeBuilderPage() {
 
   useEffect(() => {
     async function loadResume() {
+      if (!token) return;
       try {
-        const data = await api<any>("/api/resume");
+        const data = await api<any>("/api/resume", { token });
         if (data) {
           if (data.summary) setSummary(data.summary);
           setPersonalInfo(prev => ({
@@ -106,6 +107,7 @@ export default function ResumeBuilderPage() {
       const skillsArray = skills.split(',').map(s => s.trim()).filter(Boolean).map(name => ({ name }));
       await api("/api/resume", {
         method: "PUT",
+        token,
         body: JSON.stringify({
           summary,
           phone: personalInfo.phone,
