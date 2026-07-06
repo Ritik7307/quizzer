@@ -104,7 +104,39 @@ export default function ResumeBuilderPage() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const skillsArray = skills.split(',').map(s => s.trim()).filter(Boolean).map(name => ({ name }));
+      const skillsArray = skills.split(',').map(s => s.trim()).filter(Boolean).map(name => ({ name, category: "General" }));
+
+      const parseDateSafe = (dateStr: string) => {
+        if (!dateStr) return new Date().toISOString();
+        const d = new Date(dateStr);
+        return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+      };
+
+      const mappedExperience = experience.map(exp => ({
+        ...exp,
+        title: exp.role || "Untitled",
+        startDate: parseDateSafe(exp.startDate),
+        endDate: exp.endDate && exp.endDate.toLowerCase() !== "present" ? parseDateSafe(exp.endDate) : null,
+        current: !exp.endDate || exp.endDate.toLowerCase() === "present"
+      }));
+
+      const mappedEducation = education.map(edu => {
+        const years = edu.year ? edu.year.split('-').map(y => y.trim()) : [];
+        return {
+          ...edu,
+          field: "General",
+          startDate: parseDateSafe(years[0] ? `${years[0]}-01-01` : ""),
+          endDate: years[1] ? parseDateSafe(`${years[1]}-01-01`) : null,
+          current: !years[1]
+        };
+      });
+
+      const mappedProjects = projects.map(proj => ({
+        ...proj,
+        title: proj.name || "Untitled",
+        githubLink: proj.link
+      }));
+
       await api("/api/resume", {
         method: "PUT",
         token,
@@ -114,9 +146,9 @@ export default function ResumeBuilderPage() {
           githubUrl: personalInfo.github,
           linkedinUrl: personalInfo.linkedin,
           portfolioUrl: personalInfo.website,
-          experiences: experience,
-          educations: education,
-          projects: projects,
+          experiences: mappedExperience,
+          educations: mappedEducation,
+          projects: mappedProjects,
           skills: skillsArray,
         }),
       });
@@ -295,7 +327,7 @@ export default function ResumeBuilderPage() {
     switch(sectionId) {
       case 'summary':
         return summary ? (
-          <div className="mb-6" key="summary">
+          <div className="mb-6 break-inside-avoid print:break-inside-avoid" key="summary">
             {template === 'classic' && <SectionHeader title="Professional Summary" />}
             {template !== 'classic' && <SectionHeader title="Summary" />}
             <p className={`text-[15px] leading-relaxed 
@@ -315,7 +347,7 @@ export default function ResumeBuilderPage() {
             <SectionHeader title="Experience" />
             <div className="space-y-4">
               {experience.map(exp => (
-                <div key={exp.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''}`}>
+                <div key={exp.id} className={`break-inside-avoid print:break-inside-avoid ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''}`}>
                   {template === 'minimalist' && (
                     <div className="text-sm font-semibold text-slate-600 mt-1">{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
                   )}
@@ -359,7 +391,7 @@ export default function ResumeBuilderPage() {
             <SectionHeader title="Projects" />
             <div className={`space-y-4 ${template === 'creative' ? 'grid grid-cols-2 gap-4 space-y-0' : ''}`}>
               {projects.map(proj => (
-                <div key={proj.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''} ${template === 'creative' ? 'bg-slate-50 p-4 rounded-lg' : ''}`}>
+                <div key={proj.id} className={`break-inside-avoid print:break-inside-avoid ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''} ${template === 'creative' ? 'bg-slate-50 p-4 rounded-lg' : ''}`}>
                   {template === 'minimalist' && <div />}
                   <div>
                     <div className={`flex items-center gap-2 mb-1 ${template === 'elegant' ? 'justify-center flex-col' : ''}`}>
@@ -396,7 +428,7 @@ export default function ResumeBuilderPage() {
             <SectionHeader title="Education" />
             <div className="space-y-3">
               {education.map(edu => (
-                <div key={edu.id} className={`flex justify-between items-baseline 
+                <div key={edu.id} className={`break-inside-avoid print:break-inside-avoid flex justify-between items-baseline 
                   ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}
                   ${template === 'elegant' ? 'flex-col items-center text-center mb-4' : ''}
                 `}>
@@ -425,7 +457,7 @@ export default function ResumeBuilderPage() {
 
       case 'skills':
         return skills ? (
-          <div className="mb-6" key="skills">
+          <div className="mb-6 break-inside-avoid print:break-inside-avoid" key="skills">
             <SectionHeader title="Skills" />
             <div className={`text-[14px] text-slate-800 leading-relaxed 
               ${template === 'classic' ? 'font-serif' : 'font-medium'}
