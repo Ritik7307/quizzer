@@ -279,36 +279,70 @@ export default function ResumeBuilderPage() {
     }
   };
 
+  const SectionHeader = ({ title }: { title: string }) => {
+    switch(template) {
+      case 'classic': return <h2 className="text-lg font-black text-black uppercase tracking-widest border-b-2 border-black font-serif pb-1 mb-4">{title}</h2>;
+      case 'minimalist': return <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-1 mb-4">{title}</h2>;
+      case 'professional': return <h2 className="text-xl font-bold text-slate-800 uppercase border-b-2 border-slate-800 pb-1 mb-4">{title}</h2>;
+      case 'creative': return <div className="flex items-center mb-4"><div className="w-8 h-1 bg-teal-500 mr-3"></div><h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">{title}</h2></div>;
+      case 'elegant': return <h2 className="text-lg font-serif text-slate-800 uppercase tracking-[0.15em] text-center border-b border-slate-200 pb-2 mb-4">{title}</h2>;
+      case 'modern':
+      default: return <h2 className="text-lg font-black text-slate-900 uppercase tracking-widest border-b border-slate-300 pb-1 mb-4">{title}</h2>;
+    }
+  };
+
   const renderSection = (sectionId: string) => {
     switch(sectionId) {
       case 'summary':
         return summary ? (
           <div className="mb-6" key="summary">
-            {template === 'classic' && <h2 className="text-lg font-bold text-black uppercase border-b-2 border-black pb-1 mb-3">Professional Summary</h2>}
-            <p className={`text-[15px] leading-relaxed text-slate-800 ${template === 'classic' ? 'font-serif' : ''}`}>{summary}</p>
+            {template === 'classic' && <SectionHeader title="Professional Summary" />}
+            {template !== 'classic' && <SectionHeader title="Summary" />}
+            <p className={`text-[15px] leading-relaxed 
+              ${template === 'classic' ? 'font-serif text-slate-800' : ''}
+              ${template === 'modern' ? 'text-slate-800' : ''}
+              ${template === 'minimalist' ? 'text-slate-700' : ''}
+              ${template === 'professional' ? 'text-slate-700 font-medium' : ''}
+              ${template === 'creative' ? 'text-slate-700 border-l-4 border-teal-100 pl-4' : ''}
+              ${template === 'elegant' ? 'font-serif text-slate-700 text-center px-8' : ''}
+            `}>{summary}</p>
           </div>
         ) : null;
         
       case 'experience':
         return experience.length > 0 && experience.some(e => e.company || e.role) ? (
           <div className="mb-6" key="experience">
-            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-4`}>Experience</h2>
+            <SectionHeader title="Experience" />
             <div className="space-y-4">
               {experience.map(exp => (
-                <div key={exp.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}`}>
+                <div key={exp.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''}`}>
                   {template === 'minimalist' && (
                     <div className="text-sm font-semibold text-slate-600 mt-1">{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
                   )}
                   <div>
-                    <div className={`flex justify-between items-baseline mb-1 ${template === 'minimalist' ? 'flex-col sm:flex-row' : ''}`}>
-                      <h3 className={`text-[16px] font-bold text-slate-900 ${template === 'classic' ? 'font-serif' : ''}`}>{exp.role}</h3>
+                    <div className={`flex justify-between items-baseline mb-1 ${template === 'minimalist' ? 'flex-col sm:flex-row' : ''} ${template === 'elegant' ? 'flex-col items-center justify-center' : ''}`}>
+                      <h3 className={`text-[16px] font-bold text-slate-900 ${template === 'classic' ? 'font-serif' : ''} ${template === 'elegant' ? 'font-serif text-xl' : ''}`}>{exp.role}</h3>
                       {template !== 'minimalist' && (
-                        <span className={`text-sm font-semibold text-slate-600 ${template === 'classic' ? 'font-serif font-normal' : ''}`}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</span>
+                        <span className={`text-sm font-semibold text-slate-600 ${template === 'classic' ? 'font-serif font-normal' : ''} ${template === 'elegant' ? 'font-serif text-slate-500 mt-1' : ''}`}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</span>
                       )}
                     </div>
-                    <div className={`text-[15px] font-semibold mb-1.5 ${template === 'classic' ? 'text-black font-serif italic' : template === 'minimalist' ? 'text-slate-700' : 'text-indigo-700'}`}>{exp.company}</div>
+                    <div className={`text-[15px] font-semibold mb-1.5 
+                      ${template === 'classic' ? 'text-black font-serif italic' : ''}
+                      ${template === 'minimalist' ? 'text-slate-700' : ''}
+                      ${template === 'modern' ? 'text-indigo-700' : ''}
+                      ${template === 'professional' ? 'text-slate-600 uppercase tracking-wide text-sm' : ''}
+                      ${template === 'creative' ? 'text-teal-600' : ''}
+                      ${template === 'elegant' ? 'text-slate-700 font-serif italic' : ''}
+                    `}>{exp.company}</div>
                     {exp.description && (
-                      <div className={`text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap ${template === 'classic' ? 'font-serif' : template === 'minimalist' ? '' : 'pl-3 border-l-2 border-slate-200'}`}>
+                      <div className={`text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap 
+                        ${template === 'classic' ? 'font-serif' : ''}
+                        ${template === 'minimalist' ? '' : ''}
+                        ${template === 'modern' ? 'pl-3 border-l-2 border-slate-200' : ''}
+                        ${template === 'professional' ? '' : ''}
+                        ${template === 'creative' ? 'pl-3 border-l-2 border-teal-100' : ''}
+                        ${template === 'elegant' ? 'font-serif text-slate-600 mt-3 px-4' : ''}
+                      `}>
                         {exp.description}
                       </div>
                     )}
@@ -322,18 +356,30 @@ export default function ResumeBuilderPage() {
       case 'projects':
         return projects.length > 0 && projects.some(p => p.name) ? (
           <div className="mb-6" key="projects">
-            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-4`}>Projects</h2>
-            <div className="space-y-4">
+            <SectionHeader title="Projects" />
+            <div className={`space-y-4 ${template === 'creative' ? 'grid grid-cols-2 gap-4 space-y-0' : ''}`}>
               {projects.map(proj => (
-                <div key={proj.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}`}>
+                <div key={proj.id} className={`${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''} ${template === 'creative' ? 'bg-slate-50 p-4 rounded-lg' : ''}`}>
                   {template === 'minimalist' && <div />}
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className={`text-[16px] font-bold text-slate-900 ${template === 'classic' ? 'font-serif' : ''}`}>{proj.name}</h3>
-                      {proj.link && <span className={`text-[13px] ${template === 'classic' ? 'text-slate-600 font-serif' : template === 'minimalist' ? 'text-slate-500' : 'font-semibold text-indigo-600'}`}>({proj.link.replace(/^https?:\/\//, '')})</span>}
+                    <div className={`flex items-center gap-2 mb-1 ${template === 'elegant' ? 'justify-center flex-col' : ''}`}>
+                      <h3 className={`text-[16px] font-bold text-slate-900 ${template === 'classic' || template === 'elegant' ? 'font-serif' : ''}`}>{proj.name}</h3>
+                      {proj.link && <span className={`text-[13px] 
+                        ${template === 'classic' ? 'text-slate-600 font-serif' : ''}
+                        ${template === 'minimalist' ? 'text-slate-500' : ''}
+                        ${template === 'modern' ? 'font-semibold text-indigo-600' : ''}
+                        ${template === 'professional' ? 'text-slate-500' : ''}
+                        ${template === 'creative' ? 'text-teal-500' : ''}
+                        ${template === 'elegant' ? 'font-serif text-slate-400' : ''}
+                      `}>({proj.link.replace(/^https?:\/\//, '')})</span>}
                     </div>
                     {proj.description && (
-                      <div className={`text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap ${template === 'classic' ? 'font-serif' : template === 'minimalist' ? '' : 'pl-3 border-l-2 border-slate-200'}`}>
+                      <div className={`text-[14px] text-slate-800 leading-relaxed whitespace-pre-wrap 
+                        ${template === 'classic' ? 'font-serif' : ''}
+                        ${template === 'modern' ? 'pl-3 border-l-2 border-slate-200' : ''}
+                        ${template === 'creative' ? 'text-slate-600 text-sm mt-2' : ''}
+                        ${template === 'elegant' ? 'font-serif text-slate-600 px-4' : ''}
+                      `}>
                         {proj.description}
                       </div>
                     )}
@@ -347,19 +393,29 @@ export default function ResumeBuilderPage() {
       case 'education':
         return education.length > 0 && education.some(e => e.institution || e.degree) ? (
           <div className="mb-6" key="education">
-            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-4`}>Education</h2>
+            <SectionHeader title="Education" />
             <div className="space-y-3">
               {education.map(edu => (
-                <div key={edu.id} className={`flex justify-between items-baseline ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}`}>
+                <div key={edu.id} className={`flex justify-between items-baseline 
+                  ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}
+                  ${template === 'elegant' ? 'flex-col items-center text-center mb-4' : ''}
+                `}>
                   {template === 'minimalist' && (
                     <div className="text-sm font-semibold text-slate-600">{edu.year}</div>
                   )}
-                  <div className={template === 'minimalist' ? 'flex flex-col' : ''}>
-                    <div className={`text-[15px] font-bold text-slate-900 ${template === 'classic' ? 'font-serif' : ''}`}>{edu.institution}</div>
-                    <div className={`text-[14px] font-medium text-slate-700 ${template === 'classic' ? 'font-serif italic text-black' : ''}`}>{edu.degree}</div>
+                  <div className={template === 'minimalist' || template === 'elegant' ? 'flex flex-col' : ''}>
+                    <div className={`text-[15px] font-bold text-slate-900 ${template === 'classic' || template === 'elegant' ? 'font-serif' : ''}`}>{edu.institution}</div>
+                    <div className={`text-[14px] font-medium text-slate-700 
+                      ${template === 'classic' ? 'font-serif italic text-black' : ''}
+                      ${template === 'elegant' ? 'font-serif text-slate-600' : ''}
+                      ${template === 'professional' ? 'text-slate-500' : ''}
+                    `}>{edu.degree}</div>
                   </div>
                   {template !== 'minimalist' && (
-                    <div className={`text-sm font-semibold text-slate-600 ${template === 'classic' ? 'font-serif font-normal text-black' : ''}`}>{edu.year}</div>
+                    <div className={`text-sm font-semibold text-slate-600 
+                      ${template === 'classic' ? 'font-serif font-normal text-black' : ''}
+                      ${template === 'elegant' ? 'font-serif text-slate-400 mt-1' : ''}
+                    `}>{edu.year}</div>
                   )}
                 </div>
               ))}
@@ -370,14 +426,28 @@ export default function ResumeBuilderPage() {
       case 'skills':
         return skills ? (
           <div className="mb-6" key="skills">
-            <h2 className={`text-lg font-black text-slate-900 uppercase tracking-widest border-b ${template === 'classic' ? 'border-b-2 border-black font-bold font-serif' : template === 'minimalist' ? 'border-slate-200' : 'border-slate-300'} pb-1 mb-3`}>Skills</h2>
-            <div className={`text-[14px] text-slate-800 leading-relaxed ${template === 'classic' ? 'font-serif' : 'font-medium'}`}>
-              {template === 'modern' ? (
+            <SectionHeader title="Skills" />
+            <div className={`text-[14px] text-slate-800 leading-relaxed 
+              ${template === 'classic' ? 'font-serif' : 'font-medium'}
+              ${template === 'elegant' ? 'text-center' : ''}
+            `}>
+              {(template === 'modern' || template === 'creative') ? (
                 skills.split(',').map((skill, i) => (
-                  <span key={i} className="inline-block mr-2 mb-1 px-2 py-0.5 bg-slate-100 rounded-sm">{skill.trim()}</span>
+                  <span key={i} className={`inline-block mr-2 mb-2 px-2.5 py-1 rounded-sm text-sm
+                    ${template === 'creative' ? 'bg-teal-50 text-teal-700 border border-teal-100 rounded-full' : 'bg-slate-100'}
+                  `}>{skill.trim()}</span>
                 ))
+              ) : template === 'professional' ? (
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                  {skills.split(',').map((skill, i) => (
+                    <div key={i} className="flex items-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-800 mr-2"></div>
+                      <span>{skill.trim()}</span>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <p>{skills}</p>
+                <p className={template === 'elegant' ? 'font-serif text-slate-600 leading-loose' : ''}>{skills}</p>
               )}
             </div>
           </div>
@@ -433,6 +503,9 @@ export default function ResumeBuilderPage() {
                     <option value="modern">Modern (Default)</option>
                     <option value="classic">Classic (ATS-Friendly)</option>
                     <option value="minimalist">Minimalist</option>
+                    <option value="professional">Professional</option>
+                    <option value="creative">Creative</option>
+                    <option value="elegant">Elegant</option>
                   </select>
                 </div>
               </CardContent>
@@ -468,14 +541,38 @@ export default function ResumeBuilderPage() {
             <div className={`bg-white text-black shrink-0 w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none print:w-full print:min-h-0 print:max-w-none print:m-0 p-[20mm] ${template === 'classic' ? 'font-serif' : ''}`}>
               
               {/* Header section */}
-              <div className={`border-b-2 ${template === 'classic' ? 'border-black' : 'border-slate-800'} pb-6 mb-6`}>
-                <h1 className={`text-4xl font-black text-slate-900 tracking-tight uppercase mb-3 text-center ${template === 'minimalist' ? 'font-light tracking-widest' : template === 'classic' ? 'font-serif' : ''}`}>{personalInfo.name || "YOUR NAME"}</h1>
-                <div className={`flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm font-medium ${template === 'classic' ? 'text-black font-serif' : 'text-slate-700'}`}>
-                  {personalInfo.email && <div className="flex items-center gap-1.5">{template !== 'classic' && <Mail className="w-3.5 h-3.5" />} {personalInfo.email}</div>}
-                  {personalInfo.phone && <div className="flex items-center gap-1.5">{template !== 'classic' && <Phone className="w-3.5 h-3.5" />} {personalInfo.phone}</div>}
-                  {personalInfo.website && <div className="flex items-center gap-1.5">{template !== 'classic' && <Globe className="w-3.5 h-3.5" />} {personalInfo.website.replace(/^https?:\/\//, '')}</div>}
-                  {personalInfo.linkedin && <div className="flex items-center gap-1.5">{template !== 'classic' && <Briefcase className="w-3.5 h-3.5" />} {personalInfo.linkedin.replace(/^https?:\/\//, '')}</div>}
-                  {personalInfo.github && <div className="flex items-center gap-1.5">{template !== 'classic' && <Code2 className="w-3.5 h-3.5" />} {personalInfo.github.replace(/^https?:\/\//, '')}</div>}
+              <div className={`
+                ${template === 'classic' ? 'border-b-2 border-black pb-6 mb-6' : ''}
+                ${template === 'modern' ? 'border-b-2 border-slate-800 pb-6 mb-6' : ''}
+                ${template === 'minimalist' ? 'border-b border-slate-200 pb-6 mb-6' : ''}
+                ${template === 'professional' ? 'bg-slate-900 text-white p-8 -mx-[20mm] -mt-[20mm] mb-8' : ''}
+                ${template === 'creative' ? 'border-l-8 border-teal-500 pl-6 mb-8' : ''}
+                ${template === 'elegant' ? 'text-center pb-8 mb-8 border-b border-slate-300 mt-4' : ''}
+              `}>
+                <h1 className={`
+                  text-4xl tracking-tight uppercase mb-3 
+                  ${(template === 'modern' || template === 'classic' || template === 'minimalist') ? 'text-center' : ''}
+                  ${template === 'minimalist' ? 'font-light tracking-widest text-slate-900' : ''}
+                  ${template === 'classic' ? 'font-serif font-black text-black' : ''}
+                  ${template === 'modern' ? 'font-black text-slate-900' : ''}
+                  ${template === 'professional' ? 'font-bold text-white tracking-wide' : ''}
+                  ${template === 'creative' ? 'font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-600 normal-case text-5xl' : ''}
+                  ${template === 'elegant' ? 'font-serif font-light tracking-[0.2em] text-slate-800 normal-case text-5xl' : ''}
+                `}>{personalInfo.name || "YOUR NAME"}</h1>
+                <div className={`flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium
+                  ${(template === 'modern' || template === 'classic' || template === 'minimalist' || template === 'elegant') ? 'justify-center' : 'justify-start'}
+                  ${template === 'classic' ? 'text-black font-serif' : ''}
+                  ${template === 'modern' ? 'text-slate-700' : ''}
+                  ${template === 'minimalist' ? 'text-slate-600' : ''}
+                  ${template === 'professional' ? 'text-slate-300' : ''}
+                  ${template === 'creative' ? 'text-slate-600' : ''}
+                  ${template === 'elegant' ? 'text-slate-500 font-serif' : ''}
+                `}>
+                  {personalInfo.email && <div className="flex items-center gap-1.5">{template !== 'classic' && template !== 'elegant' && <Mail className="w-3.5 h-3.5" />} {personalInfo.email}</div>}
+                  {personalInfo.phone && <div className="flex items-center gap-1.5">{template !== 'classic' && template !== 'elegant' && <Phone className="w-3.5 h-3.5" />} {personalInfo.phone}</div>}
+                  {personalInfo.website && <div className="flex items-center gap-1.5">{template !== 'classic' && template !== 'elegant' && <Globe className="w-3.5 h-3.5" />} {personalInfo.website.replace(/^https?:\/\//, '')}</div>}
+                  {personalInfo.linkedin && <div className="flex items-center gap-1.5">{template !== 'classic' && template !== 'elegant' && <Briefcase className="w-3.5 h-3.5" />} {personalInfo.linkedin.replace(/^https?:\/\//, '')}</div>}
+                  {personalInfo.github && <div className="flex items-center gap-1.5">{template !== 'classic' && template !== 'elegant' && <Code2 className="w-3.5 h-3.5" />} {personalInfo.github.replace(/^https?:\/\//, '')}</div>}
                 </div>
               </div>
 
