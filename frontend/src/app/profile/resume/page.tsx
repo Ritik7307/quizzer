@@ -327,7 +327,7 @@ export default function ResumeBuilderPage() {
     switch(sectionId) {
       case 'summary':
         return summary ? (
-          <div className="mb-6 break-inside-avoid print:break-inside-avoid" key="summary">
+          <div className="mb-4" key="summary">
             {template === 'classic' && <SectionHeader title="Professional Summary" />}
             {template !== 'classic' && <SectionHeader title="Summary" />}
             <p className={`text-[15px] leading-relaxed 
@@ -343,9 +343,9 @@ export default function ResumeBuilderPage() {
         
       case 'experience':
         return experience.length > 0 && experience.some(e => e.company || e.role) ? (
-          <div className="mb-6" key="experience">
+          <div className="mb-4" key="experience">
             <SectionHeader title="Experience" />
-            <div className="space-y-4">
+            <div className="space-y-3">
               {experience.map(exp => (
                 <div key={exp.id} className={`break-inside-avoid print:break-inside-avoid ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''}`}>
                   {template === 'minimalist' && (
@@ -387,9 +387,9 @@ export default function ResumeBuilderPage() {
 
       case 'projects':
         return projects.length > 0 && projects.some(p => p.name) ? (
-          <div className="mb-6" key="projects">
+          <div className="mb-4" key="projects">
             <SectionHeader title="Projects" />
-            <div className={`space-y-4 ${template === 'creative' ? 'grid grid-cols-2 gap-4 space-y-0' : ''}`}>
+            <div className={`space-y-3 ${template === 'creative' ? 'grid grid-cols-2 gap-4 space-y-0' : ''}`}>
               {projects.map(proj => (
                 <div key={proj.id} className={`break-inside-avoid print:break-inside-avoid ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''} ${template === 'elegant' ? 'text-center mb-6' : ''} ${template === 'creative' ? 'bg-slate-50 p-4 rounded-lg' : ''}`}>
                   {template === 'minimalist' && <div />}
@@ -424,9 +424,9 @@ export default function ResumeBuilderPage() {
 
       case 'education':
         return education.length > 0 && education.some(e => e.institution || e.degree) ? (
-          <div className="mb-6" key="education">
+          <div className="mb-4" key="education">
             <SectionHeader title="Education" />
-            <div className="space-y-3">
+            <div className="space-y-2">
               {education.map(edu => (
                 <div key={edu.id} className={`break-inside-avoid print:break-inside-avoid flex justify-between items-baseline 
                   ${template === 'minimalist' ? 'grid grid-cols-[1fr_3fr] gap-4' : ''}
@@ -457,7 +457,7 @@ export default function ResumeBuilderPage() {
 
       case 'skills':
         return skills ? (
-          <div className="mb-6 break-inside-avoid print:break-inside-avoid" key="skills">
+          <div className="mb-4" key="skills">
             <SectionHeader title="Skills" />
             <div className={`text-[14px] text-slate-800 leading-relaxed 
               ${template === 'classic' ? 'font-serif' : 'font-medium'}
@@ -570,16 +570,16 @@ export default function ResumeBuilderPage() {
           <div className="overflow-auto bg-slate-200 dark:bg-slate-900 flex justify-center items-start p-4 sm:p-8 print:p-0 print:bg-white print:block">
             
             {/* A4 Paper Container */}
-            <div className={`bg-white text-black shrink-0 w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none print:w-full print:min-h-0 print:max-w-none print:m-0 p-[20mm] ${template === 'classic' ? 'font-serif' : ''}`}>
+            <div className={`bg-white text-black shrink-0 w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none print:w-full print:min-h-0 print:max-w-none print:m-0 p-[15mm] ${template === 'classic' ? 'font-serif' : ''}`}>
               
               {/* Header section */}
               <div className={`
-                ${template === 'classic' ? 'border-b-2 border-black pb-6 mb-6' : ''}
-                ${template === 'modern' ? 'border-b-2 border-slate-800 pb-6 mb-6' : ''}
-                ${template === 'minimalist' ? 'border-b border-slate-200 pb-6 mb-6' : ''}
-                ${template === 'professional' ? 'bg-slate-900 text-white p-8 -mx-[20mm] -mt-[20mm] mb-8' : ''}
-                ${template === 'creative' ? 'border-l-8 border-teal-500 pl-6 mb-8' : ''}
-                ${template === 'elegant' ? 'text-center pb-8 mb-8 border-b border-slate-300 mt-4' : ''}
+                ${template === 'classic' ? 'border-b-2 border-black pb-4 mb-4' : ''}
+                ${template === 'modern' ? 'border-b-2 border-slate-800 pb-4 mb-4' : ''}
+                ${template === 'minimalist' ? 'border-b border-slate-200 pb-4 mb-4' : ''}
+                ${template === 'professional' ? 'bg-slate-900 text-white p-6 -mx-[15mm] -mt-[15mm] mb-6' : ''}
+                ${template === 'creative' ? 'border-l-8 border-teal-500 pl-5 mb-6' : ''}
+                ${template === 'elegant' ? 'text-center pb-5 mb-5 border-b border-slate-300 mt-2' : ''}
               `}>
                 <h1 className={`
                   text-4xl tracking-tight uppercase mb-3 
