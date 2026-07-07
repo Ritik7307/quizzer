@@ -831,9 +831,9 @@ export default function PracticeSheetPage() {
                               )}
 
                               {/* Question Title */}
-                              {q.isExternalOnly && q.referenceUrl ? (
+                              {(q.isExternalOnly || !!q.referenceUrl) ? (
                                 <a
-                                  href={q.referenceUrl}
+                                  href={q.referenceUrl!}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-xs font-bold text-foreground/95 hover:text-indigo-550 dark:hover:text-indigo-400 transition-colors truncate leading-none flex items-center gap-2"
@@ -849,18 +849,7 @@ export default function PracticeSheetPage() {
                                 </Link>
                               )}
 
-                              {/* External Reference Link */}
-                              {q.referenceUrl && !q.isExternalOnly && (
-                                <a
-                                  href={q.referenceUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  title="View on original LeetCode / Codeforces page"
-                                  className="text-muted-foreground hover:text-foreground transition-all duration-150 p-0.5 shrink-0"
-                                >
-                                  <ExternalLink className="h-3 w-3" />
-                                </a>
-                              )}
+                              {/* Removed secondary external link since the main title links to it */}
                             </div>
 
                             <div className="flex items-center gap-4 justify-between sm:justify-end">
@@ -882,7 +871,7 @@ export default function PracticeSheetPage() {
                               </Badge>
 
                               {/* Action Button */}
-                              {q.isExternalOnly ? (
+                              {(q.isExternalOnly || !!q.referenceUrl) ? (
                                 <div className="flex items-center gap-2">
                                   {q.referenceUrl && (
                                     <Button
